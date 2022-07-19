@@ -1,4 +1,4 @@
-package org.acme;
+package life.genny.datagenerator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

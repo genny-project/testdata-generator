@@ -49,10 +49,17 @@ If you want to learn more about building native executables, please consult http
 
 ## Related Guides
 
+- Hibernate ORM ([guide](https://quarkus.io/guides/hibernate-orm)): Define your persistent model with Hibernate ORM and JPA
 - RESTEasy Classic ([guide](https://quarkus.io/guides/resteasy)): REST endpoint framework implementing JAX-RS and more
 - Agroal - Database connection pool ([guide](https://quarkus.io/guides/datasource)): Pool JDBC database connections (included in Hibernate ORM)
 
 ## Provided Code
+
+### Hibernate ORM
+
+Create your first JPA entity
+
+[Related guide section...](https://quarkus.io/guides/hibernate-orm)
 
 ### RESTEasy JAX-RS
 

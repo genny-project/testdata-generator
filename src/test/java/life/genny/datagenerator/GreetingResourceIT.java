@@ -1,4 +1,4 @@
-package org.acme;
+package life.genny.datagenerator;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

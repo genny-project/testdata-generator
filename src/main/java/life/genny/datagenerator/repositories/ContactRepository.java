@@ -1,10 +1,9 @@
 package life.genny.datagenerator.repositories;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import life.genny.datagenerator.data.ContactDAO;
+import life.genny.datagenerator.entity.BaseEntity;
+import life.genny.datagenerator.model.Contact;
 
-import javax.enterprise.context.ApplicationScoped;
+public class ContactRepository implements PanacheRepository<BaseEntity> {
 
-@ApplicationScoped
-public class ContactRepository implements PanacheRepository<ContactDAO> {
 }

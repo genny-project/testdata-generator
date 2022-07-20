@@ -2,7 +2,6 @@ package life.genny.datagenerator;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.data.ContactDAO;
 import life.genny.datagenerator.repositories.ContactRepository;
 import life.genny.datagenerator.utils.ContactGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -12,7 +11,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import java.text.ParseException;
 
 @Startup
 @ApplicationScoped
@@ -35,17 +33,17 @@ public class ContactStartup {
 
         int i = 0;
         while (i < total) {
-            try {
-                ContactDAO contact = generator.generatePerson();
-
-                contactRepository.persist(contact);
-                if (contactRepository.isPersistent(contact)) {
-                    LOGGER.info("CONTACT CREATED: " + contact.getId());
-                    i++;
-                }
-            } catch (ParseException e) {
-                throw new RuntimeException(e);
-            }
+//            try {
+//                Contact contact = generator.generatePerson();
+//
+//                contactRepository.persist(contact);
+//                if (contactRepository.isPersistent(contact)) {
+//                    LOGGER.info("CONTACT CREATED: " + contact.getId());
+//                    i++;
+//                }
+//            } catch (ParseException e) {
+//                throw new RuntimeException(e);
+//            }
         }
     }
 }

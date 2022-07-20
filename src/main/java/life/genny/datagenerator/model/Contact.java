@@ -1,10 +1,10 @@
-package life.genny.datagenerator.data;
+package life.genny.datagenerator.model;
 
 import life.genny.datagenerator.utils.DateUtil;
 
 import java.util.Date;
 
-public class ContactDTO {
+public class Contact {
 
     private Long id;
     private String fullName;

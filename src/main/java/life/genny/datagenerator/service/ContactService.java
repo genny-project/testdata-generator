@@ -1,6 +1,6 @@
 package life.genny.datagenerator.service;
 
-import life.genny.datagenerator.repositories.ContactRepository;
+import life.genny.datagenerator.repository.ContactRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -10,7 +10,4 @@ public class ContactService {
 
     @Inject
     ContactRepository contactRepository;
-
-
-
 }

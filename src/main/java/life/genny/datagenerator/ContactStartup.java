@@ -2,7 +2,7 @@ package life.genny.datagenerator;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.repositories.ContactRepository;
+import life.genny.datagenerator.repository.ContactRepository;
 import life.genny.datagenerator.utils.ContactGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -16,7 +16,7 @@ import javax.transaction.Transactional;
 @ApplicationScoped
 public class ContactStartup {
 
-    private static Logger LOGGER = Logger.getLogger(ContactStartup.class);
+    private static final Logger LOGGER = Logger.getLogger(ContactStartup.class);
 
     @ConfigProperty(name="total_names_tobe_generated", defaultValue="50")
     String totalGeneratedNumber;

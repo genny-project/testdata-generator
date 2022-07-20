@@ -1,7 +1,7 @@
 package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
-import life.genny.datagenerator.data.ContactDAO;
+import life.genny.datagenerator.dao.ContactDAO;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

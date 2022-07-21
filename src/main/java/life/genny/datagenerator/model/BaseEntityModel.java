@@ -1,7 +1,7 @@
 package life.genny.datagenerator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import life.genny.datagenerator.entity.BaseEntity;
+import life.genny.datagenerator.data.entity.BaseEntity;
 
 import java.util.Date;
 import java.util.HashMap;

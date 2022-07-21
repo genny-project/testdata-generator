@@ -1,7 +1,7 @@
 package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
-import life.genny.datagenerator.entity.BaseEntity;
+import life.genny.datagenerator.data.entity.BaseEntity;
 
 import java.util.Locale;
 

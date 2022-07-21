@@ -2,8 +2,8 @@ package life.genny.datagenerator;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.entity.BaseEntity;
-import life.genny.datagenerator.repository.BaseEntityRepository;
+import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.utils.ContactGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;

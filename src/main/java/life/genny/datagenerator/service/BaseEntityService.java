@@ -1,7 +1,7 @@
 package life.genny.datagenerator.service;
 
-import life.genny.datagenerator.entity.BaseEntity;
-import life.genny.datagenerator.repository.BaseEntityRepository;
+import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.data.repository.BaseEntityRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;

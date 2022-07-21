@@ -1,4 +1,4 @@
-package life.genny.datagenerator.entity;
+package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.ColumnDefault;

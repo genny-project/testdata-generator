@@ -1,4 +1,4 @@
-package life.genny.datagenerator.entity;
+package life.genny.datagenerator.data.entity;
 
 import life.genny.datagenerator.model.BaseEntityAttributeToModel;
 

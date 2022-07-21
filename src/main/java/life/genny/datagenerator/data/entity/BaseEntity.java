@@ -1,7 +1,6 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jboss.logging.Logger;
@@ -15,8 +14,7 @@ import java.util.UUID;
 public class BaseEntity extends PanacheEntityBase {
     private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
 
-    @Column(length = 31, nullable = false, name = "d_type")
-    @ColumnDefault("\"BaseEntity\"")
+    @Column(length = 31, nullable = false, name = "d_type", columnDefinition = "DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 
     @Id
@@ -31,8 +29,7 @@ public class BaseEntity extends PanacheEntityBase {
     @Column()
     private String name;
 
-    @Column(nullable = false)
-    @ColumnDefault("\"genny\"")
+    @Column(nullable = false, columnDefinition = "DEFAULT \"genny\"")
     private String realm = "genny";
 
     @UpdateTimestamp
@@ -42,8 +39,7 @@ public class BaseEntity extends PanacheEntityBase {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @Column(nullable = false)
-    @ColumnDefault("0")
+    @Column(nullable = false, columnDefinition = "DEFAULT 0")
     private int status;
 
     @Override

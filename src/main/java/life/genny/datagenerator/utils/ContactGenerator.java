@@ -45,6 +45,17 @@ public class ContactGenerator {
 //        return contact;
 //    }
 
+        /* Phone Number */
+//        Random random = new Random();
+//        int part1 = random.nextInt(600) + 100;
+//        int part2 = random.nextInt(641) + 100;
+//        int part3 = random.nextInt(8999) + 1000;
+//        String generatedPhoneNumber = part1 + "" + part2 + "" + part3;
+//        contact.setPhoneNumber(generatedPhoneNumber);
+
+//        return contact;
+//        return null;
+//    }
     public BaseEntity createEntity() {
         Faker faker = new Faker(new Locale("en-AU"));
         BaseEntity entity = new BaseEntity();

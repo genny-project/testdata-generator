@@ -1,4 +1,4 @@
-package life.genny.datagenerator;
+package life.genny.datagenerator.model;
 
 public class AttributeCode {
 

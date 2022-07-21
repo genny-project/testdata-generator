@@ -42,20 +42,9 @@ public class ContactStartup {
                     i++;
                 }
             } catch (Exception e) {
-                LOGGER.error(e);
+                LOGGER.error(e.getMessage());
             }
             i++;
-//            try {
-//                Contact contact = generator.generatePerson();
-//
-//                baseEntityRepository.persist(contact);
-//                if (baseEntityRepository.isPersistent(contact)) {
-//                    LOGGER.info("CONTACT CREATED: " + contact.getId());
-//                    i++;
-//                }
-//            } catch (ParseException e) {
-//                throw new RuntimeException(e);
-//            }
         }
     }
 }

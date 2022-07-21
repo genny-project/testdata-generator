@@ -1,23 +1,23 @@
 package life.genny.datagenerator.service;
 
 import life.genny.datagenerator.entity.BaseEntity;
-import life.genny.datagenerator.repository.ContactRepository;
+import life.genny.datagenerator.repository.BaseEntityRepository;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.List;
 
 @ApplicationScoped
-public class ContactService {
+public class BaseEntityService {
 
     @Inject
-    ContactRepository contactRepository;
+    BaseEntityRepository baseEntityRepository;
 
     public List<BaseEntity> getBaseEntity() {
-        return contactRepository.listAll();
+        return baseEntityRepository.listAll();
     }
 
     public long countEntity() {
-        return contactRepository.count();
+        return baseEntityRepository.count();
     }
 }

@@ -1,5 +1,10 @@
 package life.genny.datagenerator.utils;
 
+import com.github.javafaker.Faker;
+import life.genny.datagenerator.entity.BaseEntity;
+
+import java.util.Locale;
+
 public class ContactGenerator {
 
     /* Generate random person data. */
@@ -39,5 +44,13 @@ public class ContactGenerator {
 //
 //        return contact;
 //    }
+
+    public BaseEntity createEntity() {
+        Faker faker = new Faker(new Locale("en-AU"));
+        BaseEntity entity = new BaseEntity();
+        entity.setStatus(1);
+        entity.setName(faker.address().firstName() + " " + faker.address().lastName());
+        return entity;
+    }
 
 }

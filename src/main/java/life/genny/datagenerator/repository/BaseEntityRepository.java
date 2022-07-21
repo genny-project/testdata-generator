@@ -6,6 +6,5 @@ import life.genny.datagenerator.entity.BaseEntity;
 import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class ContactRepository implements PanacheRepository<BaseEntity> {
-
+public class BaseEntityRepository implements PanacheRepository<BaseEntity> {
 }

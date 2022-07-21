@@ -1,19 +1,23 @@
 package life.genny.datagenerator.entity;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.jboss.logging.Logger;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity(name = "baseentity")
 @Table(indexes = @Index(columnList = "realm, status, code, name"))
-public class BaseEntity {
+public class BaseEntity extends PanacheEntityBase {
+    private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
+
     @Column(length = 31, nullable = false, name = "d_type")
     @ColumnDefault("\"BaseEntity\"")
-    private String dType;
+    private String dType = "BaseEntity";
 
     @Id
     @Column(length = 20)
@@ -21,7 +25,6 @@ public class BaseEntity {
     private Long id;
 
     @CreationTimestamp
-    @Type(type = "org.hibernate.type.LocalDateTimeType")
     @Column(length = 6)
     private Date created;
 
@@ -30,10 +33,9 @@ public class BaseEntity {
 
     @Column(nullable = false)
     @ColumnDefault("\"genny\"")
-    private String realm;
+    private String realm = "genny";
 
     @UpdateTimestamp
-    @Type(type = "org.hibernate.type.LocalDateTimeType")
     @Column(length = 6)
     private Date updated;
 
@@ -43,6 +45,15 @@ public class BaseEntity {
     @Column(nullable = false)
     @ColumnDefault("0")
     private int status;
+
+    @Override
+    public void persist() {
+        LOGGER.info("on persist");
+        if (getCode() == null) {
+            setCode();
+        }
+        super.persist();
+    }
 
     public String getdType() {
         return dType;
@@ -96,8 +107,8 @@ public class BaseEntity {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCode() {
+        this.code = "PER_" + UUID.randomUUID().toString().toUpperCase();
     }
 
     public int getStatus() {

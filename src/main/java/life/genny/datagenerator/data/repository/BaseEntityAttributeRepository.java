@@ -2,6 +2,7 @@ package life.genny.datagenerator.data.repository;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.math.BigDecimal;
@@ -9,29 +10,7 @@ import java.util.Date;
 
 @ApplicationScoped
 public class BaseEntityAttributeRepository implements PanacheRepository<BaseEntityAttribute> {
-
-    private boolean defaultInferred = false;
-    private boolean defaultPrivacyFlag = false;
-    private boolean defaultReadOnly = false;
-    private String defaultRealm = "Genny";
-    private String defaultIcon = null;
-    private boolean defaultConfirmationFlag = false;
-
-    private BaseEntityAttribute buildEntity(String attributeCode, String baseEntityCode, Long baseEntityId) {
-        Date now = new Date();
-        BaseEntityAttribute entity = new BaseEntityAttribute();
-        entity.setAttributeCode(attributeCode);
-        entity.setBaseEntityCode(baseEntityCode);
-        entity.setCreated(now);
-        entity.setInferred(defaultInferred);
-        entity.setPrivacyFlag(defaultPrivacyFlag);
-        entity.setReadOnly(defaultReadOnly);
-        entity.setRealm(defaultRealm);
-        entity.setUpdated(now);
-        entity.setBASEENTITY_ID(baseEntityId);
-        return entity;
-    }
-
+    private static final Logger LOGGER = Logger.getLogger(BaseEntityAttributeRepository.class.getSimpleName());
 
     public void persistValueBoolean(String attributeCode, String baseEntityCode, boolean value) {
 //        BaseEntityAttribute entity = buildEntity(attributeCode, baseEntityCode);

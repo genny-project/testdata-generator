@@ -20,6 +20,7 @@ public class AttributeCode {
         ATT_PRI_TIMEZONE_ID,
         SER_LNK_SELECT_COUNTRY,
         SER_PRI_TIMEZONE_ID,
+
     }
 
     public enum DEF_AGENCY {

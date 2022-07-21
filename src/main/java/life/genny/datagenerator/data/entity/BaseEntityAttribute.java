@@ -2,8 +2,12 @@ package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
@@ -21,19 +25,35 @@ public class BaseEntityAttribute extends PanacheEntityBase {
     private boolean readOnly;
     private String realm;
     private Date updated;
-    private boolean valueBoolean;
+    private Boolean valueBoolean;
     private Date valueDate;
-    private byte[] valueDateRange;
+    private Byte[] valueDateRange;
     private Date valueDateTime;
-    private double valueDouble;
-    private int valueInteger;
+    private Double valueDouble;
+    private Integer valueInteger;
     private Long valueLong;
     private BigDecimal money;
     private String valueString;
-    private Date valueTime;
-    private double weight;
+    private LocalTime valueTime;
+    private Double weight;
     private String icon;
     private boolean confirmationFlag;
+
+    public Long getATTRIBUTE_ID() {
+        return ATTRIBUTE_ID;
+    }
+
+    public void setATTRIBUTE_ID(Long ATTRIBUTE_ID) {
+        this.ATTRIBUTE_ID = ATTRIBUTE_ID;
+    }
+
+    public Long getBASEENTITY_ID() {
+        return BASEENTITY_ID;
+    }
+
+    public void setBASEENTITY_ID(Long BASEENTITY_ID) {
+        this.BASEENTITY_ID = BASEENTITY_ID;
+    }
 
     public String getAttributeCode() {
         return attributeCode;
@@ -99,11 +119,11 @@ public class BaseEntityAttribute extends PanacheEntityBase {
         this.updated = updated;
     }
 
-    public boolean isValueBoolean() {
+    public Boolean getValueBoolean() {
         return valueBoolean;
     }
 
-    public void setValueBoolean(boolean valueBoolean) {
+    public void setValueBoolean(Boolean valueBoolean) {
         this.valueBoolean = valueBoolean;
     }
 
@@ -115,11 +135,11 @@ public class BaseEntityAttribute extends PanacheEntityBase {
         this.valueDate = valueDate;
     }
 
-    public byte[] getValueDateRange() {
+    public Byte[] getValueDateRange() {
         return valueDateRange;
     }
 
-    public void setValueDateRange(byte[] valueDateRange) {
+    public void setValueDateRange(Byte[] valueDateRange) {
         this.valueDateRange = valueDateRange;
     }
 
@@ -131,19 +151,19 @@ public class BaseEntityAttribute extends PanacheEntityBase {
         this.valueDateTime = valueDateTime;
     }
 
-    public double getValueDouble() {
+    public Double getValueDouble() {
         return valueDouble;
     }
 
-    public void setValueDouble(double valueDouble) {
+    public void setValueDouble(Double valueDouble) {
         this.valueDouble = valueDouble;
     }
 
-    public int getValueInteger() {
+    public Integer getValueInteger() {
         return valueInteger;
     }
 
-    public void setValueInteger(int valueInteger) {
+    public void setValueInteger(Integer valueInteger) {
         this.valueInteger = valueInteger;
     }
 
@@ -171,36 +191,20 @@ public class BaseEntityAttribute extends PanacheEntityBase {
         this.valueString = valueString;
     }
 
-    public Date getValueTime() {
+    public LocalTime getValueTime() {
         return valueTime;
     }
 
-    public void setValueTime(Date valueTime) {
+    public void setValueTime(LocalTime valueTime) {
         this.valueTime = valueTime;
     }
 
-    public double getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight(double weight) {
+    public void setWeight(Double weight) {
         this.weight = weight;
-    }
-
-    public Long getATTRIBUTE_ID() {
-        return ATTRIBUTE_ID;
-    }
-
-    public void setATTRIBUTE_ID(Long ATTRIBUTE_ID) {
-        this.ATTRIBUTE_ID = ATTRIBUTE_ID;
-    }
-
-    public Long getBASEENTITY_ID() {
-        return BASEENTITY_ID;
-    }
-
-    public void setBASEENTITY_ID(Long BASEENTITY_ID) {
-        this.BASEENTITY_ID = BASEENTITY_ID;
     }
 
     public String getIcon() {

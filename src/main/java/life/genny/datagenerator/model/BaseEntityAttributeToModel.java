@@ -7,4 +7,6 @@ public interface BaseEntityAttributeToModel {
      * @return the value of BaseEntityAttribute, it could be valueDate, valueBoolean, valueInteger and the others
      */
     Object getValue();
+
+    void setValue(Object value) throws Exception;
 }

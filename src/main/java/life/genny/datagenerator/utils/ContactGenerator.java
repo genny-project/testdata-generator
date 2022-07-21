@@ -2,10 +2,16 @@ package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
 import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import life.genny.datagenerator.model.BaseEntityAttributeModel;
+import org.jboss.logging.Logger;
 
+import java.util.Date;
 import java.util.Locale;
 
 public class ContactGenerator {
+
+    private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
 
     /* Generate random person data. */
 //    public ContactDAO generatePerson() throws ParseException {
@@ -53,7 +59,7 @@ public class ContactGenerator {
 //        String generatedPhoneNumber = part1 + "" + part2 + "" + part3;
 //        contact.setPhoneNumber(generatedPhoneNumber);
 
-//        return contact;
+    //        return contact;
 //        return null;
 //    }
     public BaseEntity createEntity() {
@@ -63,5 +69,34 @@ public class ContactGenerator {
         entity.setName(faker.address().firstName() + " " + faker.address().lastName());
         return entity;
     }
+
+
+    private final boolean defaultInferred = false;
+    private final boolean defaultPrivacyFlag = false;
+    private final boolean defaultReadOnly = false;
+    private final String defaultRealm = "Genny";
+    private final String defaultIcon = null;
+    private final boolean defaultConfirmationFlag = false;
+
+    public BaseEntityAttribute createAttribute(String attributeCode, String baseEntityCode, Long baseEntityId, Object value) {
+        Date now = new Date();
+        BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
+        entity.setAttributeCode(attributeCode);
+        entity.setBaseEntityCode(baseEntityCode);
+        entity.setCreated(now);
+        entity.setInferred(defaultInferred);
+        entity.setPrivacyFlag(defaultPrivacyFlag);
+        entity.setReadOnly(defaultReadOnly);
+        entity.setRealm(defaultRealm);
+        entity.setUpdated(now);
+        entity.setBASEENTITY_ID(baseEntityId);
+        try {
+            entity.setValue(value);
+        } catch (Exception e) {
+            LOGGER.error(e);
+        }
+        return entity.toEntity();
+    }
+
 
 }

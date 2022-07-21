@@ -1,6 +1,6 @@
 package life.genny.datagenerator.resource;
 
-import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
 
 import javax.inject.Inject;
@@ -21,7 +21,7 @@ public class ContactResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getAllContacts() {
-        List<BaseEntity> baseEntities = service.getBaseEntity();
+        List<BaseEntityModel> baseEntities = service.getBaseEntity();
         return Response.ok(baseEntities).build();
     }
 

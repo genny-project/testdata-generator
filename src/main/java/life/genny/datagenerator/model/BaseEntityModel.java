@@ -32,6 +32,10 @@ public class BaseEntityModel {
     public BaseEntityModel() {
     }
 
+    public BaseEntityModel(BaseEntity entity) {
+        this(entity, null);
+    }
+
     public BaseEntityModel(BaseEntity entity, List<? extends BaseEntityAttributeToModel> attributes) {
         setdType(entity.getdType());
         setId(entity.getId());
@@ -42,10 +46,15 @@ public class BaseEntityModel {
         setStatus(entity.getStatus());
         setUpdated(entity.getUpdated());
 
+        if (attributes == null) return;
         this.attributes = new HashMap<>();
         for (BaseEntityAttributeToModel attr : attributes) {
             this.attributes.put(attr.getAttributeCode(), attr.getValue());
         }
+    }
+
+    public BaseEntity toEntity() {
+        return new BaseEntity(dType, id, created, name, realm, updated, code, status);
     }
 
     public Object getAttribute(String code) {

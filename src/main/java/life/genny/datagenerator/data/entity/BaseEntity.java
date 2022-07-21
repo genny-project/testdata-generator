@@ -39,7 +39,7 @@ public class BaseEntity extends PanacheEntityBase {
     @Column(length = 6)
     private Date updated;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
 
     @Column(nullable = false)
@@ -53,6 +53,20 @@ public class BaseEntity extends PanacheEntityBase {
             setCode();
         }
         super.persist();
+    }
+
+    public BaseEntity() {
+    }
+
+    public BaseEntity(String dType, Long id, Date created, String name, String realm, Date updated, String code, int status) {
+        this.dType = dType;
+        this.id = id;
+        this.created = created;
+        this.name = name;
+        this.realm = realm;
+        this.updated = updated;
+        this.code = code;
+        this.status = status;
     }
 
     public String getdType() {
@@ -104,11 +118,16 @@ public class BaseEntity extends PanacheEntityBase {
     }
 
     public String getCode() {
+        if (this.code == null) {
+            setCode();
+        }
         return code;
     }
 
     public void setCode() {
-        this.code = "PER_" + UUID.randomUUID().toString().toUpperCase();
+        if (this.code == null) {
+            this.code = "PER_" + UUID.randomUUID().toString().toUpperCase();
+        }
     }
 
     public int getStatus() {

@@ -19,6 +19,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.time.LocalTime;
 
 @Startup
 @ApplicationScoped
@@ -47,7 +48,10 @@ public class ContactStartup {
             LOGGER.info("entity is persist:" + entity.getId());
         }
 
-        BaseEntityAttribute attr = generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME, entity.getCode(), entity.getId(), "Pak Wayan");
+        LocalTime time = LocalTime.now();
+        BaseEntityAttribute attr = generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME, entity.getCode(), entity.getId(), entity.getName());
+        baseEntityAttributeRepository.persist(attr);
+        attr = generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB, entity.getCode(), entity.getId(), time);
         baseEntityAttributeRepository.persist(attr);
 
         BaseEntityModel model = service.getBaseEntityWithAttribute(entity.getId());

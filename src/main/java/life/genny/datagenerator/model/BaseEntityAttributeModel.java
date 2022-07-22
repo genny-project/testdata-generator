@@ -3,6 +3,7 @@ package life.genny.datagenerator.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import life.genny.datagenerator.utils.DateUtil;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -47,7 +48,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         } else if (entity.getValueString() != null) {
             return entity.getValueString();
         } else if (entity.getValueTime() != null) {
-            return entity.getValueTime();
+            return DateUtil.localTimeToDate(entity.getValueTime());
         } else if (entity.getMoney() != null) {
             return entity.getMoney();
         } else if (entity.getValueInteger() != null) {

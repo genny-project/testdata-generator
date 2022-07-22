@@ -1,8 +1,7 @@
 package life.genny.datagenerator.utils;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.ZoneId;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class DateUtil {
@@ -27,6 +26,22 @@ public class DateUtil {
         }
 
         return 0;
+    }
+
+    public static String formatToString(LocalTime time) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+        return time.format(dtf);
+    }
+
+    public static LocalTime parseLocalTime(String time) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm:ss.SSS");
+        return dtf.parse(time, LocalTime::from);
+    }
+
+    public static Date localTimeToDate(LocalTime time) {
+        Instant instant = time.atDate(LocalDate.of(0, 1, 1)).
+                atZone(ZoneId.systemDefault()).toInstant();
+        return Date.from(instant);
     }
 
 }

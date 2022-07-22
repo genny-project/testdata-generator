@@ -1,5 +1,6 @@
 package life.genny.datagenerator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 
@@ -28,6 +29,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         return entity.getAttributeCode();
     }
 
+    @JsonIgnore
     @Override
     public Object getValue() {
         if (entity.getValueBoolean() != null) {
@@ -173,7 +175,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     @JsonProperty("value_boolean")
-    public boolean isValueBoolean() {
+    public Boolean isValueBoolean() {
         return entity.getValueBoolean();
     }
 
@@ -209,7 +211,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     @JsonProperty("value_double")
-    public double getValueDouble() {
+    public Double getValueDouble() {
         return entity.getValueDouble();
     }
 
@@ -218,7 +220,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     @JsonProperty("value_integer")
-    public int getValueInteger() {
+    public Integer getValueInteger() {
         return entity.getValueInteger();
     }
 
@@ -226,7 +228,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.entity.setValueInteger(valueInteger);
     }
 
-    @JsonProperty("value_date_time")
+    @JsonProperty("value_long")
     public Long getValueLong() {
         return entity.getValueLong();
     }
@@ -235,7 +237,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.entity.setValueLong(valueLong);
     }
 
-    @JsonProperty("value_date_time")
+    @JsonProperty("value_money")
     public BigDecimal getMoney() {
         return entity.getMoney();
     }
@@ -245,7 +247,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.entity.setMoney(money);
     }
 
-    @JsonProperty("value_date_time")
+    @JsonProperty("value_string")
     public String getValueString() {
         return entity.getValueString();
     }
@@ -264,7 +266,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     @JsonProperty("weight")
-    public double getWeight() {
+    public Double getWeight() {
         return entity.getWeight();
     }
 
@@ -272,7 +274,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.entity.setWeight(weight);
     }
 
-    @JsonProperty("value_date_time")
+    @JsonProperty("value_icon")
     public String getIcon() {
         return entity.getIcon();
     }

@@ -40,8 +40,13 @@ public class BaseEntityService {
 //        return new BaseEntityModel(entity);
     }
 
-    public void save(BaseEntityModel model) {
-        baseEntityRepository.persist(model.toEntity());
+    public BaseEntityModel save(BaseEntityModel model) {
+        BaseEntity entity = model.toEntity();
+        baseEntityRepository.persist(entity);
+        if (baseEntityRepository.isPersistent(entity)) {
+            model.setId(entity.getId());
+        }
+        return model;
     }
 
     public boolean check(BaseEntityModel model) {

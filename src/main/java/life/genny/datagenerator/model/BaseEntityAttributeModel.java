@@ -1,5 +1,6 @@
 package life.genny.datagenerator.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 import life.genny.datagenerator.utils.DateUtil;
@@ -11,75 +12,76 @@ import java.util.Date;
 
 public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> implements BaseEntityAttributeToModel {
 
-    @JsonProperty("dtype")
+    @JsonProperty("attribute_code")
     private String attributeCode;
 
-    @JsonProperty("dtype")
+    @JsonProperty("base_entity_code")
     private String baseEntityCode;
 
-    @JsonProperty("dtype")
+    @JsonProperty("created")
     private Date created;
 
-    @JsonProperty("dtype")
+    @JsonProperty("inferred")
     private boolean inferred;
 
-    @JsonProperty("dtype")
+    @JsonProperty("privacy_fLag")
     private boolean privacyFlag;
 
-    @JsonProperty("dtype")
+    @JsonProperty("read_only")
     private boolean readOnly;
 
-    @JsonProperty("dtype")
+    @JsonProperty("realm")
     private String realm;
 
-    @JsonProperty("dtype")
+    @JsonProperty("updated")
     private Date updated;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_boolean")
     private Boolean valueBoolean;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_date")
     private Date valueDate;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_range")
     private Byte[] valueDateRange;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_date_time")
     private Date valueDateTime;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_double")
     private Double valueDouble;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_integer")
     private Integer valueInteger;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_long")
     private Long valueLong;
 
-    @JsonProperty("dtype")
+    @JsonProperty("money")
     private BigDecimal money;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_String")
     private String valueString;
 
-    @JsonProperty("dtype")
+    @JsonProperty("value_time")
     private LocalTime valueTime;
 
-    @JsonProperty("dtype")
+    @JsonProperty("attribute_id")
     private Long attributeId;
 
-    @JsonProperty("dtype")
+    @JsonIgnore
     private BaseEntityModel baseEntityModel;
 
-    @JsonProperty("dtype")
+    @JsonProperty("weight")
     private Double weight;
 
-    @JsonProperty("dtype")
+    @JsonProperty("icon")
     private String icon;
 
-    @JsonProperty("dtype")
+    @JsonProperty("confirmation_flag")
     private boolean confirmationFlag;
 
+    @JsonIgnore
     @Override
     public String getAttributeCode() {
         return attributeCode;
@@ -315,7 +317,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         } else if (this.getValueString() != null) {
             return this.getValueString();
         } else if (this.getValueTime() != null) {
-            return DateUtil.localTimeToDate(entity.getValueTime());
+            return DateUtil.localTimeToDate(getValueTime());
         } else if (this.getMoney() != null) {
             return this.getMoney();
         } else if (this.getValueInteger() != null) {

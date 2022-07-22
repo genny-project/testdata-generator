@@ -2,7 +2,7 @@ package life.genny.datagenerator.model;
 
 public class AttributeCode {
 
-    public enum DEF_ADDRESS {
+    public enum DEF_ADDRESS implements BaseCode {
         ATT_LNK_SELECT_COUNTRY,
         ATT_PRI_ADDRESS_ADDRESS1,
         ATT_PRI_ADDRESS_ADDRESS2,
@@ -20,17 +20,16 @@ public class AttributeCode {
         ATT_PRI_TIMEZONE_ID,
         SER_LNK_SELECT_COUNTRY,
         SER_PRI_TIMEZONE_ID,
-
     }
 
-    public enum DEF_AGENCY {
+    public enum DEF_AGENCY implements BaseCode {
         ATT_PRI_IS_AGENCY,
         DFT_PRI_IS_AGENCY,
         DFT_PRI_STATUS,
         LNK_INCLUDE,
     }
 
-    public enum DEF_AGENT {
+    public enum DEF_AGENT implements BaseCode {
         ATT_LNK_AGENCY,
         ATT_PRI_ADDED_BY,
         ATT_PRI_IS_AGENT,
@@ -42,7 +41,7 @@ public class AttributeCode {
         SER_LNK_AGENCY,
     }
 
-    public enum DEF_APPLICATION {
+    public enum DEF_APPLICATION implements BaseCode {
         ATT_LNK_AGENT,
         ATT_LNK_AGENT_REASON_FOR_REJECTION,
         ATT_LNK_ALL_EMAILS,
@@ -157,7 +156,7 @@ public class AttributeCode {
         UNQ_LNK_INTERNSHIP,
     }
 
-    public enum DEF_COMPANY {
+    public enum DEF_COMPANY implements BaseCode {
         ATT_LNK_AGENCY,
         ATT_LNK_COMPANY_INC,
         ATT_LNK_COMPANY_INDUSTRY,
@@ -183,7 +182,7 @@ public class AttributeCode {
         SER_LNK_SPECIFY_ABN,
     }
 
-    public enum DEF_CONTACT {
+    public enum DEF_CONTACT implements BaseCode {
         ATT_PRI_EMAIL,
         ATT_PRI_LANDLINE,
         ATT_PRI_LINKEDIN_URL,
@@ -191,7 +190,7 @@ public class AttributeCode {
         ATT_PRI_PHONE,
     }
 
-    public enum DEF_EDU_PRO_REP {
+    public enum DEF_EDU_PRO_REP implements BaseCode {
         ATT_LNK_EDU_PROVIDER,
         ATT_PRI_ADDED_BY,
         ATT_PRI_DEPARTMENT,
@@ -203,7 +202,7 @@ public class AttributeCode {
         SER_LNK_EDU_PROVIDER,
     }
 
-    public enum DEF_EDU_PROVIDER {
+    public enum DEF_EDU_PROVIDER implements BaseCode {
         ATT_PRI_IS_EDU_PROVIDER,
         ATT_PRI_PROFILE,
         ATT_PRI_PROVIDER_ID,
@@ -212,7 +211,7 @@ public class AttributeCode {
         LNK_INCLUDE,
     }
 
-    public enum DEF_HOST_CPY {
+    public enum DEF_HOST_CPY implements BaseCode {
         ATT_DOC_OHS_CODE,
         ATT_LNK_ALL_EMAILS,
         ATT_LNK_COMPANY_INC,
@@ -250,7 +249,7 @@ public class AttributeCode {
         LNK_INCLUDE,
     }
 
-    public enum DEF_HOST_CPY_REP {
+    public enum DEF_HOST_CPY_REP implements BaseCode {
         ATT_LNK_ALL_EMAILS,
         ATT_LNK_HOST_COMPANY,
         ATT_LNK_INTERNSHIPS,
@@ -277,7 +276,7 @@ public class AttributeCode {
         SER_LNK_SPECIFY_HOST_CPY,
     }
 
-    public enum DEF_INTERN {
+    public enum DEF_INTERN implements BaseCode {
         ATT__LNK_CURRENT_SOFTWARE__PRI_NAME,
         ATT_LNK_AGENT,
         ATT_LNK_APPLICATIONS,
@@ -375,7 +374,7 @@ public class AttributeCode {
         SER_LNK_WHICH_DAYS,
     }
 
-    public enum DEF_INTERNSHIP {
+    public enum DEF_INTERNSHIP implements BaseCode {
         ATT_LNK_APPLICATIONS,
         ATT_LNK_BUSINESS_HOURS,
         ATT_LNK_DAYS_PER_WEEK,
@@ -451,7 +450,7 @@ public class AttributeCode {
         LINK_INCLUDE,
     }
 
-    public enum DEF_PERSON {
+    public enum DEF_PERSON implements BaseCode {
         ATT_LNK_ALL_EMAILS,
         ATT_LNK_GENDER_SELECT,
         ATT_LNK_SEND_EMAIL,
@@ -476,12 +475,12 @@ public class AttributeCode {
         SER_LNK_SPECIFY_HOST_CPY,
     }
 
-    public enum DEF_SUPERVISOR {
+    public enum DEF_SUPERVISOR implements BaseCode {
         LNK_INCLUDE,
         SER_PRI_IS_SUPERVISOR,
     }
 
-    public enum DEF_USER {
+    public enum DEF_USER implements BaseCode {
         ATT_PRI_ASSEMBLY_USER_ID,
         ATT_PRI_ASSOC_ENTITY_NAME,
         ATT_PRI_DEFAULT_REDIRECT,

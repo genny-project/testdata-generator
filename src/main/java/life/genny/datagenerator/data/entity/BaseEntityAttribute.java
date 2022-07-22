@@ -14,7 +14,7 @@ import java.util.Date;
 //@DynamicInsert
 public class BaseEntityAttribute extends PanacheEntityBase {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long ATTRIBUTE_ID;
     private Long BASEENTITY_ID;
     private String attributeCode;

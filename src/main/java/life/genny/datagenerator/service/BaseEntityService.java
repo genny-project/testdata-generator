@@ -29,13 +29,13 @@ public class BaseEntityService {
     }
 
     public BaseEntityModel getBaseEntityByCode(String code) {
-        BaseEntity entity = baseEntityRepository.find("code=?", code).firstResult();
+        BaseEntity entity = baseEntityRepository.find("code=?1", code).firstResult();
         return new BaseEntityModel(entity);
     }
 
     public BaseEntityModel getBaseEntityWithAttribute(Long id) {
         BaseEntity entity = baseEntityRepository.findById(id);
-        List<BaseEntityAttributeModel> attrs = baseEntityAttributeRepository.find("baseEntityCode=?", entity.getCode()).stream().map(BaseEntityAttributeModel::new).collect(Collectors.toList());
+        List<BaseEntityAttributeModel> attrs = baseEntityAttributeRepository.find("baseEntityCode=?1", entity.getCode()).stream().map(BaseEntityAttributeModel::new).collect(Collectors.toList());
         return new BaseEntityModel(entity, attrs);
 //        return new BaseEntityModel(entity);
     }

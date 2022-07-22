@@ -1,11 +1,16 @@
 package life.genny.datagenerator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
 import life.genny.datagenerator.data.repository.BaseEntityRepository;
+import life.genny.datagenerator.model.AttributeCode;
+import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.utils.ContactGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -28,6 +33,8 @@ public class ContactStartup {
     BaseEntityRepository baseEntityRepository;
     @Inject
     BaseEntityAttributeRepository baseEntityAttributeRepository;
+    @Inject
+    BaseEntityService service;
 
     ContactGenerator generator = new ContactGenerator();
 
@@ -36,9 +43,21 @@ public class ContactStartup {
         LOGGER.info("PersonStartup");
         BaseEntity entity = generator.createEntity();
         baseEntityRepository.persist(entity);
+        if (baseEntityRepository.isPersistent(entity)) {
+            LOGGER.info("entity is persist:" + entity.getId());
+        }
 
-        BaseEntityAttribute attr = generator.createAttribute(, )
+        BaseEntityAttribute attr = generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME, entity.getCode(), entity.getId(), "Pak Wayan");
+        baseEntityAttributeRepository.persist(attr);
 
+        BaseEntityModel model = service.getBaseEntityWithAttribute(entity.getId());
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(model);
+            LOGGER.info(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
 //        int total = Integer.parseInt(totalGeneratedNumber);
 

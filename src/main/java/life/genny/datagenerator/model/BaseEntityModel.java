@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class BaseEntityModel {
+public class BaseEntityModel extends BaseModel<BaseEntity> {
     @JsonProperty("d_type")
     private String dType;
     @JsonProperty("id")
@@ -37,6 +37,7 @@ public class BaseEntityModel {
     }
 
     public BaseEntityModel(BaseEntity entity, List<? extends BaseEntityAttributeToModel> attributes) {
+        super(entity);
         setdType(entity.getdType());
         setId(entity.getId());
         setCode(entity.getCode());

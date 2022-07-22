@@ -3,6 +3,7 @@ package life.genny.datagenerator.utils;
 import com.github.javafaker.Faker;
 import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import life.genny.datagenerator.model.BaseCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import org.jboss.logging.Logger;
 
@@ -67,6 +68,7 @@ public class ContactGenerator {
         BaseEntity entity = new BaseEntity();
         entity.setStatus(1);
         entity.setName(faker.address().firstName() + " " + faker.address().lastName());
+        entity.setCode();
         return entity;
     }
 
@@ -78,7 +80,7 @@ public class ContactGenerator {
     private final String defaultIcon = null;
     private final boolean defaultConfirmationFlag = false;
 
-    public BaseEntityAttribute createAttribute(String attributeCode, String baseEntityCode, Long baseEntityId, Object value) {
+    public BaseEntityAttribute createAttribute(BaseCode attributeCode, String baseEntityCode, Long baseEntityId, Object value) {
         Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);

@@ -1,6 +1,5 @@
 package life.genny.datagenerator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 
@@ -9,17 +8,14 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
-public class BaseEntityAttributeModel implements BaseEntityAttributeToModel {
-
-    @JsonIgnore
-    private final BaseEntityAttribute entity;
+public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> implements BaseEntityAttributeToModel {
 
     public BaseEntityAttributeModel() {
-        entity = new BaseEntityAttribute();
+        super(new BaseEntityAttribute());
     }
 
     public BaseEntityAttributeModel(BaseEntityAttribute entity) {
-        this.entity = entity;
+        super(entity);
     }
 
     public BaseEntityAttribute toEntity() {
@@ -109,8 +105,8 @@ public class BaseEntityAttributeModel implements BaseEntityAttributeToModel {
         this.entity.setBASEENTITY_ID(BASEENTITY_ID);
     }
 
-    public void setAttributeCode(String attributeCode) {
-        this.entity.setAttributeCode(attributeCode);
+    public void setAttributeCode(BaseCode attributeCode) {
+        this.entity.setAttributeCode(attributeCode.toString());
     }
 
     @JsonProperty("base_entity_code")

@@ -83,7 +83,7 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         } else if (value instanceof Integer) {
             entity.setValueInteger((Integer) value);
         } else {
-            throw new Exception("Unknown data type");
+            throw new Exception("Unknown value data type");
         }
     }
 

@@ -1,13 +1,7 @@
 package life.genny.datagenerator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.data.entity.BaseEntity;
-import life.genny.datagenerator.data.entity.BaseEntityAttribute;
-import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
-import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
@@ -35,8 +29,6 @@ public class PersonStartup {
     BaseEntityService baseEntityService;
     @Inject
     BaseEntityAttributeService attributeService;
-    @Inject
-    BaseEntityService service;
 
     PersonGenerator generator = new PersonGenerator();
 
@@ -46,13 +38,12 @@ public class PersonStartup {
 
         int i = 0;
 //        while (i < Integer.parseInt(totalGeneratedNumber)) {
-        while (i < 5) {
+        while (i < 2) {
             boolean success = true;
 
-            BaseEntityModel entityModel = new BaseEntityModel(generator.createEntity());
-
-            baseEntityService.save(entityModel);
-            if (baseEntityService.check(entityModel)) {
+            BaseEntityModel entityModel = baseEntityService.save(
+                    new BaseEntityModel(generator.createEntity()));
+            if (entityModel != null) {
                 LOGGER.info("entity is persist:" + entityModel.getId());
 
                 try {
@@ -81,20 +72,21 @@ public class PersonStartup {
                     attributeService.save(emailAttr);
                     attributeService.save(linkedInUrlAttr);
                 } catch (Exception e) {
+                    i++;
                     success = false;
                     LOGGER.error(e.getMessage());
                     e.printStackTrace();
                 }
             }
 
-            BaseEntityModel model = service.getBaseEntityWithAttribute(entityModel.getId());
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                String json = mapper.writeValueAsString(model);
-                LOGGER.info(json);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+//            BaseEntityModel model = baseEntityService.getBaseEntityWithAttribute(entityModel.getId());
+//            ObjectMapper mapper = new ObjectMapper();
+//            try {
+//                String json = mapper.writeValueAsString(model);
+//                LOGGER.info(json);
+//            } catch (JsonProcessingException e) {
+//                throw new RuntimeException(e);
+//            }
 
             if (success) i++;
         }

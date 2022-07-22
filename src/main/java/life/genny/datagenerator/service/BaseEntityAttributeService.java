@@ -2,7 +2,6 @@ package life.genny.datagenerator.service;
 
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
-import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 
 import javax.enterprise.context.ApplicationScoped;

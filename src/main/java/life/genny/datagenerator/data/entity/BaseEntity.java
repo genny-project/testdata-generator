@@ -14,7 +14,7 @@ import java.util.UUID;
 public class BaseEntity extends PanacheEntityBase {
     private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
 
-    @Column(length = 31, nullable = false, name = "d_type", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
+    @Column(length = 31, nullable = false, name = "dtype", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 
     @Id

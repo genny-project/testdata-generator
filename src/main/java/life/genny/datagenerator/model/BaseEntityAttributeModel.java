@@ -297,7 +297,31 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     public BaseEntityAttribute toEntity() {
-        return new BaseEntityAttribute();
+        return new BaseEntityAttribute(
+                this.attributeCode,
+                this.baseEntityCode,
+                this.created,
+                this.inferred,
+                this.privacyFlag,
+                this.readOnly,
+                this.realm,
+                this.updated,
+                this.valueBoolean,
+                this.valueDate,
+                this.valueDateRange,
+                this.valueDateTime,
+                this.valueDouble,
+                this.valueInteger,
+                this.valueLong,
+                this.money,
+                this.valueString,
+                this.valueTime,
+                this.attributeId,
+                this.baseEntityModel.toEntity(),
+                this.weight,
+                this.icon,
+                this.confirmationFlag
+        );
     }
 
     @Override

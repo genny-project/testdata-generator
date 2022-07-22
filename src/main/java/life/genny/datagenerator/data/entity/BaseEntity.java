@@ -14,7 +14,7 @@ import java.util.UUID;
 public class BaseEntity extends PanacheEntityBase {
     private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
 
-    @Column(length = 31, nullable = false, name = "d_type", columnDefinition = "DEFAULT \"BaseEntity\"")
+    @Column(length = 31, nullable = false, name = "d_type", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 
     @Id
@@ -29,7 +29,7 @@ public class BaseEntity extends PanacheEntityBase {
     @Column()
     private String name;
 
-    @Column(nullable = false, columnDefinition = "DEFAULT \"genny\"")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT \"genny\"")
     private String realm = "genny";
 
     @UpdateTimestamp
@@ -39,7 +39,7 @@ public class BaseEntity extends PanacheEntityBase {
     @Column(nullable = false, unique = true)
     private String code;
 
-    @Column(nullable = false, columnDefinition = "DEFAULT 0")
+    @Column(nullable = false, columnDefinition = "INT(11) DEFAULT 0")
     private int status;
 
     @Override

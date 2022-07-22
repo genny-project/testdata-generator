@@ -1,59 +1,159 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
-//@DynamicInsert
+//@Table(indexes = @Index(columnList = "`baseEntityCode`,`attributeCode`,`valueString`(20)"))
 public class BaseEntityAttribute extends PanacheEntityBase {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long ATTRIBUTE_ID;
-    private Long BASEENTITY_ID;
+
+    @Column(
+            name = "attributeCode",
+            unique = true,
+            columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private String attributeCode;
+
+    @Column(
+            name = "baseEntityCode",
+            unique = true,
+            columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private String baseEntityCode;
+
+    @Column(
+            name = "created",
+            columnDefinition = "datetime(6) DEFAULT NULL"
+    )
+    @CreationTimestamp()
     private Date created;
+
+    @Column(
+            name = "inferred",
+            columnDefinition = "bit(1) DEFAULT NULL"
+    )
     private boolean inferred;
+
+    @Column(
+            name = "privacyFlag",
+            columnDefinition = "bit(1) DEFAULT NULL"
+    )
     private boolean privacyFlag;
+
+    @Column(
+            name = "readOnly",
+            columnDefinition = "bit(1) DEFAULT NULL"
+    )
     private boolean readOnly;
+
+    @Column(
+            name = "realm",
+            unique = true,
+            columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private String realm;
+
+    @Column(
+            name = "updated",
+            columnDefinition = "datetime(6) DEFAULT NULL"
+    )
+    @UpdateTimestamp
     private Date updated;
+
+    @Column(
+            name = "valueBoolean",
+            columnDefinition = "bit(1) DEFAULT NULL"
+    )
     private Boolean valueBoolean;
+
+    @Column(
+            name = "valueDate",
+            columnDefinition = "date DEFAULT NULL"
+    )
     private Date valueDate;
+
+    @Column(
+            name = "valueDateRange",
+            columnDefinition = "tinyblob DEFAULT NULL"
+    )
     private Byte[] valueDateRange;
+
+    @Column(
+            name = "valueDateTime",
+            columnDefinition = "datetime(6) DEFAULT NULL"
+    )
     private Date valueDateTime;
+
+    @Column(
+            name = "valueDouble",
+            columnDefinition = "double DEFAULT NULL"
+    )
     private Double valueDouble;
+
+    @Column(
+            name = "valueInteger",
+            columnDefinition = "int(11) DEFAULT NULL"
+    )
     private Integer valueInteger;
+
+    @Column(
+            name = "valueLong",
+            columnDefinition = "bigint(20) DEFAULT NULL"
+    )
     private Long valueLong;
+
+    @Column(
+            name = "money",
+            columnDefinition = "varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private BigDecimal money;
+
+    @Column(
+            name = "valueString",
+            columnDefinition = "longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private String valueString;
+
+    @Column(
+            name = "valueTime",
+            columnDefinition = "time DEFAULT NULL"
+    )
     private LocalTime valueTime;
+
+    @Id
+    @Column(
+            name = "ATTRIBUTE_ID",
+            columnDefinition = "bigint(20) NOT NULL AUTO_INCREMENT"
+    )
+    private Long attributeId;
+
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "BASEENTITY_ID", nullable = false)
+    private BaseEntity baseEntity;
+
+    @Column(
+            name = "weight",
+            columnDefinition = "double DEFAULT NULL"
+    )
     private Double weight;
+
+    @Column(
+            name = "icon",
+            columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
+    )
     private String icon;
+
+    @Column(
+            name = "confirmationFlag",
+            columnDefinition = "bit(1) DEFAULT NULL"
+    )
     private boolean confirmationFlag;
-
-    public Long getATTRIBUTE_ID() {
-        return ATTRIBUTE_ID;
-    }
-
-    public void setATTRIBUTE_ID(Long ATTRIBUTE_ID) {
-        this.ATTRIBUTE_ID = ATTRIBUTE_ID;
-    }
-
-    public Long getBASEENTITY_ID() {
-        return BASEENTITY_ID;
-    }
-
-    public void setBASEENTITY_ID(Long BASEENTITY_ID) {
-        this.BASEENTITY_ID = BASEENTITY_ID;
-    }
 
     public String getAttributeCode() {
         return attributeCode;
@@ -197,6 +297,22 @@ public class BaseEntityAttribute extends PanacheEntityBase {
 
     public void setValueTime(LocalTime valueTime) {
         this.valueTime = valueTime;
+    }
+
+    public Long getAttributeId() {
+        return attributeId;
+    }
+
+    public void setAttributeId(Long attributeId) {
+        this.attributeId = attributeId;
+    }
+
+    public BaseEntity getBaseEntity() {
+        return baseEntity;
+    }
+
+    public void setBaseEntity(BaseEntity baseEntity) {
+        this.baseEntity = baseEntity;
     }
 
     public Double getWeight() {

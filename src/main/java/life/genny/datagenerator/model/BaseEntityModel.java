@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BaseEntityModel extends BaseModel<BaseEntity> {
-    @JsonProperty("d_type")
+    @JsonProperty("dtype")
     private String dType;
     @JsonProperty("id")
     private Long id;
@@ -37,7 +37,6 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
     }
 
     public BaseEntityModel(BaseEntity entity, List<? extends BaseEntityAttributeToModel> attributes) {
-        super(entity);
         setdType(entity.getdType());
         setId(entity.getId());
         setCode(entity.getCode());

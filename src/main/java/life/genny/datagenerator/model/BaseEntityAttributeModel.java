@@ -91,6 +91,10 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.attributeCode = attributeCode.toString();
     }
 
+    public void setAttributeCode(String attributeCode) {
+        this.attributeCode = attributeCode;
+    }
+
     public String getBaseEntityCode() {
         return baseEntityCode;
     }

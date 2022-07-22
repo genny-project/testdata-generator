@@ -473,6 +473,11 @@ public class AttributeCode {
         SER_LNK_GENDER_SELECT,
         SER_LNK_SEND_EMAIL,
         SER_LNK_SPECIFY_HOST_CPY,
+        TEMP_STREET,
+        TEMP_COUNTRY,
+        TEMP_ZIPCODE,
+        TEMP_PHONE_NUMBER,
+        TEMP_DOB,
     }
 
     public enum DEF_SUPERVISOR implements BaseCode {

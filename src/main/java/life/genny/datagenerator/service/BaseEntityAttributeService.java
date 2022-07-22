@@ -13,8 +13,6 @@ import java.util.stream.Collectors;
 public class BaseEntityAttributeService {
     @Inject
     BaseEntityAttributeRepository baseEntityAttributeRepository;
-    @Inject
-    BaseEntityRepository baseEntityRepository;
 
     public void save(List<BaseEntityAttributeModel> attributes) {
         baseEntityAttributeRepository.persist(attributes.stream().map(BaseEntityAttributeModel::toEntity));

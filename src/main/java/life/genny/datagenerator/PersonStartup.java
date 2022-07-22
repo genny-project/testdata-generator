@@ -15,6 +15,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Map;
 
 @Startup
 @ApplicationScoped
@@ -37,8 +38,7 @@ public class PersonStartup {
         LOGGER.info("PersonStartup");
 
         int i = 0;
-//        while (i < Integer.parseInt(totalGeneratedNumber)) {
-        while (i < 2) {
+        while (i < Integer.parseInt(totalGeneratedNumber)) {
             boolean success = true;
 
             BaseEntityModel entityModel = baseEntityService.save(
@@ -55,22 +55,46 @@ public class PersonStartup {
                             entityModel, firstName));
                     BaseEntityAttributeModel lastNameAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                            entityModel, lastName));
+                                    entityModel, lastName));
                     BaseEntityAttributeModel dobAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                            entityModel, generator.generateDOB()));
+                                    entityModel, generator.generateDOB()));
                     BaseEntityAttributeModel emailAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                            entityModel, generator.generateEmail(firstName, lastName)));
+                                    entityModel, generator.generateEmail(firstName, lastName)));
                     BaseEntityAttributeModel linkedInUrlAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                            entityModel, generator.generateLinkedInURL(firstName, lastName)));
+                                    entityModel, generator.generateLinkedInURL(firstName, lastName)));
+
+                    Map<String, String> streetHashMap = generator.generateFullAddress();
+                    String street = streetHashMap.get("street");
+                    String country = streetHashMap.get("country");
+                    String zipCode = streetHashMap.get("zipCode");
+
+
+                    BaseEntityAttributeModel streetAttr = new BaseEntityAttributeModel(
+                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_STREET,
+                                    entityModel, street));
+                    BaseEntityAttributeModel countryAttr = new BaseEntityAttributeModel(
+                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_COUNTRY,
+                                    entityModel, country));
+                    BaseEntityAttributeModel zipcodeAttr = new BaseEntityAttributeModel(
+                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_ZIPCODE,
+                                    entityModel, zipCode));
+
+                    BaseEntityAttributeModel phoneNumberAttr = new BaseEntityAttributeModel(
+                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_PHONE_NUMBER,
+                                    entityModel, generator.generatePhoneNumber()));
 
                     attributeService.save(firstNameAttr);
                     attributeService.save(lastNameAttr);
                     attributeService.save(dobAttr);
                     attributeService.save(emailAttr);
                     attributeService.save(linkedInUrlAttr);
+                    attributeService.save(streetAttr);
+                    attributeService.save(countryAttr);
+                    attributeService.save(zipcodeAttr);
+                    attributeService.save(phoneNumberAttr);
                 } catch (Exception e) {
                     i++;
                     success = false;

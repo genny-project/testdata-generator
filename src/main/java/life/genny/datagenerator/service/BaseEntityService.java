@@ -44,6 +44,10 @@ public class BaseEntityService {
         baseEntityRepository.persist(model.toEntity());
     }
 
+    public boolean check(BaseEntityModel model) {
+        return baseEntityRepository.isPersistent(model.toEntity());
+    }
+
     public void saveAll(List<BaseEntityModel> models) {
         baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
     }

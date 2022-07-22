@@ -37,11 +37,14 @@ public class BaseEntityService {
         BaseEntity entity = baseEntityRepository.findById(id);
         List<BaseEntityAttributeModel> attrs = baseEntityAttributeRepository.find("baseEntityCode=?1", entity.getCode()).stream().map(BaseEntityAttributeModel::new).collect(Collectors.toList());
         return new BaseEntityModel(entity, attrs);
-//        return new BaseEntityModel(entity);
     }
 
-    public void save(BaseEntityModel model) {
-        baseEntityRepository.persist(model.toEntity());
+    public BaseEntityModel save(BaseEntityModel model) {
+        BaseEntity newEntity = model.toEntity();
+        baseEntityRepository.persist(newEntity);
+        if (baseEntityRepository.isPersistent(newEntity))
+            return new BaseEntityModel(newEntity);
+        return null;
     }
 
     public boolean check(BaseEntityModel model) {

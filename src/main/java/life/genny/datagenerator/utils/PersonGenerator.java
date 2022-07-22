@@ -92,10 +92,10 @@ public class PersonGenerator {
         GregorianCalendar calendar = new GregorianCalendar();
         DateUtil dtUtil = new DateUtil();
         int year = dtUtil.pickRandom(1970, 2000);
-        calendar.set(calendar.YEAR, year);
-        int day = dtUtil.pickRandom(1, calendar.getActualMaximum(calendar.DAY_OF_YEAR));
-        calendar.set(calendar.DAY_OF_YEAR, day);
-        String generatedDate = calendar.get(calendar.YEAR) + "-" + calendar.get(calendar.DAY_OF_MONTH) + "-" + calendar.get(calendar.MONTH);
+        calendar.set(Calendar.YEAR, year);
+        int day = dtUtil.pickRandom(1, calendar.getActualMaximum(Calendar.DAY_OF_YEAR));
+        calendar.set(Calendar.DAY_OF_YEAR, day);
+        String generatedDate = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.MONTH);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.parse(generatedDate);
     }

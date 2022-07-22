@@ -1,12 +1,8 @@
 package life.genny.datagenerator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Calendar;
@@ -14,73 +10,73 @@ import java.util.Date;
 
 public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> implements BaseEntityAttributeToModel {
 
-    @JsonProperty("dtype")
+    @JsonProperty("attributeCode")
     private String attributeCode;
 
-    @JsonProperty("dtype")
+    @JsonProperty("baseEntityCode")
     private String baseEntityCode;
 
-    @JsonProperty("dtype")
+    @JsonProperty("created")
     private Date created;
 
-    @JsonProperty("dtype")
+    @JsonProperty("inferred")
     private boolean inferred;
 
-    @JsonProperty("dtype")
+    @JsonProperty("privacyFlag")
     private boolean privacyFlag;
 
-    @JsonProperty("dtype")
+    @JsonProperty("readOnly")
     private boolean readOnly;
 
-    @JsonProperty("dtype")
+    @JsonProperty("realm")
     private String realm;
 
-    @JsonProperty("dtype")
+    @JsonProperty("updated")
     private Date updated;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueBoolean")
     private Boolean valueBoolean;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueDate")
     private Date valueDate;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueDateRange")
     private Byte[] valueDateRange;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueDateTime")
     private Date valueDateTime;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueDouble")
     private Double valueDouble;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueInteger")
     private Integer valueInteger;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueLong")
     private Long valueLong;
 
-    @JsonProperty("dtype")
+    @JsonProperty("money")
     private BigDecimal money;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueString")
     private String valueString;
 
-    @JsonProperty("dtype")
+    @JsonProperty("valueTime")
     private LocalTime valueTime;
 
-    @JsonProperty("dtype")
+    @JsonProperty("attributeId")
     private Long attributeId;
 
-    @JsonProperty("dtype")
+    @JsonProperty("baseEntityModel")
     private BaseEntityModel baseEntityModel;
 
-    @JsonProperty("dtype")
+    @JsonProperty("weight")
     private Double weight;
 
-    @JsonProperty("dtype")
+    @JsonProperty("icon")
     private String icon;
 
-    @JsonProperty("dtype")
+    @JsonProperty("confirmationFlag")
     private boolean confirmationFlag;
 
     @Override
@@ -298,7 +294,31 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     public BaseEntityAttribute toEntity() {
-        return new BaseEntityAttribute();
+        return new BaseEntityAttribute(
+                this.attributeCode,
+                this.baseEntityCode,
+                this.created,
+                this.inferred,
+                this.privacyFlag,
+                this.readOnly,
+                this.realm,
+                this.updated,
+                this.valueBoolean,
+                this.valueDate,
+                this.valueDateRange,
+                this.valueDateTime,
+                this.valueDouble,
+                this.valueInteger,
+                this.valueLong,
+                this.money,
+                this.valueString,
+                this.valueTime,
+                this.attributeId,
+                this.baseEntityModel.toEntity(),
+                this.weight,
+                this.icon,
+                this.confirmationFlag
+        );
     }
 
     @Override

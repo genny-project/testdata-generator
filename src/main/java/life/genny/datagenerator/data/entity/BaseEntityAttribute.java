@@ -15,14 +15,12 @@ public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(
             name = "attributeCode",
-            unique = true,
             columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
     )
     private String attributeCode;
 
     @Column(
             name = "baseEntityCode",
-            unique = true,
             columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
     )
     private String baseEntityCode;
@@ -54,7 +52,6 @@ public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(
             name = "realm",
-            unique = true,
             columnDefinition = "varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL"
     )
     private String realm;
@@ -127,13 +124,14 @@ public class BaseEntityAttribute extends PanacheEntityBase {
     private LocalTime valueTime;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(
             name = "ATTRIBUTE_ID",
             columnDefinition = "bigint(20) NOT NULL AUTO_INCREMENT"
     )
     private Long attributeId;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "BASEENTITY_ID", nullable = false)
     private BaseEntity baseEntity;
 
@@ -154,6 +152,35 @@ public class BaseEntityAttribute extends PanacheEntityBase {
             columnDefinition = "bit(1) DEFAULT NULL"
     )
     private boolean confirmationFlag;
+
+    public BaseEntityAttribute() {
+    }
+
+    public BaseEntityAttribute(String attributeCode, String baseEntityCode, Date created, boolean inferred, boolean privacyFlag, boolean readOnly, String realm, Date updated, Boolean valueBoolean, Date valueDate, Byte[] valueDateRange, Date valueDateTime, Double valueDouble, Integer valueInteger, Long valueLong, BigDecimal money, String valueString, LocalTime valueTime, Long attributeId, BaseEntity baseEntity, Double weight, String icon, boolean confirmationFlag) {
+        this.attributeCode = attributeCode;
+        this.baseEntityCode = baseEntityCode;
+        this.created = created;
+        this.inferred = inferred;
+        this.privacyFlag = privacyFlag;
+        this.readOnly = readOnly;
+        this.realm = realm;
+        this.updated = updated;
+        this.valueBoolean = valueBoolean;
+        this.valueDate = valueDate;
+        this.valueDateRange = valueDateRange;
+        this.valueDateTime = valueDateTime;
+        this.valueDouble = valueDouble;
+        this.valueInteger = valueInteger;
+        this.valueLong = valueLong;
+        this.money = money;
+        this.valueString = valueString;
+        this.valueTime = valueTime;
+        this.attributeId = attributeId;
+        this.baseEntity = baseEntity;
+        this.weight = weight;
+        this.icon = icon;
+        this.confirmationFlag = confirmationFlag;
+    }
 
     public String getAttributeCode() {
         return attributeCode;

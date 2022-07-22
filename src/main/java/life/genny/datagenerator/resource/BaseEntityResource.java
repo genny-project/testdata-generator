@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Path("/base_entity")
-public class ContactResource {
+public class BaseEntityResource {
 
     @Inject
     BaseEntityService service;

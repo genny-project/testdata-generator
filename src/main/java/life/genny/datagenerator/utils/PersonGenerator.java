@@ -12,10 +12,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-enum EmailOptions {
-    OPTION1,
-    OPTION2,
-}
 
 public class PersonGenerator {
 

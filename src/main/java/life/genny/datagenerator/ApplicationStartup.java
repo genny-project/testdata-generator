@@ -19,9 +19,9 @@ import java.util.Map;
 
 @Startup
 @ApplicationScoped
-public class PersonStartup {
+public class ApplicationStartup {
 
-    private static final Logger LOGGER = Logger.getLogger(PersonStartup.class);
+    private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
 
     @ConfigProperty(name = "total_names_tobe_generated", defaultValue = "50")
     String totalGeneratedNumber;
@@ -33,12 +33,30 @@ public class PersonStartup {
 
     PersonGenerator generator = new PersonGenerator();
 
-    @Transactional
     void onStart(@Observes StartupEvent event) {
-        LOGGER.info("PersonStartup");
+        LOGGER.info("ApplicationStartup ");
+        if (baseEntityService.countEntity() > 0) return;
 
+        int totalRow = Integer.parseInt(totalGeneratedNumber);
+        int thread = Math.min(totalRow, totalRow / 100);
         int i = 0;
-        while (i < Integer.parseInt(totalGeneratedNumber)) {
+        while (i < thread) {
+            final int start = i;
+            try {
+                generate(start * 100, (start + 1) * 100);
+                Thread.sleep(500);
+            } catch (Exception e) {
+                LOGGER.error(e);
+            }
+            i++;
+        }
+    }
+
+    @Transactional
+    void generate(int startIndex, int endIndex) {
+        LOGGER.info("create insert : " + startIndex + " -> " + endIndex);
+        int i = startIndex;
+        while (i < endIndex) {
             boolean success = true;
 
             BaseEntityModel entityModel = baseEntityService.save(
@@ -52,7 +70,7 @@ public class PersonStartup {
 
                     BaseEntityAttributeModel firstNameAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                            entityModel, firstName));
+                                    entityModel, firstName));
                     BaseEntityAttributeModel lastNameAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
                                     entityModel, lastName));
@@ -63,14 +81,13 @@ public class PersonStartup {
                             generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
                                     entityModel, generator.generateEmail(firstName, lastName)));
                     BaseEntityAttributeModel linkedInUrlAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
+                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
                                     entityModel, generator.generateLinkedInURL(firstName, lastName)));
 
                     Map<String, String> streetHashMap = generator.generateFullAddress();
                     String street = streetHashMap.get("street");
                     String country = streetHashMap.get("country");
                     String zipCode = streetHashMap.get("zipCode");
-
 
                     BaseEntityAttributeModel streetAttr = new BaseEntityAttributeModel(
                             generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_STREET,

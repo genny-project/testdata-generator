@@ -58,4 +58,6 @@ public class BaseEntityService {
     public long countEntity() {
         return baseEntityRepository.count();
     }
+
+
 }

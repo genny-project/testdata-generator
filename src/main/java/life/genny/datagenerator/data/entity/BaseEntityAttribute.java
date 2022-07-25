@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
-//@Table(indexes = @Index(columnList = "`baseEntityCode`,`attributeCode`,`valueString`(20)"))
+@Table(indexes = @Index(columnList = "baseEntityCode, attributeCode, realm, valueBoolean, BASEENTITY_ID"))
 public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(

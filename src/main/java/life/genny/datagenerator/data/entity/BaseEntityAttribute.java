@@ -10,7 +10,31 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
-//@Table(indexes = @Index(columnList = "`baseEntityCode`,`attributeCode`,`valueString`(20)"))
+@Table(
+        indexes = {
+                @Index(columnList = "BASEENTITY_ID"),
+                @Index(
+                        name = "id_search",
+                        columnList = "baseEntityCode, attributeCode, valueString"
+                ),
+                @Index(
+                        name = "ba_idx",
+                        columnList = "attributeCode, baseEntityCode, realm"
+                ),
+                @Index(
+                        name = "rvsvb2",
+                        columnList = "realm, valueString, valueBoolean"
+                ),
+                @Index(
+                        name = "beid_attrcode_valStr_valBool_idx",
+                        columnList = "BASEENTITY_ID, attributeCode, valueString, valueBoolean"
+                )
+        },
+        uniqueConstraints = @UniqueConstraint(
+                columnNames = {"attributeCode", "baseEntityCode", "realm"}
+        ),
+        schema = ""
+)
 public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(

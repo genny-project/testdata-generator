@@ -19,7 +19,7 @@ public class BaseEntity extends PanacheEntityBase {
 
     @Id
     @Column(length = 20)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @CreationTimestamp

@@ -73,17 +73,17 @@ public class PersonStartup {
 
 
                     BaseEntityAttributeModel streetAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_STREET,
+                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
                                     entityModel, street));
                     BaseEntityAttributeModel countryAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_COUNTRY,
+                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
                                     entityModel, country));
                     BaseEntityAttributeModel zipcodeAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_ZIPCODE,
+                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
                                     entityModel, zipCode));
 
                     BaseEntityAttributeModel phoneNumberAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.TEMP_PHONE_NUMBER,
+                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
                                     entityModel, generator.generatePhoneNumber()));
 
                     attributeService.save(firstNameAttr);

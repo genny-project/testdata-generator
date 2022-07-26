@@ -3,6 +3,7 @@ package life.genny.datagenerator;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.model.AttributeCode;
+import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityAttributeService;
 import life.genny.datagenerator.service.BaseEntityService;
@@ -27,7 +28,7 @@ public class ApplicationStartup {
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
 
-    @ConfigProperty(name = "total_names_tobe_generated", defaultValue = "50")
+    @ConfigProperty(name = "data.total_person_tobe_generated", defaultValue = "50")
     String totalGeneratedNumber;
 
     @ConfigProperty(name = "data.generator.max.thread", defaultValue = "5")
@@ -41,17 +42,16 @@ public class ApplicationStartup {
     @Inject
     BaseEntityAttributeService attributeService;
 
-    PersonGenerator generator = new PersonGenerator();
+    PersonGenerator personGenerator = new PersonGenerator();
     UserGenerator userGenerator = new UserGenerator();
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-//        if (baseEntityService.countEntity() > 0) return;
+        if (baseEntityService.countEntity() > 0) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
-        int perThread = Math.max(10, Math.min(Integer.parseInt(this.perThread), 250));
+        int perThread = Integer.parseInt(this.perThread);
         int maxThread = Integer.parseInt(this.maxThread);
-        LOGGER.info("created process totalRow: " + totalRow + ", perThread:" + perThread + ", maxThread:" + maxThread);
 
         ExecutorService executor = Executors.newFixedThreadPool(maxThread);
 
@@ -82,71 +82,9 @@ public class ApplicationStartup {
     private void generateData(int count) {
         List<BaseEntityModel> models = userGenerator.generateUserBulk(count);
         baseEntityService.saveAll(models);
-    }
 
-    @Transactional
-    void generate(int startIndex, int endIndex) {
-        LOGGER.info("create insert : " + startIndex + " -> " + endIndex);
-        int i = startIndex;
-        while (i < endIndex) {
-            LOGGER.info("running: " + i);
-            BaseEntityModel entityModel = generator.createPersonEntity();
-            try {
-                String firstName = GeneratorUtils.generateFirstName();
-                String lastName = GeneratorUtils.generateLastName();
-
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                                entityModel, firstName));
-
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                                entityModel, lastName));
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                                entityModel, GeneratorUtils.generateDOB()));
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                                entityModel, GeneratorUtils.generateEmail(firstName, lastName)));
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                                entityModel, GeneratorUtils.generateLinkedInURL(firstName, lastName)));
-
-                Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
-                String street = streetHashMap.get("street");
-                String country = streetHashMap.get("country");
-                String zipCode = streetHashMap.get("zipCode");
-
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                                entityModel, street));
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                                entityModel, country));
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                                entityModel, zipCode));
-
-                entityModel.addAttribute(
-                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                                entityModel, GeneratorUtils.generatePhoneNumber()));
-
-                entityModel = baseEntityService.save(entityModel);
-
-                LOGGER.info("entity is persist:" + entityModel.getId());
-            } catch (Exception e) {
-                LOGGER.error(e);
-            }
-            i++;
-
-//            BaseEntityModel model = baseEntityService.getBaseEntityWithAttribute(entityModel.getId());
-//            ObjectMapper mapper = new ObjectMapper();
-//            try {
-//                String json = mapper.writeValueAsString(model);
-//                LOGGER.info(json);
-//            } catch (JsonProcessingException e) {
-//                throw new RuntimeException(e);
-//            }
-        }
+        LOGGER.debug("creating person : " + count);
+        List<BaseEntityModel> entityModels = personGenerator.generate(count);
+        baseEntityService.saveAll(entityModels);
     }
 }

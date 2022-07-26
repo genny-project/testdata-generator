@@ -53,4 +53,51 @@ public class PersonGenerator {
         return entity;
     }
 
+    public List<BaseEntityModel> generate(int totalIndex) {
+        List<BaseEntityModel> entityModels = new ArrayList<>();
+        int i = 0;
+        while (i < totalIndex) {
+            BaseEntityModel entityModel = this.createPersonEntity();
+            try {
+                String firstName = this.generateFirstName();
+                String lastName = this.generateLastName();
+
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
+                                entityModel, firstName));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
+                                entityModel, lastName));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
+                                entityModel, this.generateDOB()));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
+                                entityModel, this.generateEmail(firstName, lastName)));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
+                                entityModel, this.generateLinkedInURL(firstName, lastName)));
+
+                Map<String, String> streetHashMap = this.generateFullAddress();
+                String street = streetHashMap.get("street");
+                String country = streetHashMap.get("country");
+                String zipCode = streetHashMap.get("zipCode");
+
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
+                                entityModel, street));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
+                                entityModel, country));
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
+                                entityModel, zipCode));
+
+                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
+                                entityModel, this.generatePhoneNumber()));
+
+                entityModels.add(entityModel);
+
+            } catch (Exception e) {
+                LOGGER.error(e);
+            }
+            i++;
+
+        }
+
+        return entityModels;
+    }
+
 }

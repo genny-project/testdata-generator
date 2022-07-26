@@ -41,6 +41,7 @@ public class BaseEntityService {
         return new BaseEntityModel(entity);
     }
 
+    @Transactional
     public BaseEntityModel save(BaseEntityModel model) {
         BaseEntity newEntity = model.toEntity();
         baseEntityRepository.persist(newEntity);
@@ -56,6 +57,8 @@ public class BaseEntityService {
     @Transactional
     public void saveAll(List<BaseEntityModel> models) {
         baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
+
+        LOGGER.debug("flushing");
         baseEntityRepository.flush();
     }
 

@@ -64,12 +64,14 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
 
     public BaseEntity toEntity() {
         BaseEntity entity = new BaseEntity(dType, id, created, name, realm, updated, code, status);
-        List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
-            BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
-            attr.setBaseEntity(entity);
-            return attr;
-        }).collect(Collectors.toList());
-        entity.setAttributes(attributes1);
+        if (attributeMap != null) {
+            List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
+                BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
+                attr.setBaseEntity(entity);
+                return attr;
+            }).collect(Collectors.toList());
+            entity.setAttributes(attributes1);
+        }
         return entity;
     }
 

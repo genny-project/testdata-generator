@@ -3,11 +3,12 @@ package life.genny.datagenerator;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.model.AttributeCode;
-import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityAttributeService;
 import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.utils.GeneratorUtils;
 import life.genny.datagenerator.utils.PersonGenerator;
+import life.genny.datagenerator.utils.UserGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -15,6 +16,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,30 +42,27 @@ public class ApplicationStartup {
     BaseEntityAttributeService attributeService;
 
     PersonGenerator generator = new PersonGenerator();
-    private ExecutorService executor;
+    UserGenerator userGenerator = new UserGenerator();
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-        if (baseEntityService.countEntity() > 0) return;
+//        if (baseEntityService.countEntity() > 0) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
-        int perThread = Integer.parseInt(this.perThread);
+        int perThread = Math.max(10, Math.min(Integer.parseInt(this.perThread), 250));
         int maxThread = Integer.parseInt(this.maxThread);
+        LOGGER.info("created process totalRow: " + totalRow + ", perThread:" + perThread + ", maxThread:" + maxThread);
 
-        executor = Executors.newFixedThreadPool(maxThread);
+        ExecutorService executor = Executors.newFixedThreadPool(maxThread);
 
         int thread = Math.min(totalRow, totalRow / perThread);
         int i = 0;
         while (i < thread) {
             final int start = i;
             try {
+                LOGGER.info("create thread: " + start);
                 executor.submit(() -> {
-                            try {
-                                Thread.sleep(500);
-                            } catch (Exception e) {
-                                LOGGER.error(e);
-                            }
-                            generate(start * perThread, (start + 1) * perThread);
+                            generateData(perThread);
                         }
                 );
             } catch (Exception e) {
@@ -71,7 +70,18 @@ public class ApplicationStartup {
             }
             i++;
         }
-//        generate(0, 5);
+        if ((perThread * thread) < totalRow) {
+            int count = totalRow - (perThread * thread);
+            executor.submit(() -> {
+                        generateData(count);
+                    }
+            );
+        }
+    }
+
+    private void generateData(int count) {
+        List<BaseEntityModel> models = userGenerator.generateUserBulk(count);
+        baseEntityService.saveAll(models);
     }
 
     @Transactional
@@ -82,55 +92,44 @@ public class ApplicationStartup {
             LOGGER.info("running: " + i);
             BaseEntityModel entityModel = generator.createPersonEntity();
             try {
-                String firstName = generator.generateFirstName();
-                String lastName = generator.generateLastName();
+                String firstName = GeneratorUtils.generateFirstName();
+                String lastName = GeneratorUtils.generateLastName();
 
-//                    BaseEntityAttributeModel firstNameAttr = ;
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                                entityModel, firstName)));
+                                entityModel, firstName));
 
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                                entityModel, lastName)));
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                                entityModel, lastName));
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                                entityModel, generator.generateDOB())));
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                                entityModel, GeneratorUtils.generateDOB()));
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                                entityModel, generator.generateEmail(firstName, lastName))));
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                                entityModel, GeneratorUtils.generateEmail(firstName, lastName)));
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                                entityModel, generator.generateLinkedInURL(firstName, lastName))));
+                                entityModel, GeneratorUtils.generateLinkedInURL(firstName, lastName)));
 
-                Map<String, String> streetHashMap = generator.generateFullAddress();
+                Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
                 String street = streetHashMap.get("street");
                 String country = streetHashMap.get("country");
                 String zipCode = streetHashMap.get("zipCode");
 
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                                entityModel, street)));
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                                entityModel, street));
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                                entityModel, country)));
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                                entityModel, country));
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                                entityModel, zipCode)));
+                                entityModel, zipCode));
 
-                entityModel.addAttribute(new BaseEntityAttributeModel(
+                entityModel.addAttribute(
                         generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                                entityModel, generator.generatePhoneNumber())));
-
-//                    attributeService.save(firstNameAttr);
-//                    attributeService.save(lastNameAttr);
-//                    attributeService.save(dobAttr);
-//                    attributeService.save(emailAttr);
-//                    attributeService.save(linkedInUrlAttr);
-//                    attributeService.save(streetAttr);
-//                    attributeService.save(countryAttr);
-//                    attributeService.save(zipcodeAttr);
-//                    attributeService.save(phoneNumberAttr);
+                                entityModel, GeneratorUtils.generatePhoneNumber()));
 
                 entityModel = baseEntityService.save(entityModel);
 

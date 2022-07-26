@@ -294,7 +294,6 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
         this.valueString = entity.getValueString();
         this.valueTime = entity.getValueTime();
         this.attributeId = entity.getAttributeId();
-        this.baseEntityModel = new BaseEntityModel(entity.getBaseEntity());
         this.weight = entity.getWeight();
         this.icon = entity.getIcon();
         this.confirmationFlag = entity.isConfirmationFlag();
@@ -321,7 +320,6 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
                 this.valueString,
                 this.valueTime,
                 this.attributeId,
-                this.baseEntityModel.toEntity(),
                 this.weight,
                 this.icon,
                 this.confirmationFlag

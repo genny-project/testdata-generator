@@ -191,7 +191,7 @@ public class BaseEntityAttribute extends PanacheEntityBase {
     public BaseEntityAttribute() {
     }
 
-    public BaseEntityAttribute(String attributeCode, String baseEntityCode, Date created, boolean inferred, boolean privacyFlag, boolean readOnly, String realm, Date updated, Boolean valueBoolean, Date valueDate, Byte[] valueDateRange, Date valueDateTime, Double valueDouble, Integer valueInteger, Long valueLong, BigDecimal money, String valueString, LocalTime valueTime, Long attributeId, BaseEntity baseEntity, Double weight, String icon, boolean confirmationFlag) {
+    public BaseEntityAttribute(String attributeCode, String baseEntityCode, Date created, boolean inferred, boolean privacyFlag, boolean readOnly, String realm, Date updated, Boolean valueBoolean, Date valueDate, Byte[] valueDateRange, Date valueDateTime, Double valueDouble, Integer valueInteger, Long valueLong, BigDecimal money, String valueString, LocalTime valueTime, Long attributeId, Double weight, String icon, boolean confirmationFlag) {
         this.attributeCode = attributeCode;
         this.baseEntityCode = baseEntityCode;
         this.created = created;
@@ -211,7 +211,6 @@ public class BaseEntityAttribute extends PanacheEntityBase {
         this.valueString = valueString;
         this.valueTime = valueTime;
         this.attributeId = attributeId;
-        this.baseEntity = baseEntity;
         this.weight = weight;
         this.icon = icon;
         this.confirmationFlag = confirmationFlag;

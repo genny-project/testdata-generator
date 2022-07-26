@@ -2,11 +2,10 @@ package life.genny.datagenerator.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BaseEntityModel extends BaseModel<BaseEntity> {
     @JsonProperty("dtype")
@@ -29,32 +28,49 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
     @JsonProperty("attributes")
     private Map<String, Object> attributes;
 
+    private Map<String, BaseEntityAttributeModel> attributeMap = new HashMap<>();
+
     public BaseEntityModel() {
     }
 
-    public BaseEntityModel(BaseEntity entity) {
-        this(entity, null);
-    }
 
-    public BaseEntityModel(BaseEntity entity, List<? extends BaseEntityAttributeToModel> attributes) {
+    public BaseEntityModel(BaseEntity entity) {
         setdType(entity.getdType());
         setId(entity.getId());
-        setCode(entity.getCode());
+        this.code = entity.getCode();
         setCreated(entity.getCreated());
         setName(entity.getName());
         setRealm(entity.getRealm());
         setStatus(entity.getStatus());
         setUpdated(entity.getUpdated());
 
-        if (attributes == null) return;
-        this.attributes = new HashMap<>();
-        for (BaseEntityAttributeToModel attr : attributes) {
-            this.attributes.put(attr.getAttributeCode(), attr.getValue());
+        if (entity.getAttributes() != null) {
+            this.attributes = new HashMap<>();
+            this.attributeMap = new HashMap<>();
+            for (BaseEntityAttribute attr : entity.getAttributes()) {
+                BaseEntityAttributeModel attrModel = new BaseEntityAttributeModel(attr);
+                attrModel.setBaseEntityModel(this);
+                this.attributeMap.put(attr.getAttributeCode(), attrModel);
+                this.attributes.put(attr.getAttributeCode(), attrModel.getValue());
+            }
         }
     }
 
+    public void addAttribute(BaseEntityAttributeModel attribute) {
+        attribute.setBaseEntityCode(getCode());
+        attribute.setBaseEntityModel(this);
+        attributeMap.put(attribute.getAttributeCode(), attribute);
+    }
+
     public BaseEntity toEntity() {
-        return new BaseEntity(dType, id, created, name, realm, updated, code, status);
+        BaseEntity entity = new BaseEntity(dType, id, created, name, realm, updated, code, status);
+        List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
+            BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
+            attr.setBaseEntity(entity);
+            return attr;
+        }).collect(Collectors.toList());
+        entity.setAttributes(attributes1);
+        return entity;
     }
 
     public Object getAttribute(String code) {
@@ -122,8 +138,44 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
         return code;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setCode(Class<? extends BaseCode> code) {
+        String prefix = "";
+        if (code == AttributeCode.DEF_PERSON.class) {
+            prefix = "PER_";
+        } else if (code == AttributeCode.DEF_APPLICATION.class) {
+            prefix = "APP_";
+        } else if (code == AttributeCode.DEF_ADDRESS.class) {
+            prefix = "ADD_";
+        } else if (code == AttributeCode.DEF_AGENCY.class) {
+            prefix = "AGE_";
+        } else if (code == AttributeCode.DEF_AGENT.class) {
+            prefix = "AGN_";
+        } else if (code == AttributeCode.DEF_COMPANY.class) {
+            prefix = "COM_";
+        } else if (code == AttributeCode.DEF_CONTACT.class) {
+            prefix = "CON_";
+        } else if (code == AttributeCode.DEF_EDU_PRO_REP.class) {
+            prefix = "EDR_";
+        } else if (code == AttributeCode.DEF_EDU_PROVIDER.class) {
+            prefix = "EDP_";
+        } else if (code == AttributeCode.DEF_HOST_CPY.class) {
+            prefix = "HCP_";
+        } else if (code == AttributeCode.DEF_INTERN.class) {
+            prefix = "NTRN_";
+        } else if (code == AttributeCode.DEF_HOST_CPY_REP.class) {
+            prefix = "HCR_";
+        } else if (code == AttributeCode.DEF_SUPERVISOR.class) {
+            prefix = "SPV_";
+        } else if (code == AttributeCode.DEF_INTERNSHIP.class) {
+            prefix = "NTRS_";
+        } else if (code == AttributeCode.DEF_USER.class) {
+            prefix = "USR_";
+        } else if (code == AttributeCode.DEF_ORGANISATION.class) {
+            prefix = "ORG_";
+        } else {
+            prefix = "UNKW_";
+        }
+        this.code = prefix + UUID.randomUUID().toString().toUpperCase();
     }
 
     public int getStatus() {

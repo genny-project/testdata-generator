@@ -6,8 +6,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.jboss.logging.Logger;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.UUID;
+import java.util.List;
 
 @Entity(name = "baseentity")
 @Table(
@@ -58,27 +59,30 @@ public class BaseEntity extends PanacheEntityBase {
     @Column(nullable = false, columnDefinition = "INT(11) DEFAULT 0")
     private int status;
 
-    @Override
-    public void persist() {
-        LOGGER.info("on persist");
-        if (getCode() == null) {
-            setCode();
-        }
-        super.persist();
-    }
+    @OneToMany(mappedBy = "baseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BaseEntityAttribute> attributes;
 
     public BaseEntity() {
     }
 
     public BaseEntity(String dType, Long id, Date created, String name, String realm, Date updated, String code, int status) {
-        this.dType = dType;
+        this.dType = dType == null ? "BaseEntity" : dType;
         this.id = id;
         this.created = created;
         this.name = name;
-        this.realm = realm;
+        this.realm = realm == null ? "genny" : realm;
         this.updated = updated;
         this.code = code;
         this.status = status;
+    }
+
+    public List<BaseEntityAttribute> getAttributes() {
+        if (attributes == null) attributes = new ArrayList<>();
+        return attributes;
+    }
+
+    public void setAttributes(List<BaseEntityAttribute> attributes) {
+        this.attributes = attributes;
     }
 
     public String getdType() {
@@ -130,16 +134,11 @@ public class BaseEntity extends PanacheEntityBase {
     }
 
     public String getCode() {
-        if (this.code == null) {
-            setCode();
-        }
         return code;
     }
 
-    public void setCode() {
-        if (this.code == null) {
-            this.code = "PER_" + UUID.randomUUID().toString().toUpperCase();
-        }
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public int getStatus() {

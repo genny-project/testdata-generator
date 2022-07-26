@@ -446,7 +446,7 @@ public class AttributeCode {
         SER_LNK_WORKSITE_SELECT,
     }
 
-    public enum DEF_ORGANISATION {
+    public enum DEF_ORGANISATION implements BaseCode {
         LINK_INCLUDE,
     }
 

@@ -16,6 +16,8 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Startup
 @ApplicationScoped
@@ -26,30 +28,50 @@ public class ApplicationStartup {
     @ConfigProperty(name = "total_names_tobe_generated", defaultValue = "50")
     String totalGeneratedNumber;
 
+    @ConfigProperty(name = "data.generator.max.thread", defaultValue = "5")
+    String maxThread;
+
+    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
+    String perThread;
+
     @Inject
     BaseEntityService baseEntityService;
     @Inject
     BaseEntityAttributeService attributeService;
 
     PersonGenerator generator = new PersonGenerator();
+    private ExecutorService executor;
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
         if (baseEntityService.countEntity() > 0) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
-        int thread = Math.min(totalRow, totalRow / 100);
+        int perThread = Integer.parseInt(this.perThread);
+        int maxThread = Integer.parseInt(this.maxThread);
+
+        executor = Executors.newFixedThreadPool(maxThread);
+
+        int thread = Math.min(totalRow, totalRow / perThread);
         int i = 0;
         while (i < thread) {
             final int start = i;
             try {
-                generate(start * 100, (start + 1) * 100);
-                Thread.sleep(500);
+                executor.submit(() -> {
+                            try {
+                                Thread.sleep(500);
+                            } catch (Exception e) {
+                                LOGGER.error(e);
+                            }
+                            generate(start * perThread, (start + 1) * perThread);
+                        }
+                );
             } catch (Exception e) {
                 LOGGER.error(e);
             }
             i++;
         }
+//        generate(0, 5);
     }
 
     @Transactional
@@ -57,68 +79,66 @@ public class ApplicationStartup {
         LOGGER.info("create insert : " + startIndex + " -> " + endIndex);
         int i = startIndex;
         while (i < endIndex) {
-            boolean success = true;
+            LOGGER.info("running: " + i);
+            BaseEntityModel entityModel = generator.createPersonEntity();
+            try {
+                String firstName = generator.generateFirstName();
+                String lastName = generator.generateLastName();
 
-            BaseEntityModel entityModel = baseEntityService.save(
-                    new BaseEntityModel(generator.createEntity()));
-            if (entityModel != null) {
+//                    BaseEntityAttributeModel firstNameAttr = ;
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
+                                entityModel, firstName)));
+
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
+                                entityModel, lastName)));
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
+                                entityModel, generator.generateDOB())));
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
+                                entityModel, generator.generateEmail(firstName, lastName))));
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
+                                entityModel, generator.generateLinkedInURL(firstName, lastName))));
+
+                Map<String, String> streetHashMap = generator.generateFullAddress();
+                String street = streetHashMap.get("street");
+                String country = streetHashMap.get("country");
+                String zipCode = streetHashMap.get("zipCode");
+
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
+                                entityModel, street)));
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
+                                entityModel, country)));
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
+                                entityModel, zipCode)));
+
+                entityModel.addAttribute(new BaseEntityAttributeModel(
+                        generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
+                                entityModel, generator.generatePhoneNumber())));
+
+//                    attributeService.save(firstNameAttr);
+//                    attributeService.save(lastNameAttr);
+//                    attributeService.save(dobAttr);
+//                    attributeService.save(emailAttr);
+//                    attributeService.save(linkedInUrlAttr);
+//                    attributeService.save(streetAttr);
+//                    attributeService.save(countryAttr);
+//                    attributeService.save(zipcodeAttr);
+//                    attributeService.save(phoneNumberAttr);
+
+                entityModel = baseEntityService.save(entityModel);
+
                 LOGGER.info("entity is persist:" + entityModel.getId());
-
-                try {
-                    String firstName = generator.generateFirstName();
-                    String lastName = generator.generateLastName();
-
-                    BaseEntityAttributeModel firstNameAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                                    entityModel, firstName));
-                    BaseEntityAttributeModel lastNameAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                                    entityModel, lastName));
-                    BaseEntityAttributeModel dobAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                                    entityModel, generator.generateDOB()));
-                    BaseEntityAttributeModel emailAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                                    entityModel, generator.generateEmail(firstName, lastName)));
-                    BaseEntityAttributeModel linkedInUrlAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                                    entityModel, generator.generateLinkedInURL(firstName, lastName)));
-
-                    Map<String, String> streetHashMap = generator.generateFullAddress();
-                    String street = streetHashMap.get("street");
-                    String country = streetHashMap.get("country");
-                    String zipCode = streetHashMap.get("zipCode");
-
-                    BaseEntityAttributeModel streetAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                                    entityModel, street));
-                    BaseEntityAttributeModel countryAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                                    entityModel, country));
-                    BaseEntityAttributeModel zipcodeAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                                    entityModel, zipCode));
-
-                    BaseEntityAttributeModel phoneNumberAttr = new BaseEntityAttributeModel(
-                            generator.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                                    entityModel, generator.generatePhoneNumber()));
-
-                    attributeService.save(firstNameAttr);
-                    attributeService.save(lastNameAttr);
-                    attributeService.save(dobAttr);
-                    attributeService.save(emailAttr);
-                    attributeService.save(linkedInUrlAttr);
-                    attributeService.save(streetAttr);
-                    attributeService.save(countryAttr);
-                    attributeService.save(zipcodeAttr);
-                    attributeService.save(phoneNumberAttr);
-                } catch (Exception e) {
-                    i++;
-                    success = false;
-                    LOGGER.error(e.getMessage());
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                LOGGER.error(e);
             }
+            i++;
 
 //            BaseEntityModel model = baseEntityService.getBaseEntityWithAttribute(entityModel.getId());
 //            ObjectMapper mapper = new ObjectMapper();
@@ -128,8 +148,6 @@ public class ApplicationStartup {
 //            } catch (JsonProcessingException e) {
 //                throw new RuntimeException(e);
 //            }
-
-            if (success) i++;
         }
     }
 }

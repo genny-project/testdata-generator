@@ -16,6 +16,7 @@
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
     <org.mapstruct.version>1.5.1.Final</org.mapstruct.version>
+    <main.class>life.genny.datagenerator.ApplicationMain</main.class>
   </properties>
   <dependencyManagement>
     <dependencies>

@@ -3,7 +3,6 @@ package life.genny.datagenerator.service;
 import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
 import life.genny.datagenerator.data.repository.BaseEntityRepository;
-import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -35,8 +34,7 @@ public class BaseEntityService {
 
     public BaseEntityModel getBaseEntityWithAttribute(Long id) {
         BaseEntity entity = baseEntityRepository.findById(id);
-        List<BaseEntityAttributeModel> attrs = baseEntityAttributeRepository.find("baseEntityCode=?1", entity.getCode()).stream().map(BaseEntityAttributeModel::new).collect(Collectors.toList());
-        return new BaseEntityModel(entity, attrs);
+        return new BaseEntityModel(entity);
     }
 
     public BaseEntityModel save(BaseEntityModel model) {

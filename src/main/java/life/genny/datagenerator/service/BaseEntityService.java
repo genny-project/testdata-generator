@@ -4,19 +4,28 @@ import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
 import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.model.BaseEntityModel;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BaseEntityService {
 
+    private static final Logger LOGGER = Logger.getLogger(BaseEntityService.class);
+
     @Inject
     BaseEntityRepository baseEntityRepository;
     @Inject
     BaseEntityAttributeRepository baseEntityAttributeRepository;
+
+    @PersistenceContext
+    EntityManager entityManager;
 
     public List<BaseEntityModel> getBaseEntity() {
         return baseEntityRepository.listAll().stream().map(BaseEntityModel::new).collect(Collectors.toList());
@@ -37,6 +46,7 @@ public class BaseEntityService {
         return new BaseEntityModel(entity);
     }
 
+    @Transactional
     public BaseEntityModel save(BaseEntityModel model) {
         BaseEntity newEntity = model.toEntity();
         baseEntityRepository.persist(newEntity);
@@ -49,8 +59,17 @@ public class BaseEntityService {
         return baseEntityRepository.isPersistent(model.toEntity());
     }
 
+    @Transactional
     public void saveAll(List<BaseEntityModel> models) {
-        baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
+        List<BaseEntity> entities = models.stream().map(model -> {
+            BaseEntityModel entityModel = model;
+            return entityModel.toEntity();
+        }).collect(Collectors.toList());
+
+        baseEntityRepository.persist(entities);
+
+        LOGGER.debug("flushing");
+        baseEntityRepository.flush();
     }
 
     public long countEntity() {

@@ -1,6 +1,7 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import life.genny.datagenerator.data.DatabaseSchema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,42 +11,7 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
-@Table(
-        schema = "create TABLE `baseentity_attribute` (\n" +
-                "    `attributeCode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `baseEntityCode` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `created` datetime(6) DEFAULT NULL,\n" +
-                "    `inferred` bit(1) DEFAULT NULL,\n" +
-                "    `privacyFlag` bit(1) DEFAULT NULL,\n" +
-                "    `readonly` bit(1) DEFAULT NULL,\n" +
-                "    `realm` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `updated` datetime(6) DEFAULT NULL,\n" +
-                "    `valueBoolean` bit(1) DEFAULT NULL,\n" +
-                "    `valueDate` date DEFAULT NULL,\n" +
-                "    `valueDateRange` tinyblob DEFAULT NULL,\n" +
-                "    `valueDateTime` datetime(6) DEFAULT NULL,\n" +
-                "    `valueDouble` double DEFAULT NULL,\n" +
-                "    `valueInteger` int(11) DEFAULT NULL,\n" +
-                "    `valueLong` bigint(20) DEFAULT NULL,\n" +
-                "    `money` varchar(128) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `valueString` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `valueTime` time DEFAULT NULL,\n" +
-                "    `weight` double DEFAULT NULL,\n" +
-                "    `ATTRIBUTE_ID` bigint(20) NOT NULL,\n" +
-                "    `BASEENTITY_ID` bigint(20) NOT NULL,\n" +
-                "    `icon` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,\n" +
-                "    `confirmationFlag` bit(1) DEFAULT NULL,\n" +
-                "    PRIMARY KEY (`ATTRIBUTE_ID`,`BASEENTITY_ID`),\n" +
-                "    UNIQUE KEY `UKfhe6ytcnf3pqww35brvtadvta` (`attributeCode`,`baseEntityCode`,`realm`),\n" +
-                "    KEY `FKmqrqcxsqu49b0cliy2tymjoae` (`BASEENTITY_ID`),\n" +
-                "    KEY `id_search` (`baseEntityCode`,`attributeCode`,`valueString`(20)),\n" +
-                "    KEY `ba_idx` (`attributeCode`,`baseEntityCode`,`realm`),\n" +
-                "    KEY `rvsvb2` (`realm`,`valueString`(25),`valueBoolean`),\n" +
-                "    KEY `beid_attrcode_valStr_valBool_idx` (`BASEENTITY_ID`,`attributeCode`,`valueString`(20),`valueBoolean`),\n" +
-                "    CONSTRAINT `FKaedpn6csuwk6uwm5kqh73tiwd` FOREIGN KEY (`ATTRIBUTE_ID`) REFERENCES `attribute` (`id`),\n" +
-                "    CONSTRAINT `FKmqrqcxsqu49b0cliy2tymjoae` FOREIGN KEY (`BASEENTITY_ID`) REFERENCES `baseentity` (`id`)\n" +
-                ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;"
-)
+@Table(schema = DatabaseSchema.CREATE_BASE_ENTITY_ATTRIBUTE)
 public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(

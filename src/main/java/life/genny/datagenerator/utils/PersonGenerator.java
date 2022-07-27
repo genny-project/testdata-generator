@@ -2,7 +2,6 @@ package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.AttributeCode;
-import life.genny.datagenerator.model.BaseCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import org.jboss.logging.Logger;
@@ -14,8 +13,6 @@ public class PersonGenerator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
-    Faker faker = new Faker();
-
     public BaseEntityModel createPersonEntity() {
         Faker faker = new Faker(new Locale("en-AU"));
         BaseEntityModel entity = new BaseEntityModel();
@@ -25,23 +22,16 @@ public class PersonGenerator {
         return entity;
     }
 
-    private final boolean defaultInferred = false;
-    private final boolean defaultPrivacyFlag = false;
-    private final boolean defaultReadOnly = false;
-    private final String defaultRealm = "Genny";
-    private final String defaultIcon = null;
-    private final boolean defaultConfirmationFlag = false;
-
-    public BaseEntityAttributeModel createAttribute(BaseCode attributeCode, BaseEntityModel model, Object value) {
+    public BaseEntityAttributeModel createAttribute(AttributeCode.DEF_PERSON attributeCode, BaseEntityModel model, Object value) {
         Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
         entity.setBaseEntityCode(model.getCode());
         entity.setCreated(now);
-        entity.setInferred(defaultInferred);
-        entity.setPrivacyFlag(defaultPrivacyFlag);
-        entity.setReadOnly(defaultReadOnly);
-        entity.setRealm(defaultRealm);
+        entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
+        entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
+        entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
+        entity.setRealm(GeneratorUtils.DEFAULT_REALM);
         entity.setUpdated(now);
         entity.setBaseEntityModel(model);
         try {

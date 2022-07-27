@@ -9,6 +9,11 @@ import java.util.*;
 public class GeneratorUtils {
 
 
+    public static final boolean DEFAULT_INFERRED = false;
+    public static final boolean DEFAULT_PRIVACY_FLAG = false;
+    public static final boolean DEFAULT_READ_ONLY = false;
+    public static final String DEFAULT_REALM = "Genny";
+
     private static final Faker faker = new Faker();
 
     public static String generateFirstName() {
@@ -58,6 +63,10 @@ public class GeneratorUtils {
         HashMap<String, String> address = new HashMap<>();
         address.put("street", faker.address().streetAddress());
         address.put("country", faker.address().country());
+        address.put("city", faker.address().city());
+        address.put("province", faker.address().state());
+        address.put("full", faker.address().fullAddress());
+        address.put("second", faker.address().secondaryAddress());
         String zipCode = faker.address().zipCode();
         if (zipCode.length() < 6) address.put("zipCode", zipCode);
         else address.put("zipCode", zipCode.substring(0, 5));

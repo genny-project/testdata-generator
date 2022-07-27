@@ -1,24 +1,15 @@
 package life.genny.datagenerator.utils;
 
 import life.genny.datagenerator.model.AttributeCode;
-import life.genny.datagenerator.model.BaseCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class UserGenerator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
-
-    private final boolean defaultInferred = false;
-    private final boolean defaultPrivacyFlag = false;
-    private final boolean defaultReadOnly = false;
-    private final String defaultRealm = "Genny";
-    private final String defaultIcon = null;
-    private final boolean defaultConfirmationFlag = false;
 
     public BaseEntityModel generateUser() {
         BaseEntityModel model = new BaseEntityModel();
@@ -28,16 +19,16 @@ public class UserGenerator {
         return model;
     }
 
-    public BaseEntityAttributeModel createUserAttribute(BaseCode attributeCode, Object value) {
+    public BaseEntityAttributeModel createUserAttribute(AttributeCode.DEF_USER attributeCode, Object value) {
 //        Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
 //        entity.setBaseEntityCode(model.getCode());
 //        entity.setCreated(now);
-        entity.setInferred(defaultInferred);
-        entity.setPrivacyFlag(defaultPrivacyFlag);
-        entity.setReadOnly(defaultReadOnly);
-        entity.setRealm(defaultRealm);
+        entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
+        entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
+        entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
+        entity.setRealm(GeneratorUtils.DEFAULT_REALM);
 //        entity.setUpdated(now);
 //        entity.setBaseEntityModel(model);
         try {
@@ -58,7 +49,6 @@ public class UserGenerator {
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
             String email = GeneratorUtils.generateEmail(firstName, lastName);
-            Map<String, String> address = GeneratorUtils.generateFullAddress();
 
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_HAS_LOGGED_IN,

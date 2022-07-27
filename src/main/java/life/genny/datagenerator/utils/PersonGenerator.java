@@ -7,8 +7,7 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import org.jboss.logging.Logger;
 
-import java.util.Date;
-import java.util.Locale;
+import java.util.*;
 
 
 public class PersonGenerator {
@@ -59,21 +58,21 @@ public class PersonGenerator {
         while (i < totalIndex) {
             BaseEntityModel entityModel = this.createPersonEntity();
             try {
-                String firstName = this.generateFirstName();
-                String lastName = this.generateLastName();
+                String firstName = GeneratorUtils.generateFirstName();
+                String lastName = GeneratorUtils.generateLastName();
 
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                                entityModel, firstName));
+                        entityModel, firstName));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                                entityModel, lastName));
+                        entityModel, lastName));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                                entityModel, this.generateDOB()));
+                        entityModel, GeneratorUtils.generateDOB()));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                                entityModel, this.generateEmail(firstName, lastName)));
+                        entityModel, GeneratorUtils.generateEmail(firstName, lastName)));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                                entityModel, this.generateLinkedInURL(firstName, lastName)));
+                        entityModel, GeneratorUtils.generateLinkedInURL(firstName, lastName)));
 
-                Map<String, String> streetHashMap = this.generateFullAddress();
+                Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
                 String street = streetHashMap.get("street");
                 String country = streetHashMap.get("country");
                 String zipCode = streetHashMap.get("zipCode");
@@ -86,7 +85,7 @@ public class PersonGenerator {
                                 entityModel, zipCode));
 
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                                entityModel, this.generatePhoneNumber()));
+                        entityModel, GeneratorUtils.generatePhoneNumber()));
 
                 entityModels.add(entityModel);
 

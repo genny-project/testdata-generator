@@ -4,14 +4,19 @@ import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
 import java.util.*;
 
 
-public class PersonGenerator {
+public class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
+
+    public PersonGenerator(int count, BaseEntityService service, long id) {
+        super(count, service, id);
+    }
 
     public BaseEntityModel createPersonEntity() {
         Faker faker = new Faker(new Locale("en-AU"));
@@ -22,18 +27,16 @@ public class PersonGenerator {
         return entity;
     }
 
-    public BaseEntityAttributeModel createAttribute(AttributeCode.DEF_PERSON attributeCode, BaseEntityModel model, Object value) {
+    public BaseEntityAttributeModel createAttribute(AttributeCode.DEF_PERSON attributeCode, Object value) {
         Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
-        entity.setBaseEntityCode(model.getCode());
         entity.setCreated(now);
         entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
         entity.setUpdated(now);
-        entity.setBaseEntityModel(model);
         try {
             entity.setValue(value);
         } catch (Exception e) {
@@ -52,15 +55,15 @@ public class PersonGenerator {
                 String lastName = GeneratorUtils.generateLastName();
 
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                        entityModel, firstName));
+                        firstName));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                        entityModel, lastName));
+                        lastName));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                        entityModel, GeneratorUtils.generateDOB()));
+                        GeneratorUtils.generateDOB()));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                        entityModel, GeneratorUtils.generateEmail(firstName, lastName)));
+                        GeneratorUtils.generateEmail(firstName, lastName)));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                        entityModel, GeneratorUtils.generateLinkedInURL(firstName, lastName)));
+                        GeneratorUtils.generateLinkedInURL(firstName, lastName)));
 
                 Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
                 String street = streetHashMap.get("street");
@@ -68,17 +71,21 @@ public class PersonGenerator {
                 String zipCode = streetHashMap.get("zipCode");
 
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                                entityModel, street));
+                        street));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                                entityModel, country));
+                        country));
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                                entityModel, zipCode));
+                        zipCode));
 
                 entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                        entityModel, GeneratorUtils.generatePhoneNumber()));
+                        GeneratorUtils.generatePhoneNumber()));
+                entityModel.addAttribute(
+                        createAttribute(AttributeCode.DEF_PERSON.ATT_LNK_GENDER_SELECT, GeneratorUtils.createGenderSelect())
+                );
+                entityModel.addAttribute(createAttribute(AttributeCode.DEF_PERSON.ATT_LNK_SEND_EMAIL, true));
+                entityModel.addAttribute(createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_INITIALS, firstName + " " + lastName));
 
                 entityModels.add(entityModel);
-
             } catch (Exception e) {
                 LOGGER.error(e);
             }
@@ -89,4 +96,8 @@ public class PersonGenerator {
         return entityModels;
     }
 
+    @Override
+    List<BaseEntityModel> onGenerate(int count) {
+        return generate(count);
+    }
 }

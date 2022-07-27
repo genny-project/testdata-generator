@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyThreadPool {
-    private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
+    private static final Logger LOGGER = Logger.getLogger(MyThreadPool.class);
     private final List<MyThread> threads = new ArrayList<>();
     private final List<PoolTask> pendingTasks = new ArrayList<>();
 

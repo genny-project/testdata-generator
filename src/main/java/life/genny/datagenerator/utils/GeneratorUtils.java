@@ -73,6 +73,21 @@ public class GeneratorUtils {
         return address;
     }
 
+    public static String createGenderSelect() {
+        final String[] GENDERS = new String[]{
+                "[\"SEL_MALE\"]", "[\"SEL_FEMALE\"]", "[SEL_OTHER\"]"
+        };
+        int index = new Random().nextInt(3);
+        return GENDERS[index];
+    }
+
+    public static String createGender() {
+        final String[] GENDERS = new String[]{
+                "MALE", "FEMALE", "OTHER]"
+        };
+        int index = new Random().nextInt(3);
+        return GENDERS[index];
+    }
 
     public static String generateGender() {
         return null;

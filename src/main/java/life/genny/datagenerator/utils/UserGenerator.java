@@ -3,13 +3,18 @@ package life.genny.datagenerator.utils;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserGenerator {
+public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
+
+    public UserGenerator(int count, BaseEntityService service, long id) {
+        super(count, service, id);
+    }
 
     public BaseEntityModel generateUser() {
         BaseEntityModel model = new BaseEntityModel();
@@ -20,17 +25,12 @@ public class UserGenerator {
     }
 
     public BaseEntityAttributeModel createUserAttribute(AttributeCode.DEF_USER attributeCode, Object value) {
-//        Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
-//        entity.setBaseEntityCode(model.getCode());
-//        entity.setCreated(now);
         entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-//        entity.setUpdated(now);
-//        entity.setBaseEntityModel(model);
         try {
             entity.setValue(value);
         } catch (Exception e) {
@@ -44,7 +44,6 @@ public class UserGenerator {
         int i = 0;
         while (i < count) {
             BaseEntityModel model = this.generateUser();
-            LOGGER.info("created: " + model.getCode());
 
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
@@ -112,5 +111,10 @@ public class UserGenerator {
             i++;
         }
         return models;
+    }
+
+    @Override
+    List<BaseEntityModel> onGenerate(int count) {
+        return generateUserBulk(count);
     }
 }

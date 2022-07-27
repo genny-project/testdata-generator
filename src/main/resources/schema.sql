@@ -48,4 +48,4 @@ create TABLE `baseentity_attribute` (
     KEY `beid_attrcode_valStr_valBool_idx` (`BASEENTITY_ID`,`attributeCode`,`valueString`(20),`valueBoolean`),
     CONSTRAINT `FKaedpn6csuwk6uwm5kqh73tiwd` FOREIGN KEY (`ATTRIBUTE_ID`) REFERENCES `attribute` (`id`),
     CONSTRAINT `FKmqrqcxsqu49b0cliy2tymjoae` FOREIGN KEY (`BASEENTITY_ID`) REFERENCES `baseentity` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

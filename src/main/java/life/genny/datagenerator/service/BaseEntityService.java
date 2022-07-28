@@ -8,15 +8,12 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BaseEntityService {
-
     private static final Logger LOGGER = Logger.getLogger(BaseEntityService.class);
 
     @Inject
@@ -24,8 +21,6 @@ public class BaseEntityService {
     @Inject
     BaseEntityAttributeRepository baseEntityAttributeRepository;
 
-    @PersistenceContext
-    EntityManager entityManager;
 
     public List<BaseEntityModel> getBaseEntity() {
         return baseEntityRepository.listAll().stream().map(BaseEntityModel::new).collect(Collectors.toList());
@@ -61,12 +56,7 @@ public class BaseEntityService {
 
     @Transactional
     public void saveAll(List<BaseEntityModel> models) {
-        List<BaseEntity> entities = models.stream().map(model -> {
-            BaseEntityModel entityModel = model;
-            return entityModel.toEntity();
-        }).collect(Collectors.toList());
-
-        baseEntityRepository.persist(entities);
+        baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
 
         LOGGER.debug("flushing");
         baseEntityRepository.flush();
@@ -75,6 +65,5 @@ public class BaseEntityService {
     public long countEntity() {
         return baseEntityRepository.count();
     }
-
 
 }

@@ -2,18 +2,16 @@ package life.genny.datagenerator;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityAttributeService;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.utils.PersonGenerator;
+import life.genny.datagenerator.utils.UserGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -37,45 +35,45 @@ public class ApplicationStartup {
     @Inject
     BaseEntityAttributeService attributeService;
 
+    //    PersonGenerator personGenerator = new PersonGenerator();
+    //    UserGenerator userGenerator = new UserGenerator();
     private ExecutorService executor;
-    PersonGenerator personGenerator = new PersonGenerator();
 
-    @Transactional
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-        if (baseEntityService.countEntity() > 0) return;
+//        if (baseEntityService.countEntity() > 10000) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
         int perThread = Integer.parseInt(this.perThread);
         int maxThread = Integer.parseInt(this.maxThread);
 
         executor = Executors.newFixedThreadPool(maxThread);
-
         int thread = Math.min(totalRow, totalRow / perThread);
-
         int i = 0;
         while (i < thread) {
             final int start = i;
-            try {
-                executor.submit(() -> {
-                            try {
-                                Thread.sleep(500);
-                            } catch (Exception e) {
-                                LOGGER.error(e);
-                            }
-                            createAndInsertPerson(start * perThread, (start + 1) * perThread);
-                        }
-                );
-            } catch (Exception e) {
-                LOGGER.error(e);
-            }
+            LOGGER.info("create thread: " + start);
+            execute(perThread, i);
             i++;
+        }
+        if ((perThread * thread) < totalRow) {
+            int count = totalRow - (perThread * thread);
+            execute(count, i);
         }
     }
 
-    private void createAndInsertPerson(int startIndex, int endIndex) {
-        LOGGER.debug("creating person : " + startIndex + " -> " + endIndex);
-        List<BaseEntityModel> entityModels = personGenerator.generate(endIndex - startIndex);
-        baseEntityService.saveAll(entityModels);
+    /**
+     * executor.submit( Generator instance )
+     *
+     * @param count
+     * @param i
+     */
+    private void execute(int count, int i) {
+        try {
+            executor.submit(new UserGenerator(count, baseEntityService, i));
+            executor.submit(new PersonGenerator(count, baseEntityService, i));
+        } catch (Exception e) {
+            LOGGER.error(e);
+        }
     }
 }

@@ -2,19 +2,29 @@ package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class GeneratorUtils {
 
-
     public static final boolean DEFAULT_INFERRED = false;
     public static final boolean DEFAULT_PRIVACY_FLAG = false;
     public static final boolean DEFAULT_READ_ONLY = false;
     public static final String DEFAULT_REALM = "Genny";
 
+    public static final String[] GENDER = {"MALE", "FEMALE", "OTHER"};
+
     private static final Faker faker = new Faker();
+
+    public static String generateUUID() {
+        return UUID.randomUUID().toString().toUpperCase();
+    }
 
     public static String generateFirstName() {
         return faker.name().firstName();
@@ -73,24 +83,11 @@ public class GeneratorUtils {
         return address;
     }
 
-    public static String createGenderSelect() {
-        final String[] GENDERS = new String[]{
-                "[\"SEL_MALE\"]", "[\"SEL_FEMALE\"]", "[SEL_OTHER\"]"
-        };
-        int index = new Random().nextInt(3);
-        return GENDERS[index];
-    }
-
-    public static String createGender() {
-        final String[] GENDERS = new String[]{
-                "MALE", "FEMALE", "OTHER]"
-        };
-        int index = new Random().nextInt(3);
-        return GENDERS[index];
-    }
 
     public static String generateGender() {
-        return null;
+        Random random = new Random();
+        int i = random.nextInt(3);
+        return GENDER[i];
     }
 
     public static String generateLinkedInURL(String firstName, String lastName) {
@@ -109,6 +106,16 @@ public class GeneratorUtils {
     public static String generateImageUrl(String firstName, String lastName) {
         return "https://drive.google.com/" + UUID.randomUUID() + "/" + (firstName.toLowerCase()
                 + lastName.toLowerCase()).replace(" ", "");
+    }
+
+    public static File generateImage() throws IOException {
+        Random random = new Random();
+        BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = bufferedImage.createGraphics();
+        g2d.setColor(Color.red);
+        File file = new File("image.jpg");
+        ImageIO.write(bufferedImage, "jpg", file);
+        return file;
     }
 
 }

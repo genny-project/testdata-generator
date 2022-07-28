@@ -54,38 +54,76 @@ public class PersonGenerator extends Generator {
                 String firstName = GeneratorUtils.generateFirstName();
                 String lastName = GeneratorUtils.generateLastName();
 
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
-                        firstName));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
-                        lastName));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                        GeneratorUtils.generateDOB()));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                        GeneratorUtils.generateEmail(firstName, lastName)));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                        GeneratorUtils.generateLinkedInURL(firstName, lastName)));
-
                 Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
                 String street = streetHashMap.get("street");
                 String country = streetHashMap.get("country");
                 String zipCode = streetHashMap.get("zipCode");
 
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                        street));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                        country));
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                        zipCode));
+                String gender = GeneratorUtils.generateGender();
 
-                entityModel.addAttribute(this.createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                        GeneratorUtils.generatePhoneNumber()));
-                entityModel.addAttribute(
-                        createAttribute(AttributeCode.DEF_PERSON.ATT_LNK_GENDER_SELECT, GeneratorUtils.createGenderSelect())
-                );
-                entityModel.addAttribute(createAttribute(AttributeCode.DEF_PERSON.ATT_LNK_SEND_EMAIL, true));
-                entityModel.addAttribute(createAttribute(AttributeCode.DEF_PERSON.ATT_PRI_INITIALS, firstName + " " + lastName));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
+                        firstName
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_LASTNAME,
+                        lastName
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_INITIALS,
+                        firstName.substring(0, 1).toUpperCase() + lastName.substring(0, 1).toUpperCase()
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_DOB,
+                        GeneratorUtils.generateDOB()
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
+                        GeneratorUtils.generateEmail(firstName, lastName)
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
+                        GeneratorUtils.generateLinkedInURL(firstName, lastName)
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_STREET,
+                        street
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
+                        country
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
+                        zipCode
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
+                        GeneratorUtils.generatePhoneNumber()
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_LNK_SEND_EMAIL,
+                        true
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_LNK_GENDER_SELECT,
+                        "[\"SEL_" + gender + "\"]"
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_GENDER,
+                        gender
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.ATT_PRI_PROCESS_ID,
+                        GeneratorUtils.generateUUID()
+                ));
+                entityModel.addAttribute(this.createAttribute(
+                        AttributeCode.DEF_PERSON.PRI_PREFIX,
+                        "PER_"
+                ));
 
                 entityModels.add(entityModel);
+
             } catch (Exception e) {
                 LOGGER.error(e);
             }

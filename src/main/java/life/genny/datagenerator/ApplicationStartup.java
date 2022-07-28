@@ -35,13 +35,13 @@ public class ApplicationStartup {
     @Inject
     BaseEntityAttributeService attributeService;
 
-//    PersonGenerator personGenerator = new PersonGenerator();
-//    UserGenerator userGenerator = new UserGenerator();
-private ExecutorService executor;
+    //    PersonGenerator personGenerator = new PersonGenerator();
+    //    UserGenerator userGenerator = new UserGenerator();
+    private ExecutorService executor;
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-        if (baseEntityService.countEntity() > 10000) return;
+//        if (baseEntityService.countEntity() > 10000) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
         int perThread = Integer.parseInt(this.perThread);

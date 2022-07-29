@@ -7,9 +7,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 
 public class GeneratorUtils {
 
@@ -21,6 +23,11 @@ public class GeneratorUtils {
     public static final String[] GENDER = {"MALE", "FEMALE", "OTHER"};
 
     private static final Faker faker = new Faker();
+
+    private static int generateRandomNum(int size) {
+        Random random = new Random();
+        return random.nextInt(size);
+    }
 
     public static String generateUUID() {
         return UUID.randomUUID().toString().toUpperCase();
@@ -103,9 +110,8 @@ public class GeneratorUtils {
         return part1 + "" + part2 + "" + part3;
     }
 
-    public static String generateImageUrl(String firstName, String lastName) {
-        return "https://drive.google.com/" + UUID.randomUUID() + "/" + (firstName.toLowerCase()
-                + lastName.toLowerCase()).replace(" ", "");
+    public static String generateImageUrl(List<String> images) {
+        return images.get(generateRandomNum(images.size()));
     }
 
     public static File generateImage() throws IOException {
@@ -116,6 +122,20 @@ public class GeneratorUtils {
         File file = new File("image.jpg");
         ImageIO.write(bufferedImage, "jpg", file);
         return file;
+    }
+
+    public static HashMap<String, String> generateLngLat() {
+        HashMap<String, String> geoLocation = new HashMap<>();
+        double minLat = 0.00;
+        double maxLat = 30.00;
+        double minLng = 40.00;
+        double maxLng = 55.00;
+        double latitude = minLat + (Math.random() * ((maxLat - minLat) + 1));
+        double longitude = minLng + (Math.random() * ((maxLng - minLng) + 1));
+        DecimalFormat dFormat = new DecimalFormat("#.#######");
+        geoLocation.put("latitude", dFormat.format(latitude));
+        geoLocation.put("longitude", dFormat.format(longitude));
+        return geoLocation;
     }
 
 }

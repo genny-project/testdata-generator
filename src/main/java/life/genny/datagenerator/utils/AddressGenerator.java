@@ -3,16 +3,30 @@ package life.genny.datagenerator.utils;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.model.json.Place;
+import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.service.PlaceService;
 import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
+
+    public AddressGenerator(int count, BaseEntityService service, long id) {
+        super(count, service, id);
+    }
+
+    @Inject
+    PlaceService placeService;
+
+    List<Place> places = new ArrayList<>();
 
     public AddressGenerator(int count, BaseEntityService service, long id) {
         super(count, service, id);
@@ -27,17 +41,12 @@ public class AddressGenerator extends Generator {
     }
 
     public BaseEntityAttributeModel createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS attributeCode, Object value) {
-        //        Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
-//        entity.setBaseEntityCode(model.getCode());
-//        entity.setCreated(now);
         entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-//        entity.setUpdated(now);
-//        entity.setBaseEntityModel(model);
         try {
             entity.setValue(value);
         } catch (Exception e) {

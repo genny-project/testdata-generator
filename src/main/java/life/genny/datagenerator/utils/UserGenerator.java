@@ -12,7 +12,7 @@ import java.util.List;
 public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    private List<String> imagesUrl;
+    private final List<String> imagesUrl;
 
     public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl) {
         super(count, service, id);
@@ -79,16 +79,16 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PROFILE,
-                    "Completed"
+                    GeneratorUtils.COMPLETED
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PROGRESS,
-                    "AVAILABNLE"
+                    GeneratorUtils.AVAILABLE
             ));
 
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_STATUS,
-                    "ACTIVE"
+                    GeneratorUtils.ACTIVE
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USER_PROFILE_PICTURE,

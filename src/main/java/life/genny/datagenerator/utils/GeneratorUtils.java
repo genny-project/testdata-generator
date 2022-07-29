@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class GeneratorUtils {
 
@@ -21,6 +21,9 @@ public class GeneratorUtils {
     public static final String DEFAULT_REALM = "Genny";
 
     public static final String[] GENDER = {"MALE", "FEMALE", "OTHER"};
+    public static final String COMPLETED = "Completed";
+    public static final String AVAILABLE = "AVAILABLE";
+    public static final String ACTIVE = "ACTIVE";
 
     private static final Faker faker = new Faker();
 

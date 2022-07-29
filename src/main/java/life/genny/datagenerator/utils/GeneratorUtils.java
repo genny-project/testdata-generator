@@ -2,15 +2,9 @@ package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 
 public class GeneratorUtils {
@@ -117,15 +111,15 @@ public class GeneratorUtils {
         return images.get(generateRandomNum(images.size()));
     }
 
-    public static File generateImage() throws IOException {
-        Random random = new Random();
-        BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = bufferedImage.createGraphics();
-        g2d.setColor(Color.red);
-        File file = new File("image.jpg");
-        ImageIO.write(bufferedImage, "jpg", file);
-        return file;
-    }
+//    public static File generateImage() throws IOException {
+//        Random random = new Random();
+//        BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g2d = bufferedImage.createGraphics();
+//        g2d.setColor(Color.red);
+//        File file = new File("image.jpg");
+//        ImageIO.write(bufferedImage, "jpg", file);
+//        return file;
+//    }
 
     public static HashMap<String, String> generateLngLat() {
         HashMap<String, String> geoLocation = new HashMap<>();

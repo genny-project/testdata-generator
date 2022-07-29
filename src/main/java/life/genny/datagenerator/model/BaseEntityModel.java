@@ -75,6 +75,10 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
         return entity;
     }
 
+    public Map<String, BaseEntityAttributeModel> getAttributeMap() {
+        return attributeMap;
+    }
+
     public Object getAttribute(String code) {
         if (attributes == null || attributes.isEmpty()) return null;
         return attributes.get(code);

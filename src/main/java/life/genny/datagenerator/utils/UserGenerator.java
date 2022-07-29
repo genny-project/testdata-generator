@@ -12,8 +12,11 @@ import java.util.List;
 public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    public UserGenerator(int count, BaseEntityService service, long id) {
+    private final List<String> imagesUrl;
+
+    public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl) {
         super(count, service, id);
+        this.imagesUrl = imagesUrl;
     }
 
     public BaseEntityModel generateUser() {
@@ -48,6 +51,7 @@ public class UserGenerator extends Generator {
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
             String email = GeneratorUtils.generateEmail(firstName, lastName);
+            String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
 
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_HAS_LOGGED_IN,
@@ -55,7 +59,7 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_IMAGE_URL,
-                    GeneratorUtils.generateImageUrl(firstName, lastName)
+                    imageUrl
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_INITIALS,
@@ -75,20 +79,20 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PROFILE,
-                    "Completed"
+                    GeneratorUtils.COMPLETED
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PROGRESS,
-                    "AVAILABNLE"
+                    GeneratorUtils.AVAILABLE
             ));
 
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_STATUS,
-                    "ACTIVE"
+                    GeneratorUtils.ACTIVE
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USER_PROFILE_PICTURE,
-                    GeneratorUtils.generateImageUrl(firstName, lastName)
+                    imageUrl
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USERCODE,
@@ -101,10 +105,6 @@ public class UserGenerator extends Generator {
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USERNAME,
                     email
-            ));
-            model.addAttribute(this.createUserAttribute(
-                    AttributeCode.DEF_USER.LNK_INCLUDE,
-                    "TODO, need ask to varun about this data"
             ));
 
             models.add(model);

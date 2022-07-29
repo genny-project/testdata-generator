@@ -66,4 +66,9 @@ public class BaseEntityService {
         return baseEntityRepository.count();
     }
 
+    @Transactional
+    public void deleteAll() {
+        baseEntityAttributeRepository.deleteAll();
+        baseEntityRepository.deleteAll();
+    }
 }

@@ -2,16 +2,23 @@ package life.genny.datagenerator;
 
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
+import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.service.BaseEntityAttributeService;
 import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.service.ImageService;
+import life.genny.datagenerator.service.PlaceService;
+import life.genny.datagenerator.utils.AddressGenerator;
 import life.genny.datagenerator.utils.PersonGenerator;
 import life.genny.datagenerator.utils.UserGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,14 +41,31 @@ public class ApplicationStartup {
     BaseEntityService baseEntityService;
     @Inject
     BaseEntityAttributeService attributeService;
+    @Inject
+    PlaceService placeService;
+    @Inject
+    ImageService imageService;
 
-    //    PersonGenerator personGenerator = new PersonGenerator();
-    //    UserGenerator userGenerator = new UserGenerator();
     private ExecutorService executor;
+    private List<String> imagesUrl = new ArrayList<>();
+    private List<Place> places = new ArrayList<>();
+
+    @PostConstruct
+    void setUp() {
+        LOGGER.info("PREPARING SAMPLE DATA TO GENERATE");
+
+        LOGGER.debug("FETCHING IMAGES");
+        imagesUrl = imageService.fetchImages();
+
+        LOGGER.debug("FETCHING PLACES");
+//        places = placeService.fetchRandomPlaces("100000");
+
+        LOGGER.info("DATA PREPARED");
+    }
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-//        if (baseEntityService.countEntity() > 10000) return;
+        if (baseEntityService.countEntity() > 0) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
         int perThread = Integer.parseInt(this.perThread);
@@ -70,8 +94,9 @@ public class ApplicationStartup {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, i));
+            executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
+//            executor.submit(new AddressGenerator(count, baseEntityService, i));
         } catch (Exception e) {
             LOGGER.error(e);
         }

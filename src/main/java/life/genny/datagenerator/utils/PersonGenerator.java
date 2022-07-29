@@ -7,7 +7,10 @@ import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 
 public class PersonGenerator extends Generator {
@@ -28,15 +31,12 @@ public class PersonGenerator extends Generator {
     }
 
     public BaseEntityAttributeModel createAttribute(AttributeCode.DEF_PERSON attributeCode, Object value) {
-        Date now = new Date();
         BaseEntityAttributeModel entity = new BaseEntityAttributeModel();
         entity.setAttributeCode(attributeCode);
-        entity.setCreated(now);
         entity.setInferred(GeneratorUtils.DEFAULT_INFERRED);
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-        entity.setUpdated(now);
         try {
             entity.setValue(value);
         } catch (Exception e) {

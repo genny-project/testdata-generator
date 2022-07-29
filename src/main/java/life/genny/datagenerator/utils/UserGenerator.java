@@ -102,10 +102,6 @@ public class UserGenerator extends Generator {
                     AttributeCode.DEF_USER.ATT_PRI_USERNAME,
                     email
             ));
-            model.addAttribute(this.createUserAttribute(
-                    AttributeCode.DEF_USER.LNK_INCLUDE,
-                    "TODO, need ask to varun about this data"
-            ));
 
             models.add(model);
             i++;

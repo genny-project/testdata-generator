@@ -3,15 +3,20 @@ package life.genny.datagenerator.utils;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AddressGenerator {
+public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
+
+    public AddressGenerator(int count, BaseEntityService service, long id) {
+        super(count, service, id);
+    }
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
@@ -73,5 +78,10 @@ public class AddressGenerator {
             i++;
         }
         return models;
+    }
+
+    @Override
+    List<BaseEntityModel> onGenerate(int count) {
+        return generateAddressBulk(count);
     }
 }

@@ -6,12 +6,10 @@ import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,10 +25,6 @@ public class AddressGenerator extends Generator {
     PlaceService placeService;
 
     List<Place> places = new ArrayList<>();
-
-    public AddressGenerator(int count, BaseEntityService service, long id) {
-        super(count, service, id);
-    }
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();

@@ -3,7 +3,6 @@ package life.genny.datagenerator;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.model.json.Place;
-import life.genny.datagenerator.service.BaseEntityAttributeService;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.PlaceService;
@@ -28,6 +27,10 @@ public class ApplicationStartup {
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
 
+    private static final String MELBOURNE_GEO_LOC = "-37.7762758,144.9242811";
+    private static final String NEW_YORK_GEO_LOC = "40.6971477,-74.260556";
+    private static final String LONDON_GEO_LOC = "51.5236688,-1.1831971";
+
     @ConfigProperty(name = "data.total_person_tobe_generated", defaultValue = "50")
     String totalGeneratedNumber;
 
@@ -39,8 +42,6 @@ public class ApplicationStartup {
 
     @Inject
     BaseEntityService baseEntityService;
-    @Inject
-    BaseEntityAttributeService attributeService;
     @Inject
     PlaceService placeService;
     @Inject
@@ -58,9 +59,12 @@ public class ApplicationStartup {
         imagesUrl = imageService.fetchImages();
 
         LOGGER.debug("FETCHING PLACES");
-//        places = placeService.fetchRandomPlaces("100000");
+        places.addAll(placeService.fetchRandomPlaces(MELBOURNE_GEO_LOC, "100000"));
+        places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, "100000"));
+        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, "100000"));
 
         LOGGER.info("DATA PREPARED");
+        LOGGER.debug("FETCHED: " + imagesUrl.size() + " IMAGES URL, " + places.size() + " PLACES");
     }
 
     void onStart(@Observes StartupEvent event) {

@@ -17,14 +17,14 @@ public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    public AddressGenerator(int count, BaseEntityService service, long id) {
+    private List<Place> places = new ArrayList<>();
+
+    public AddressGenerator(int count, BaseEntityService service, long id, List<Place> places) {
         super(count, service, id);
     }
 
     @Inject
     PlaceService placeService;
-
-    List<Place> places = new ArrayList<>();
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
@@ -55,28 +55,53 @@ public class AddressGenerator extends Generator {
         while (i < count) {
             BaseEntityModel model = createAddressEntity();
 
-            Map<String, String> address = GeneratorUtils.generateFullAddress();
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, address.get("full"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, address.get("second"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY, address.get("city"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY, address.get("country"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE, address.get("province"))
-            );
+            Place place = GeneratorUtils.pickRandomAddress(places);
+
+            String[] address = place.getVicinity().split(", ");
+            String city = "";
+            if (address.length > 1) {
+                city += address[address.length - 1];
+            } else {
+                city = address[0];
+            }
+
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1 + ": " + place.getVicinity());
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2 + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY + ": " + city);
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE + ": " + place.getGeometry().getLocation().getLat());
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LONGITUDE + ": " + place.getGeometry().getLocation().getLng());
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID + ": ");
+
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, address.get("full")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, address.get("second")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY, address.get("city")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY, address.get("country")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode")
+//            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE, address.get("province")
+//            ));
+
             models.add(model);
             i++;
         }

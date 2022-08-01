@@ -100,7 +100,7 @@ public class ApplicationStartup {
         try {
             executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
-//            executor.submit(new AddressGenerator(count, baseEntityService, i));
+//            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
             LOGGER.error(e);
         }

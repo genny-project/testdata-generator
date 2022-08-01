@@ -1,6 +1,7 @@
 package life.genny.datagenerator.utils;
 
 import com.github.javafaker.Faker;
+import life.genny.datagenerator.model.json.Place;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -73,20 +74,10 @@ public class GeneratorUtils {
         return dateFormat.parse(generatedDate);
     }
 
-    public static HashMap<String, String> generateFullAddress() {
-        HashMap<String, String> address = new HashMap<>();
-        address.put("street", faker.address().streetAddress());
-        address.put("country", faker.address().country());
-        address.put("city", faker.address().city());
-        address.put("province", faker.address().state());
-        address.put("full", faker.address().fullAddress());
-        address.put("second", faker.address().secondaryAddress());
-        String zipCode = faker.address().zipCode();
-        if (zipCode.length() < 6) address.put("zipCode", zipCode);
-        else address.put("zipCode", zipCode.substring(0, 5));
-        return address;
+    public static Place pickRandomAddress(List<Place> places) {
+        int ranInt = generateRandomNum(places.size());
+        return places.get(ranInt);
     }
-
 
     public static String generateGender() {
         Random random = new Random();

@@ -69,6 +69,10 @@ public class PlaceService {
                 .await().indefinitely();
     }
 
+    private List<String> getPlaceDetailById() {
+        return null;
+    }
+
     private void sleep(int time) {
         try {
             Thread.sleep(time);

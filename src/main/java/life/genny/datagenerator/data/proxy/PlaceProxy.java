@@ -28,4 +28,11 @@ public interface PlaceProxy {
             @QueryParam("key") String key,
             @QueryParam("pagetoken") String pageToken
     );
+
+    // https://maps.googleapis.com/maps/api/place/details/json?key=&place_id=
+    @GET
+    Uni<String> getDetailPlaceById(
+            @QueryParam("key") String key,
+            @QueryParam("place_id") String placeId
+    );
 }

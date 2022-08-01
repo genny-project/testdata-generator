@@ -1,6 +1,9 @@
 package life.genny.datagenerator.data.proxy;
 
 import io.smallrye.mutiny.Uni;
+import life.genny.datagenerator.model.json.MapsResult;
+import life.genny.datagenerator.model.json.Place;
+import life.genny.datagenerator.model.json.PlaceDetail;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.ws.rs.GET;
@@ -16,7 +19,7 @@ public interface PlaceProxy {
 
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=&radius=&key=
     @GET
-    Uni<String> getNearbyPlace(
+    Uni<MapsResult<Place>> getNearbyPlace(
             @QueryParam("key") String key,
             @QueryParam("location") String location,
             @QueryParam("radius") String radius
@@ -24,14 +27,14 @@ public interface PlaceProxy {
 
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=&key=
     @GET
-    Uni<String> getNearbyPlace(
+    Uni<MapsResult<Place>> getNearbyPlace(
             @QueryParam("key") String key,
             @QueryParam("pagetoken") String pageToken
     );
 
     // https://maps.googleapis.com/maps/api/place/details/json?key=&place_id=
     @GET
-    Uni<String> getDetailPlaceById(
+    Uni<MapsResult<PlaceDetail>> getDetailPlaceById(
             @QueryParam("key") String key,
             @QueryParam("place_id") String placeId
     );

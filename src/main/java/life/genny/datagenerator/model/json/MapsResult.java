@@ -15,60 +15,59 @@ import java.util.Map;
         "status"
 })
 @Generated("jsonschema2pojo")
-public class MapsResult {
+public class MapsResult<Result> {
 
     @JsonProperty("html_attributions")
     private List<Object> htmlAttributions = null;
     @JsonProperty("next_page_token")
     private String nextPageToken;
     @JsonProperty("results")
-    private List<Place> results = null;
+    private List<Result> results = null;
     @JsonProperty("status")
     private String status;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
-    @JsonProperty("html_attributions")
+    public MapsResult() {
+    }
+
+    @JsonIgnore
     public List<Object> getHtmlAttributions() {
         return htmlAttributions;
     }
 
-    @JsonProperty("html_attributions")
     public void setHtmlAttributions(List<Object> htmlAttributions) {
         this.htmlAttributions = htmlAttributions;
     }
 
-    @JsonProperty("next_page_token")
+    @JsonIgnore
     public String getNextPageToken() {
         return nextPageToken;
     }
 
-    @JsonProperty("next_page_token")
     public void setNextPageToken(String nextPageToken) {
         this.nextPageToken = nextPageToken;
     }
 
-    @JsonProperty("results")
-    public List<Place> getResults() {
+    @JsonIgnore
+    public List<Result> getResults() {
         return results;
     }
 
-    @JsonProperty("results")
-    public void setResults(List<Place> results) {
+    public void setResults(List<Result> results) {
         this.results = results;
     }
 
-    @JsonProperty("status")
+    @JsonIgnore
     public String getStatus() {
         return status;
     }
 
-    @JsonProperty("status")
     public void setStatus(String status) {
         this.status = status;
     }
 
-    @JsonAnyGetter
+    @JsonIgnore
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }

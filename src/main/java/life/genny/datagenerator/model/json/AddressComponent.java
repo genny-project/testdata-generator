@@ -9,12 +9,6 @@ import java.io.Serializable;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "long_name",
-        "short_name",
-        "types"
-})
-@Generated("jsonschema2pojo")
 public class AddressComponent implements Serializable {
 
     @JsonProperty("long_name")

@@ -4,12 +4,14 @@ import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.Place;
+import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.PlaceService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,10 +19,11 @@ public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    private List<Place> places = new ArrayList<>();
+    private List<PlaceDetail> places;
 
-    public AddressGenerator(int count, BaseEntityService service, long id, List<Place> places) {
+    public AddressGenerator(int count, BaseEntityService service, long id, List<PlaceDetail> places) {
         super(count, service, id);
+        this.places = places;
     }
 
     @Inject
@@ -52,32 +55,32 @@ public class AddressGenerator extends Generator {
     public List<BaseEntityModel> generateAddressBulk(long count) {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
+        LOGGER.info("PLACES SIZE: " + places.size());
         while (i < count) {
             BaseEntityModel model = createAddressEntity();
 
-            Place place = GeneratorUtils.pickRandomAddress(places);
+            PlaceDetail place = GeneratorUtils.pickRandomData(places);
 
-            String[] address = place.getVicinity().split(", ");
-            String city = "";
-            if (address.length > 1) {
-                city += address[address.length - 1];
-            } else {
-                city = address[0];
-            }
+            HashMap<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
+            String suburb = addressMap.get("administrative_area_level_3");
+            String city = addressMap.get("administrative_area_level_2");
+            String state = addressMap.get("administrative_area_level_1");
+            String country = addressMap.get("country");
+            String postalCode = addressMap.get("postal_code");
 
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1 + ": " + place.getVicinity());
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2 + ": ");
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY + ": " + city);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY + ": " + country);
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL + ": " + place.getFormattedAddress());
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON + ": ");
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE + ": " + place.getGeometry().getLocation().getLat());
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LONGITUDE + ": " + place.getGeometry().getLocation().getLng());
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE + ": ");
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE + ": " + postalCode);
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE + ": " + state);
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB + ": " + suburb);
+            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE + ": " + (place.getUtcOffset() / 60));
             LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID + ": ");
 
 //            model.addAttribute(createBaseEntityAttributeModel(

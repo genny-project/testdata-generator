@@ -10,22 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "geometry",
-        "icon",
-        "icon_background_color",
-        "icon_mask_base_uri",
-        "name",
-        "place_id",
-        "reference",
-        "scope",
-        "types",
-        "vicinity",
-        "business_status",
-        "rating",
-        "user_ratings_total",
-        "price_level"
-})
 public class Place {
 
     @JsonProperty("geometry")

@@ -8,21 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "html_attributions",
-        "next_page_token",
-        "results",
-        "status"
-})
-@Generated("jsonschema2pojo")
-public class MapsResult<Result> {
+public class MapsResult {
 
     @JsonProperty("html_attributions")
     private List<Object> htmlAttributions = null;
     @JsonProperty("next_page_token")
     private String nextPageToken;
     @JsonProperty("results")
-    private List<Result> results = null;
+    private List<Place> results = null;
+    @JsonProperty("result")
+    private PlaceDetail result = null;
     @JsonProperty("status")
     private String status;
     @JsonIgnore
@@ -50,12 +45,20 @@ public class MapsResult<Result> {
     }
 
     @JsonIgnore
-    public List<Result> getResults() {
+    public List<Place> getResults() {
         return results;
     }
 
-    public void setResults(List<Result> results) {
+    public void setResults(List<Place> results) {
         this.results = results;
+    }
+
+    public PlaceDetail getResult() {
+        return result;
+    }
+
+    public void setResult(PlaceDetail result) {
+        this.result = result;
     }
 
     @JsonIgnore

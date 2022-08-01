@@ -3,6 +3,7 @@ package life.genny.datagenerator;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.model.json.Place;
+import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.PlaceService;
@@ -49,7 +50,7 @@ public class ApplicationStartup {
 
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>();
-    private List<Place> places = new ArrayList<>();
+    private List<PlaceDetail> places = new ArrayList<>();
 
     @PostConstruct
     void setUp() {
@@ -69,7 +70,7 @@ public class ApplicationStartup {
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-        if (baseEntityService.countEntity() > 0) return;
+        if (baseEntityService.countEntity() > 10000) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
         int perThread = Integer.parseInt(this.perThread);
@@ -100,7 +101,7 @@ public class ApplicationStartup {
         try {
             executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
-//            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
+            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
             LOGGER.error(e);
         }

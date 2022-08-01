@@ -3,7 +3,6 @@ package life.genny.datagenerator.utils;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
-import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.PlaceService;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AddressGenerator extends Generator {
 
@@ -55,7 +53,6 @@ public class AddressGenerator extends Generator {
     public List<BaseEntityModel> generateAddressBulk(long count) {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
-        LOGGER.info("PLACES SIZE: " + places.size());
         while (i < count) {
             BaseEntityModel model = createAddressEntity();
 
@@ -68,41 +65,52 @@ public class AddressGenerator extends Generator {
             String country = addressMap.get("country");
             String postalCode = addressMap.get("postal_code");
 
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1 + ": " + place.getVicinity());
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2 + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY + ": " + city);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY + ": " + country);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL + ": " + place.getFormattedAddress());
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON + ": ");
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE + ": " + place.getGeometry().getLocation().getLat());
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LONGITUDE + ": " + place.getGeometry().getLocation().getLng());
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE + ": " + postalCode);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE + ": " + state);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB + ": " + suburb);
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE + ": " + (place.getUtcOffset() / 60));
-            LOGGER.debug(AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID + ": ");
-
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, place.getVicinity()
+            ));
 //            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, address.get("full")
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, null
 //            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY,
+                    (city != null && !city.isEmpty()) ? city : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY,
+                    (country != null && !country.isEmpty()) ? country : ""
+            ));
 //            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, address.get("second")
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA, null
 //            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
+            ));
 //            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode")
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON, null
 //            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE, place.getGeometry().getLocation().getLat()
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LONGITUDE, place.getGeometry().getLocation().getLng()
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE,
+                    (postalCode != null && !postalCode.isEmpty()) ? postalCode : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE,
+                    (state != null && !state.isEmpty()) ? state : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB,
+                    (suburb != null && !suburb.isEmpty()) ? suburb : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE, (place.getUtcOffset() / 60)
+            ));
 //            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY, address.get("city")
-//            ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY, address.get("country")
-//            ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode")
-//            ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE, address.get("province")
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID, null
 //            ));
 
             models.add(model);

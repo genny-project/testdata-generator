@@ -14,12 +14,13 @@ import javax.ws.rs.core.MediaType;
 import java.util.List;
 
 @RegisterRestClient
-@Path("/maps/api/place/nearbysearch/json")
+@Path("/maps/api/place")
 @Produces(MediaType.APPLICATION_JSON)
 public interface PlaceProxy {
 
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=&radius=&key=
     @GET
+    @Path("/nearbysearch/json")
     Uni<MapsResult> getNearbyPlace(
             @QueryParam("key") String key,
             @QueryParam("location") String location,
@@ -28,6 +29,7 @@ public interface PlaceProxy {
 
     // https://maps.googleapis.com/maps/api/place/nearbysearch/json?pagetoken=&key=
     @GET
+    @Path("/nearbysearch/json")
     Uni<MapsResult> getNearbyPlace(
             @QueryParam("key") String key,
             @QueryParam("pagetoken") String pageToken
@@ -35,6 +37,7 @@ public interface PlaceProxy {
 
     // https://maps.googleapis.com/maps/api/place/details/json?key=&place_id=
     @GET
+    @Path("/details/json")
     Uni<MapsResult> getDetailPlaceById(
             @QueryParam("key") String key,
             @QueryParam("place_id") String placeId

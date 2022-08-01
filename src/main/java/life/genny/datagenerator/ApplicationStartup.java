@@ -61,8 +61,8 @@ public class ApplicationStartup {
 
         LOGGER.debug("FETCHING PLACES");
         places.addAll(placeService.fetchRandomPlaces(MELBOURNE_GEO_LOC, "100000"));
-        places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, "100000"));
-        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, "100000"));
+//        places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, "100000"));
+//        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, "100000"));
 
         LOGGER.info("DATA PREPARED");
         LOGGER.debug("FETCHED: " + imagesUrl.size() + " IMAGES URL, " + places.size() + " PLACES");

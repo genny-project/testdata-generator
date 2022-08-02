@@ -1,13 +1,14 @@
 package life.genny.datagenerator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.runtime.Startup;
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.PlaceService;
 import life.genny.datagenerator.utils.AddressGenerator;
+import life.genny.datagenerator.utils.GeneratorUtils;
 import life.genny.datagenerator.utils.PersonGenerator;
 import life.genny.datagenerator.utils.UserGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -27,7 +28,6 @@ import java.util.concurrent.Executors;
 public class ApplicationStartup {
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
-
     private static final String MELBOURNE_GEO_LOC = "-37.7762758,144.9242811";
     private static final String NEW_YORK_GEO_LOC = "40.6971477,-74.260556";
     private static final String LONDON_GEO_LOC = "51.5236688,-1.1831971";
@@ -42,6 +42,8 @@ public class ApplicationStartup {
     String perThread;
 
     @Inject
+    ObjectMapper objectMapper;
+    @Inject
     BaseEntityService baseEntityService;
     @Inject
     PlaceService placeService;
@@ -50,10 +52,11 @@ public class ApplicationStartup {
 
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>();
-    private List<PlaceDetail> places = new ArrayList<>();
+    private final List<PlaceDetail> places = new ArrayList<>();
 
     @PostConstruct
     void setUp() {
+        GeneratorUtils.setObjectMapper(objectMapper);
         LOGGER.info("PREPARING SAMPLE DATA TO GENERATE");
 
         LOGGER.debug("FETCHING IMAGES");

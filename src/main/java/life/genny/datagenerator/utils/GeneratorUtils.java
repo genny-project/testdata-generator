@@ -1,8 +1,9 @@
 package life.genny.datagenerator.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.json.AddressComponent;
-import life.genny.datagenerator.model.json.PlaceDetail;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -22,6 +23,8 @@ public class GeneratorUtils {
     public static final String ACTIVE = "ACTIVE";
 
     private static final Faker faker = new Faker();
+
+    private static ObjectMapper objectMapper;
 
     private static int generateRandomNum(int size) {
         Random random = new Random();
@@ -159,6 +162,15 @@ public class GeneratorUtils {
         geoLocation.put("latitude", dFormat.format(latitude));
         geoLocation.put("longitude", dFormat.format(longitude));
         return geoLocation;
+    }
+
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        GeneratorUtils.objectMapper = objectMapper;
+    }
+
+    public static String toJson(Object obj) throws JsonProcessingException {
+        ObjectMapper objectMapper = GeneratorUtils.objectMapper == null ? new ObjectMapper() : GeneratorUtils.objectMapper;
+        return objectMapper.writeValueAsString(obj);
     }
 
 }

@@ -10,7 +10,6 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 
 public class PersonGenerator extends Generator {
@@ -54,11 +53,6 @@ public class PersonGenerator extends Generator {
                 String firstName = GeneratorUtils.generateFirstName();
                 String lastName = GeneratorUtils.generateLastName();
 
-                Map<String, String> streetHashMap = GeneratorUtils.generateFullAddress();
-                String street = streetHashMap.get("street");
-                String country = streetHashMap.get("country");
-                String zipCode = streetHashMap.get("zipCode");
-
                 String gender = GeneratorUtils.generateGender();
 
                 entityModel.addAttribute(this.createAttribute(
@@ -84,18 +78,6 @@ public class PersonGenerator extends Generator {
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
                         GeneratorUtils.generateLinkedInURL(firstName, lastName)
-                ));
-                entityModel.addAttribute(this.createAttribute(
-                        AttributeCode.DEF_PERSON.ATT_PRI_STREET,
-                        street
-                ));
-                entityModel.addAttribute(this.createAttribute(
-                        AttributeCode.DEF_PERSON.ATT_PRI_COUNTRY,
-                        country
-                ));
-                entityModel.addAttribute(this.createAttribute(
-                        AttributeCode.DEF_PERSON.ATT_PRI_ZIPCODE,
-                        zipCode
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,

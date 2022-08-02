@@ -51,4 +51,11 @@ public class DatabaseSchema {
 //            "    CONSTRAINT `FKaedpn6csuwk6uwm5kqh73tiwd` FOREIGN KEY (`ATTRIBUTE_ID`) REFERENCES `attribute` (`id`),\n" +
             "    CONSTRAINT `FKmqrqcxsqu49b0cliy2tymjoae` FOREIGN KEY (`BASEENTITY_ID`) REFERENCES `baseentity` (`id`)\n" +
             ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
+
+    public static final String CREATE_ADDRESS = "CREATE TABLE `address` (\n" +
+            "    `id` bigint NOT NULL AUTO_INCREMENT,\n" +
+            "    `json_data` longtext NOT NULL,\n" +
+            "    PRIMARY KEY(`id`)" +
+            ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;";
+
 }

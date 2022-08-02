@@ -1,5 +1,6 @@
 package life.genny.datagenerator.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
@@ -57,6 +58,7 @@ public class AddressGenerator extends Generator {
             BaseEntityModel model = createAddressEntity();
 
             PlaceDetail place = GeneratorUtils.pickRandomData(places);
+            String jsonPlace = "";
 
             HashMap<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
@@ -64,6 +66,12 @@ public class AddressGenerator extends Generator {
             String state = addressMap.get("administrative_area_level_1");
             String country = addressMap.get("country");
             String postalCode = addressMap.get("postal_code");
+
+            try {
+                jsonPlace = GeneratorUtils.toJson(place);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
 
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, place.getVicinity()
@@ -85,9 +93,10 @@ public class AddressGenerator extends Generator {
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
             ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON, null
-//            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON,
+                    jsonPlace
+            ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE, place.getGeometry().getLocation().getLat()
             ));
@@ -107,7 +116,8 @@ public class AddressGenerator extends Generator {
                     (suburb != null && !suburb.isEmpty()) ? suburb : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
-                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE, (place.getUtcOffset() / 60)
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,
+                    GeneratorUtils.generateUTCTimeZone(place.getUtcOffset())
             ));
 //            model.addAttribute(createBaseEntityAttributeModel(
 //                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID, null

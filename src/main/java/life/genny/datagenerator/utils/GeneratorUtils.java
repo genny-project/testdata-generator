@@ -173,4 +173,11 @@ public class GeneratorUtils {
         return objectMapper.writeValueAsString(obj);
     }
 
+    public static String generateUTCTimeZone(int utcOffset) {
+        if (utcOffset >= 0)
+            return "UTC +" + (utcOffset / 60);
+        else
+            return "UTC " + (utcOffset / 60);
+    }
+
 }

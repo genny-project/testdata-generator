@@ -6,6 +6,7 @@ import io.quarkus.runtime.StartupEvent;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
+import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
 import life.genny.datagenerator.utils.AddressGenerator;
 import life.genny.datagenerator.utils.GeneratorUtils;
@@ -49,6 +50,8 @@ public class ApplicationStartup {
     PlaceService placeService;
     @Inject
     ImageService imageService;
+    @Inject
+    KeycloakService keycloakService;
 
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>();
@@ -73,7 +76,8 @@ public class ApplicationStartup {
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-        if (baseEntityService.countEntity() > 10000) return;
+
+//        if (baseEntityService.countEntity() > 10000) return;
 
         int totalRow = Integer.parseInt(totalGeneratedNumber);
         int perThread = Integer.parseInt(this.perThread);
@@ -102,11 +106,11 @@ public class ApplicationStartup {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl));
+            executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
             executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 }

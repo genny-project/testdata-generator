@@ -144,7 +144,7 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
         return code;
     }
 
-    public void setCode(Class<? extends BaseCode> code) {
+    public void setCode(Class<? extends BaseCode> code, String uuid) {
         String prefix = "";
         if (code == AttributeCode.DEF_PERSON.class) {
             prefix = "PER_";
@@ -181,7 +181,11 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
         } else {
             prefix = "UNKW_";
         }
-        this.code = prefix + UUID.randomUUID().toString().toUpperCase();
+        this.code = prefix + uuid.toUpperCase();
+    }
+
+    public void setCode(Class<? extends BaseCode> defUser) {
+        this.setCode(defUser, UUID.randomUUID().toString());
     }
 
     public int getStatus() {

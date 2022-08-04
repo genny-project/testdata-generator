@@ -34,7 +34,7 @@ public abstract class Generator implements Runnable {
             LOGGER.info("GENERATED " + count + " data " + this.getClass().getName() + " id: " + id);
         } catch (Throwable e) {
             LOGGER.error("ERROR GENERATING " + this.getClass().getName() + " id: " + id);
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

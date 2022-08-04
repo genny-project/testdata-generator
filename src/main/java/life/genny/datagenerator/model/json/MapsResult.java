@@ -23,7 +23,7 @@ public class MapsResult {
     @JsonProperty("status")
     private String status;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     public MapsResult() {
     }
@@ -55,6 +55,7 @@ public class MapsResult {
         this.results = results;
     }
 
+    @JsonIgnore
     public PlaceDetail getResult() {
         return result;
     }

@@ -28,7 +28,7 @@ public class GeneratorUtils {
 
     private static int generateRandomNum(int size) {
         Random random = new Random();
-        return random.nextInt(size);
+        return random.nextInt(Math.max(10, size));
     }
 
     public static String generateUUID() {
@@ -49,16 +49,21 @@ public class GeneratorUtils {
         String email = "";
         EmailOptions value = EmailOptions.values()[index];
 
+        String[] emailHost = new String[]{"@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com"};
+        String host = emailHost[new Random().nextInt(emailHost.length)];
+        String[] separators = new String[]{".", "_", "-"};
+        String separator = separators[new Random().nextInt(separators.length)];
+
         switch (value) {
             case OPTION1:
-                email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com";
+                email = firstName.toLowerCase() + separator + lastName.toLowerCase() + host;
                 break;
             case OPTION2:
                 int randomNum = (int) Math.floor(Math.random() * 10);
-                email = lastName.toLowerCase() + randomNum + "@gmail.com";
+                email = firstName.toLowerCase() + separator + lastName.toLowerCase() + randomNum + host;
                 break;
             default:
-                email = firstName.toLowerCase() + lastName.toLowerCase() + "@gmail.com";
+                email = firstName.toLowerCase() + lastName.toLowerCase() + host;
                 break;
         }
 

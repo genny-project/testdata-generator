@@ -3,7 +3,9 @@ package life.genny.datagenerator.utils;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
+import life.genny.datagenerator.model.json.KeycloakUser;
 import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.service.KeycloakService;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -13,16 +15,18 @@ public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
     private final List<String> imagesUrl;
+    private final KeycloakService keycloakService;
 
-    public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl) {
+    public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl, KeycloakService keycloakService) {
         super(count, service, id);
         this.imagesUrl = imagesUrl;
+        this.keycloakService = keycloakService;
     }
 
-    public BaseEntityModel generateUser() {
+    public BaseEntityModel generateUser(String name, String uuid) {
         BaseEntityModel model = new BaseEntityModel();
-        model.setName(GeneratorUtils.generateFirstName() + " " + GeneratorUtils.generateLastName());
-        model.setCode(AttributeCode.DEF_USER.class);
+        model.setName(name);
+        model.setCode(AttributeCode.DEF_USER.class, uuid);
         model.setStatus(1);
         return model;
     }
@@ -37,7 +41,7 @@ public class UserGenerator extends Generator {
         try {
             entity.setValue(value);
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
         return entity;
     }
@@ -46,12 +50,16 @@ public class UserGenerator extends Generator {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
         while (i < count) {
-            BaseEntityModel model = this.generateUser();
 
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
             String email = GeneratorUtils.generateEmail(firstName, lastName);
             String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
+            String username = email.substring(0, email.indexOf("@"));
+
+            KeycloakUser user = keycloakService.registerUserToKeycloak(firstName, lastName, email, username);
+
+            BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());
 
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_HAS_LOGGED_IN,
@@ -71,7 +79,7 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_KEYCLOAK_UUID,
-                    model.getCode().substring(model.getCode().indexOf("_") + 1)
+                    user.getId()
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PREFERRED_NAME,
@@ -96,15 +104,19 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USERCODE,
-                    model.getCode()
-            ));
-            model.addAttribute(this.createUserAttribute(
-                    AttributeCode.DEF_USER.UNQ_PRI_EMAIL,
-                    email
+                    "USR_" + user.getId()
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USERNAME,
                     email
+            ));
+            model.addAttribute(this.createUserAttribute(
+                    AttributeCode.DEF_USER.UNQ_PRI_EMAIL,
+                    user.getEmail()
+            ));
+            model.addAttribute(this.createUserAttribute(
+                    AttributeCode.DEF_USER.ATT_PRI_UUID,
+                    user.getId()
             ));
 
             models.add(model);

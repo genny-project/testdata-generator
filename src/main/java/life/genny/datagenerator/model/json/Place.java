@@ -40,7 +40,7 @@ public class Place {
     @JsonProperty("price_level")
     private Integer priceLevel;
     @JsonIgnore
-    private final Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final Map<String, Object> additionalProperties = new HashMap<>();
 
     @JsonIgnore
     public Geometry getGeometry() {

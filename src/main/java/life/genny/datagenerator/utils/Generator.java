@@ -38,5 +38,5 @@ public abstract class Generator implements Runnable {
         }
     }
 
-    abstract List<BaseEntityModel> onGenerate(int count);
+    abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
 }

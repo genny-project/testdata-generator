@@ -28,9 +28,6 @@ public class PlaceService {
     @ConfigProperty(name = "data.gcp.api_key")
     String apiKey;
 
-    @ConfigProperty(name = "data.generate_100_addresses")
-    boolean generate100;
-
     @Inject
     AddressRepository addressRepository;
 
@@ -65,7 +62,7 @@ public class PlaceService {
             while (true) {
                 places.addAll(mapsResult.getResults());
                 pageToken = mapsResult.getNextPageToken();
-                if (!generate100 || (mapsResult.getNextPageToken() == null || mapsResult.getNextPageToken().isEmpty()))
+                if (mapsResult.getNextPageToken() == null || mapsResult.getNextPageToken().isEmpty())
                     break;
 
                 MapsResult mapsResultTemp = new MapsResult();

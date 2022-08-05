@@ -46,4 +46,12 @@ public interface KeycloakAuthProxy {
             MultivaluedMap<String, ?> params
     );
 
+    @DELETE
+    @Path("admin/realms/{realmName}/users/{userId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    void deleteUser(
+            @PathParam("realmName") String realmName,
+            @HeaderParam("Authorization") String bearerToken,
+            @PathParam("userId") String userId
+    );
 }

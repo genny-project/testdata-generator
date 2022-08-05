@@ -86,6 +86,13 @@ public class KeycloakRequestExecutor {
         });
     }
 
+    public void deleteUserKeycloak(String userId) throws Exception {
+        executeAuthenticatedRequest(bearerToken -> {
+            keycloakService.getKeycloakAuthProxy().deleteUser(keycloakService.getRealmName(), bearerToken, userId);
+            return null;
+        });
+    }
+
     interface OnRequestListener<E> {
         E onRequest(String bearerToken);
     }

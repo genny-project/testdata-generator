@@ -47,6 +47,8 @@ public class UserGenerator extends Generator {
         return entity;
     }
 
+    private final List<String> keycloakUserIds = new ArrayList<>();
+
     public List<BaseEntityModel> generateUserBulk(long count) throws Exception {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
@@ -59,7 +61,6 @@ public class UserGenerator extends Generator {
             String username = email.substring(0, email.indexOf("@"));
 
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
-
             if (user == null) {
                 LOGGER.info("RE-CREATE NEW USER");
                 firstName = GeneratorUtils.generateFirstName();
@@ -68,6 +69,7 @@ public class UserGenerator extends Generator {
                 user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
             }
 
+            keycloakUserIds.add(user.getId());
             BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());
 
             model.addAttribute(this.createUserAttribute(
@@ -137,5 +139,17 @@ public class UserGenerator extends Generator {
     @Override
     List<BaseEntityModel> onGenerate(int count) throws Exception {
         return generateUserBulk(count);
+    }
+
+    @Override
+    protected void onError(Throwable throwable) {
+        for (String id : keycloakUserIds) {
+            try {
+                requestExecutor.deleteUserKeycloak(id);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        keycloakUserIds.clear();
     }
 }

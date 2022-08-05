@@ -8,6 +8,7 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
+import life.genny.datagenerator.utils.AddressGenerator;
 import life.genny.datagenerator.utils.GeneratorUtils;
 import life.genny.datagenerator.utils.PersonGenerator;
 import life.genny.datagenerator.utils.UserGenerator;
@@ -107,7 +108,7 @@ public class ApplicationStartup {
         try {
             executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
-//            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
+            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

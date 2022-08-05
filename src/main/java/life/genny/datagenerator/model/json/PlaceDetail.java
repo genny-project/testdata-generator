@@ -1,16 +1,20 @@
 package life.genny.datagenerator.model.json;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.HashMap;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Place {
+public class PlaceDetail implements Serializable {
 
+    @JsonProperty("address_components")
+    private List<AddressComponent> addressComponents = null;
+    @JsonProperty("adr_address")
+    private String adrAddress;
+    @JsonProperty("formatted_address")
+    private String formattedAddress;
     @JsonProperty("geometry")
     private Geometry geometry;
     @JsonProperty("icon")
@@ -25,24 +29,40 @@ public class Place {
     private String placeId;
     @JsonProperty("reference")
     private String reference;
-    @JsonProperty("scope")
-    private String scope;
     @JsonProperty("types")
     private List<String> types = null;
+    @JsonProperty("url")
+    private String url;
+    @JsonProperty("utc_offset")
+    private int utcOffset;
     @JsonProperty("vicinity")
     private String vicinity;
-    @JsonProperty("business_status")
-    private String businessStatus;
-    @JsonProperty("rating")
-    private Integer rating;
-    @JsonProperty("user_ratings_total")
-    private Integer userRatingsTotal;
-    @JsonProperty("price_level")
-    private Integer priceLevel;
-    @JsonIgnore
-    private final Map<String, Object> additionalProperties = new HashMap<>();
+    private final static long serialVersionUID = 9195246243174947242L;
 
-    @JsonIgnore
+    public List<AddressComponent> getAddressComponents() {
+        return addressComponents;
+    }
+
+    public void setAddressComponents(List<AddressComponent> addressComponents) {
+        this.addressComponents = addressComponents;
+    }
+
+    public String getAdrAddress() {
+        return adrAddress;
+    }
+
+    public void setAdrAddress(String adrAddress) {
+        this.adrAddress = adrAddress;
+    }
+
+    public String getFormattedAddress() {
+        return formattedAddress;
+    }
+
+    public void setFormattedAddress(String formattedAddress) {
+        this.formattedAddress = formattedAddress;
+    }
+
     public Geometry getGeometry() {
         return geometry;
     }
@@ -51,7 +71,6 @@ public class Place {
         this.geometry = geometry;
     }
 
-    @JsonIgnore
     public String getIcon() {
         return icon;
     }
@@ -60,7 +79,6 @@ public class Place {
         this.icon = icon;
     }
 
-    @JsonIgnore
     public String getIconBackgroundColor() {
         return iconBackgroundColor;
     }
@@ -69,7 +87,6 @@ public class Place {
         this.iconBackgroundColor = iconBackgroundColor;
     }
 
-    @JsonIgnore
     public String getIconMaskBaseUri() {
         return iconMaskBaseUri;
     }
@@ -78,7 +95,6 @@ public class Place {
         this.iconMaskBaseUri = iconMaskBaseUri;
     }
 
-    @JsonIgnore
     public String getName() {
         return name;
     }
@@ -87,7 +103,6 @@ public class Place {
         this.name = name;
     }
 
-    @JsonIgnore
     public String getPlaceId() {
         return placeId;
     }
@@ -96,7 +111,6 @@ public class Place {
         this.placeId = placeId;
     }
 
-    @JsonIgnore
     public String getReference() {
         return reference;
     }
@@ -105,16 +119,6 @@ public class Place {
         this.reference = reference;
     }
 
-    @JsonIgnore
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
-    }
-
-    @JsonIgnore
     public List<String> getTypes() {
         return types;
     }
@@ -123,7 +127,22 @@ public class Place {
         this.types = types;
     }
 
-    @JsonIgnore
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public int getUtcOffset() {
+        return utcOffset;
+    }
+
+    public void setUtcOffset(int utcOffset) {
+        this.utcOffset = utcOffset;
+    }
+
     public String getVicinity() {
         return vicinity;
     }
@@ -131,52 +150,4 @@ public class Place {
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
     }
-
-    @JsonIgnore
-    public String getBusinessStatus() {
-        return businessStatus;
-    }
-
-    public void setBusinessStatus(String businessStatus) {
-        this.businessStatus = businessStatus;
-    }
-
-    @JsonIgnore
-    public Integer getRating() {
-        return rating;
-    }
-
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
-
-    @JsonIgnore
-    public Integer getUserRatingsTotal() {
-        return userRatingsTotal;
-    }
-
-    public void setUserRatingsTotal(Integer userRatingsTotal) {
-        this.userRatingsTotal = userRatingsTotal;
-    }
-
-    @JsonIgnore
-    public Integer getPriceLevel() {
-        return priceLevel;
-    }
-
-
-    public void setPriceLevel(Integer priceLevel) {
-        this.priceLevel = priceLevel;
-    }
-
-    @JsonIgnore
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
-    }
-
 }

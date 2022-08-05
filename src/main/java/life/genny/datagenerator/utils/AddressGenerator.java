@@ -1,30 +1,32 @@
 package life.genny.datagenerator.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
-import life.genny.datagenerator.model.json.Place;
+import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.PlaceService;
 import org.jboss.logging.Logger;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    public AddressGenerator(int count, BaseEntityService service, long id) {
+    private List<PlaceDetail> places;
+
+    public AddressGenerator(int count, BaseEntityService service, long id, List<PlaceDetail> places) {
         super(count, service, id);
+        this.places = places;
     }
 
     @Inject
     PlaceService placeService;
-
-    List<Place> places = new ArrayList<>();
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
@@ -55,28 +57,72 @@ public class AddressGenerator extends Generator {
         while (i < count) {
             BaseEntityModel model = createAddressEntity();
 
-            Map<String, String> address = GeneratorUtils.generateFullAddress();
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, address.get("full"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, address.get("second"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY, address.get("city"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY, address.get("country"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE, address.get("zipCode"))
-            );
-            model.addAttribute(
-                    createBaseEntityAttributeModel(AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE, address.get("province"))
-            );
+            PlaceDetail place = GeneratorUtils.pickRandomData(places);
+            String jsonPlace = "";
+
+            HashMap<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
+            String suburb = addressMap.get("administrative_area_level_3");
+            String city = addressMap.get("administrative_area_level_2");
+            String state = addressMap.get("administrative_area_level_1");
+            String country = addressMap.get("country");
+            String postalCode = addressMap.get("postal_code");
+
+            try {
+                jsonPlace = GeneratorUtils.toJson(place);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, place.getVicinity()
+            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, null
+//            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY,
+                    (city != null && !city.isEmpty()) ? city : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY,
+                    (country != null && !country.isEmpty()) ? country : ""
+            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA, null
+//            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_JSON,
+                    jsonPlace
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LATITUDE, place.getGeometry().getLocation().getLat()
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_LONGITUDE, place.getGeometry().getLocation().getLng()
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE,
+                    (postalCode != null && !postalCode.isEmpty()) ? postalCode : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE,
+                    (state != null && !state.isEmpty()) ? state : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB,
+                    (suburb != null && !suburb.isEmpty()) ? suburb : ""
+            ));
+            model.addAttribute(createBaseEntityAttributeModel(
+                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,
+                    GeneratorUtils.generateUTCTimeZone(place.getUtcOffset())
+            ));
+//            model.addAttribute(createBaseEntityAttributeModel(
+//                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID, null
+//            ));
+
             models.add(model);
             i++;
         }

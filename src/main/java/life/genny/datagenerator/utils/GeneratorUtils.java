@@ -1,6 +1,9 @@
 package life.genny.datagenerator.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
+import life.genny.datagenerator.model.json.AddressComponent;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -21,9 +24,11 @@ public class GeneratorUtils {
 
     private static final Faker faker = new Faker();
 
+    private static ObjectMapper objectMapper;
+
     private static int generateRandomNum(int size) {
         Random random = new Random();
-        return random.nextInt(size);
+        return random.nextInt(Math.max(10, size));
     }
 
     public static String generateUUID() {
@@ -44,16 +49,21 @@ public class GeneratorUtils {
         String email = "";
         EmailOptions value = EmailOptions.values()[index];
 
+        String[] emailHost = new String[]{"@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com"};
+        String host = emailHost[new Random().nextInt(emailHost.length)];
+        String[] separators = new String[]{".", "_", "-"};
+        String separator = separators[new Random().nextInt(separators.length)];
+
         switch (value) {
             case OPTION1:
-                email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@gmail.com";
+                email = firstName.toLowerCase() + separator + lastName.toLowerCase() + host;
                 break;
             case OPTION2:
                 int randomNum = (int) Math.floor(Math.random() * 10);
-                email = lastName.toLowerCase() + randomNum + "@gmail.com";
+                email = firstName.toLowerCase() + separator + lastName.toLowerCase() + randomNum + host;
                 break;
             default:
-                email = firstName.toLowerCase() + lastName.toLowerCase() + "@gmail.com";
+                email = firstName.toLowerCase() + lastName.toLowerCase() + host;
                 break;
         }
 
@@ -73,20 +83,44 @@ public class GeneratorUtils {
         return dateFormat.parse(generatedDate);
     }
 
-    public static HashMap<String, String> generateFullAddress() {
-        HashMap<String, String> address = new HashMap<>();
-        address.put("street", faker.address().streetAddress());
-        address.put("country", faker.address().country());
-        address.put("city", faker.address().city());
-        address.put("province", faker.address().state());
-        address.put("full", faker.address().fullAddress());
-        address.put("second", faker.address().secondaryAddress());
-        String zipCode = faker.address().zipCode();
-        if (zipCode.length() < 6) address.put("zipCode", zipCode);
-        else address.put("zipCode", zipCode.substring(0, 5));
-        return address;
+    public static <E> E pickRandomData(List<E> data) {
+        int ranInt = generateRandomNum(data.size());
+        return data.get(ranInt);
     }
 
+    public static HashMap<String, String> translateAddress(List<AddressComponent> components) {
+        HashMap<String, String> addressMap = new HashMap<>();
+        for (AddressComponent component: components) {
+            if (component.getTypes().contains("street_number")) {
+                addressMap.put("street_map", component.getLongName());
+            }
+            if (component.getTypes().contains("route")) {
+                addressMap.put("route", component.getLongName());
+            }
+            if (component.getTypes().contains("locality")) {
+                addressMap.put("locality", component.getLongName());
+            }
+            if (component.getTypes().contains("administrative_area_level_4")) {
+                addressMap.put("administrative_area_level_4", component.getLongName());
+            }
+            if (component.getTypes().contains("administrative_area_level_3")) {
+                addressMap.put("administrative_area_level_3", component.getLongName());
+            }
+            if (component.getTypes().contains("administrative_area_level_2")) {
+                addressMap.put("administrative_area_level_2", component.getLongName());
+            }
+            if (component.getTypes().contains("administrative_area_level_1")) {
+                addressMap.put("administrative_area_level_1", component.getLongName());
+            }
+            if (component.getTypes().contains("country")) {
+                addressMap.put("country", component.getLongName());
+            }
+            if (component.getTypes().contains("postal_code")) {
+                addressMap.put("postal_code", component.getLongName());
+            }
+        }
+        return addressMap;
+    }
 
     public static String generateGender() {
         Random random = new Random();
@@ -133,6 +167,22 @@ public class GeneratorUtils {
         geoLocation.put("latitude", dFormat.format(latitude));
         geoLocation.put("longitude", dFormat.format(longitude));
         return geoLocation;
+    }
+
+    public static void setObjectMapper(ObjectMapper objectMapper) {
+        GeneratorUtils.objectMapper = objectMapper;
+    }
+
+    public static String toJson(Object obj) throws JsonProcessingException {
+        ObjectMapper objectMapper = GeneratorUtils.objectMapper == null ? new ObjectMapper() : GeneratorUtils.objectMapper;
+        return objectMapper.writeValueAsString(obj);
+    }
+
+    public static String generateUTCTimeZone(int utcOffset) {
+        if (utcOffset >= 0)
+            return "UTC +" + (utcOffset / 60);
+        else
+            return "UTC " + (utcOffset / 60);
     }
 
 }

@@ -27,16 +27,18 @@ public abstract class Generator implements Runnable {
     public void run() {
         try {
             LOGGER.info("START GENERATING " + this.getClass().getName() + " id: " + id);
-//            Thread.sleep(300);
             List<BaseEntityModel> data = onGenerate(count);
             service.saveAll(data);
-//            Thread.sleep(300);
             LOGGER.info("GENERATED " + count + " data " + this.getClass().getName() + " id: " + id);
         } catch (Throwable e) {
             LOGGER.error("ERROR GENERATING " + this.getClass().getName() + " id: " + id);
             LOGGER.error(e.getMessage(), e);
+            onError(e);
         }
     }
 
-    abstract List<BaseEntityModel> onGenerate(int count);
+    abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
+
+    protected void onError(Throwable throwable) {
+    }
 }

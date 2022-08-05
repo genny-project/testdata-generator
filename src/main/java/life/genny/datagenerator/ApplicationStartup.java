@@ -8,7 +8,6 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.utils.AddressGenerator;
 import life.genny.datagenerator.utils.GeneratorUtils;
 import life.genny.datagenerator.utils.PersonGenerator;
 import life.genny.datagenerator.utils.UserGenerator;
@@ -60,7 +59,7 @@ public class ApplicationStartup {
     @PostConstruct
     void setUp() {
         GeneratorUtils.setObjectMapper(objectMapper);
-        LOGGER.info("PREPARING SAMPLE DATA TO GENERATE");
+        LOGGER.info("PREPARING SAMPLE DATA TO GENERATE SIZE:" + totalGeneratedNumber + ", MAX_THREAD:" + maxThread + ", PER_THREAD:" + perThread);
 
         LOGGER.debug("FETCHING IMAGES");
         imagesUrl = imageService.fetchImages();
@@ -108,7 +107,7 @@ public class ApplicationStartup {
         try {
             executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(count, baseEntityService, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
+//            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

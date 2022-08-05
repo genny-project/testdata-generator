@@ -5,6 +5,7 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.KeycloakUser;
 import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.service.KeycloakRequestExecutor;
 import life.genny.datagenerator.service.KeycloakService;
 import org.jboss.logging.Logger;
 
@@ -15,12 +16,12 @@ public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
     private final List<String> imagesUrl;
-    private final KeycloakService keycloakService;
+    private final KeycloakRequestExecutor requestExecutor;
 
     public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl, KeycloakService keycloakService) {
         super(count, service, id);
         this.imagesUrl = imagesUrl;
-        this.keycloakService = keycloakService;
+        this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }
 
     public BaseEntityModel generateUser(String name, String uuid) {
@@ -46,7 +47,9 @@ public class UserGenerator extends Generator {
         return entity;
     }
 
-    public List<BaseEntityModel> generateUserBulk(long count) {
+    private final List<String> keycloakUserIds = new ArrayList<>();
+
+    public List<BaseEntityModel> generateUserBulk(long count) throws Exception {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
         while (i < count) {
@@ -57,8 +60,16 @@ public class UserGenerator extends Generator {
             String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
             String username = email.substring(0, email.indexOf("@"));
 
-            KeycloakUser user = keycloakService.registerUserToKeycloak(firstName, lastName, email, username);
+            KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+            if (user == null) {
+                LOGGER.info("RE-CREATE NEW USER");
+                firstName = GeneratorUtils.generateFirstName();
+                email = GeneratorUtils.generateEmail(firstName, lastName);
+                username = email.substring(0, email.indexOf("@"));
+                user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+            }
 
+            keycloakUserIds.add(user.getId());
             BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());
 
             model.addAttribute(this.createUserAttribute(
@@ -126,7 +137,19 @@ public class UserGenerator extends Generator {
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) {
+    List<BaseEntityModel> onGenerate(int count) throws Exception {
         return generateUserBulk(count);
+    }
+
+    @Override
+    protected void onError(Throwable throwable) {
+        for (String id : keycloakUserIds) {
+            try {
+                requestExecutor.deleteUserKeycloak(id);
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+            }
+        }
+        keycloakUserIds.clear();
     }
 }

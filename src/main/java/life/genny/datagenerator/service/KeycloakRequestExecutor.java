@@ -76,6 +76,8 @@ public class KeycloakRequestExecutor {
     }
 
     public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) throws Exception {
+        if (keycloakService.checkIsEmailAvailable(email)) return null;
+        keycloakService.putEmail(email);
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
         user.setEmailVerified(true);

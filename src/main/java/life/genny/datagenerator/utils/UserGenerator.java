@@ -18,8 +18,8 @@ public class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl, KeycloakService keycloakService) {
-        super(count, service, id);
+    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<String> imagesUrl, KeycloakService keycloakService) {
+        super(count, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }
@@ -56,17 +56,22 @@ public class UserGenerator extends Generator {
 
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
-            String email = GeneratorUtils.generateEmail(firstName, lastName);
             String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
+            String email = GeneratorUtils.generateEmail(firstName, lastName);
             String username = email.substring(0, email.indexOf("@"));
 
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
-            if (user == null) {
+            int j = 0;
+            while (user == null && j < 5) {
                 LOGGER.info("RE-CREATE NEW USER");
                 firstName = GeneratorUtils.generateFirstName();
                 email = GeneratorUtils.generateEmail(firstName, lastName);
                 username = email.substring(0, email.indexOf("@"));
                 user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+                j++;
+            }
+            if (user == null) {
+                throw new Exception("Failed to create user with email " + email);
             }
 
             keycloakUserIds.add(user.getId());

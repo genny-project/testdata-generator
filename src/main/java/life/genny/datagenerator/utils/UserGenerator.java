@@ -62,12 +62,17 @@ public class UserGenerator extends Generator {
 
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
             int j = 0;
-            while (user == null && j < 5) {
-                LOGGER.info("RE-CREATE NEW USER");
-                firstName = GeneratorUtils.generateFirstName();
-                email = GeneratorUtils.generateEmail(firstName, lastName);
-                username = email.substring(0, email.indexOf("@"));
-                user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+            while ((user == null || !user.getEmail().equals(email)) && j < 5) {
+                if (user != null && !user.getEmail().equals(email)) {
+                    LOGGER.info("RE-LOAD CREATED USER");
+                    user = requestExecutor.getRegisteredUserFromKeycloak(email);
+                } else {
+                    LOGGER.info("RE-CREATE NEW USER");
+                    firstName = GeneratorUtils.generateFirstName();
+                    email = GeneratorUtils.generateEmail(firstName, lastName);
+                    username = email.substring(0, email.indexOf("@"));
+                    user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+                }
                 j++;
             }
             if (user == null) {

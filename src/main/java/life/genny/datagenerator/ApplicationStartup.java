@@ -100,11 +100,12 @@ public class ApplicationStartup {
             execute(perThread, i);
             i++;
         }
+        lastId = i-1;
         if ((perThread * thread) < totalRow) {
             int count = totalRow - (perThread * thread);
             execute(count, i);
+            lastId = i;
         }
-        lastId = i;
     }
 
     /**

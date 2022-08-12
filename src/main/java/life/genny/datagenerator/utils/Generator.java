@@ -12,15 +12,17 @@ public abstract class Generator implements Runnable {
     public final int count;
     public final BaseEntityService service;
     private final long id;
+    private final OnFinishListener onFinishListener;
 
-    public Generator(int count, BaseEntityService service) {
-        this(count, service, new Random().nextInt(1000));
+    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener) {
+        this(count, service, onFinishListener, new Random().nextInt(1000));
     }
 
-    public Generator(int count, BaseEntityService service, long id) {
+    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
         this.count = count;
         this.service = service;
         this.id = id;
+        this.onFinishListener = onFinishListener;
     }
 
     @Override
@@ -35,10 +37,17 @@ public abstract class Generator implements Runnable {
             LOGGER.error(e.getMessage(), e);
             onError(e);
         }
+        if (onFinishListener != null) {
+            onFinishListener.onFinish(id);
+        }
     }
 
     abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
 
     protected void onError(Throwable throwable) {
+    }
+
+    public interface OnFinishListener {
+        void onFinish(Long generatorId);
     }
 }

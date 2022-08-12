@@ -1,7 +1,6 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import life.genny.datagenerator.data.DatabaseSchema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,7 +10,6 @@ import java.time.LocalTime;
 import java.util.Date;
 
 @Entity(name = "baseentity_attribute")
-@Table(schema = DatabaseSchema.CREATE_BASE_ENTITY_ATTRIBUTE)
 public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(

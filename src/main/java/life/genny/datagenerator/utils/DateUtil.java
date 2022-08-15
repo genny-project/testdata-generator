@@ -18,7 +18,7 @@ public class DateUtil {
     /* Convert birthdate into age */
     public int turnBirthDateToAge(Date birthDate) {
         Date now = new Date();
-        if (birthDate != null && now != null) {
+        if (birthDate != null) {
             return Period.between(
                     convertDateIntoLocalDate(birthDate),
                     convertDateIntoLocalDate(now)

@@ -15,7 +15,7 @@ public class AddressComponent implements Serializable {
     private String shortName;
     @JsonProperty("types")
     private List<String> types = null;
-    private final static long serialVersionUID = 6765538270218164017L;
+    private static final long serialVersionUID = 6765538270218164017L;
 
     public String getLongName() {
         return longName;

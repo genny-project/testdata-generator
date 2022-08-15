@@ -16,6 +16,7 @@ import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +39,10 @@ public class PlaceService {
 
     private String pageToken;
 
+
+    @Transactional
     public void saveAddress(List<PlaceDetail> details) {
-        for (PlaceDetail detail: details) {
+        for (PlaceDetail detail : details) {
             try {
                 AddressModel model = new AddressModel(GeneratorUtils.toJson(detail));
                 addressRepository.persist(model.toEntity());

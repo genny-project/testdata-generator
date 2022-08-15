@@ -6,6 +6,7 @@ import org.jboss.logging.Logger;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public abstract class Generator implements Runnable, GeneratorListener {
     private static final Logger LOGGER = Logger.getLogger(Generator.class);
@@ -13,13 +14,17 @@ public abstract class Generator implements Runnable, GeneratorListener {
     public final BaseEntityService service;
     private final long id;
     private Date startTime;
+    private final OnFinishListener onFinishListener;
 
-    abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
+    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener) {
+        this(count, service, onFinishListener, new Random().nextInt(1000));
+    }
 
-    protected Generator(int count, BaseEntityService service, long id) {
+    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
         this.count = count;
         this.service = service;
         this.id = id;
+        this.onFinishListener = onFinishListener;
     }
 
     @Override
@@ -47,8 +52,12 @@ public abstract class Generator implements Runnable, GeneratorListener {
 
     @Override
     public void onFinish() {
-
+        if (onFinishListener != null) {
+            onFinishListener.onFinish(id);
+        }
     }
+
+    abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
 
     @Override
     public void onSuccess() {
@@ -59,5 +68,9 @@ public abstract class Generator implements Runnable, GeneratorListener {
     @Override
     public void onError(Throwable throwable) {
 
+    }
+
+    public interface OnFinishListener {
+        void onFinish(Long generatorId);
     }
 }

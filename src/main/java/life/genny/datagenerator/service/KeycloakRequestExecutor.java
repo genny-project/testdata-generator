@@ -61,6 +61,12 @@ public class KeycloakRequestExecutor {
         }
         if (auth == null) return null;
         try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+        try {
             return listener.onRequest("Bearer " + auth.getAccessToken(), listener.getInput());
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
@@ -88,8 +94,12 @@ public class KeycloakRequestExecutor {
                     keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
                     return true;
                 } catch (Exception e) {
-                    if (e instanceof WebApplicationException){
-                        throw e;
+                    if (e instanceof WebApplicationException) {
+                        if (((WebApplicationException) e).getResponse().getStatus() == 409) {
+                            keycloakService.putEmail(user.getEmail());
+                        } else {
+                            throw e;
+                        }
                     }
                     LOGGER.error(e.getMessage(), e);
                     return false;
@@ -100,12 +110,6 @@ public class KeycloakRequestExecutor {
             return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
                 @Override
                 KeycloakUser onRequest(String bearerToken, String s) {
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        LOGGER.error(e.getMessage(), e);
-                        Thread.currentThread().interrupt();
-                    }
                     List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, user.getEmail());
                     for(KeycloakUser us: users){
                         if (us.getEmail().equals(user.getEmail())) {
@@ -133,7 +137,7 @@ public class KeycloakRequestExecutor {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
                 List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                for(KeycloakUser user: users){
+                for (KeycloakUser user : users) {
                     if (user.getEmail().equals(email)) {
                         return user;
                     }
@@ -143,14 +147,17 @@ public class KeycloakRequestExecutor {
         });
     }
 
-    public static abstract class OnRequestListener<Output, Input> {
-        private final Input input;
+    public abstract static class OnRequestListener<OUTPUT, INPUT> {
+        private final INPUT input;
 
-        protected OnRequestListener(Input input) {
+        protected OnRequestListener(INPUT input) {
             this.input = input;
         }
 
-        public Input getInput() { return input;}
-        abstract Output onRequest(String bearerToken, Input input) throws Throwable;
+        public INPUT getInput() {
+            return input;
+        }
+
+        abstract OUTPUT onRequest(String bearerToken, INPUT input) throws Throwable;
     }
 }

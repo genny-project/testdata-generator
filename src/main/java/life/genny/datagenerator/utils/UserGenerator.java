@@ -18,8 +18,8 @@ public class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, long id, List<String> imagesUrl, KeycloakService keycloakService) {
-        super(count, service, id);
+    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<String> imagesUrl, KeycloakService keycloakService) {
+        super(count, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }

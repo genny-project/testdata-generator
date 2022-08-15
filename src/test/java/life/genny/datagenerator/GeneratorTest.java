@@ -56,9 +56,9 @@ public class GeneratorTest {
         int threadCount = totalData / perThread;
         ExecutorService executor = Executors.newFixedThreadPool(Math.min(threadCount, 10));
         for (int i = 0; i < threadCount; i++) {
-            executor.submit(new UserGenerator(perThread, baseEntityService, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(perThread, baseEntityService, i));
-            executor.submit(new AddressGenerator(perThread, baseEntityService, i, places));
+            executor.submit(new UserGenerator(perThread, baseEntityService, null, i, imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(perThread, baseEntityService, null, i));
+            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i, places));
         }
     }
 

@@ -8,10 +8,7 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.utils.AddressGenerator;
-import life.genny.datagenerator.utils.GeneratorUtils;
-import life.genny.datagenerator.utils.PersonGenerator;
-import life.genny.datagenerator.utils.UserGenerator;
+import life.genny.datagenerator.utils.*;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -20,6 +17,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,9 +54,22 @@ public class ApplicationStartup {
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>();
     private final List<PlaceDetail> places = new ArrayList<>();
+    private Date timeStart;
+    private long runnableCount = 0;
+    private long runnableFinished = 0;
+    private final Generator.OnFinishListener onFinishListener = new Generator.OnFinishListener() {
+        @Override
+        public void onFinish(Long generatorId) {
+            runnableFinished++;
+            if (runnableFinished == runnableCount) {
+                LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
+            }
+        }
+    };
 
     @PostConstruct
     void setUp() {
+        timeStart = new Date();
         GeneratorUtils.setObjectMapper(objectMapper);
         LOGGER.info("PREPARING SAMPLE DATA TO GENERATE SIZE:" + totalGeneratedNumberProperty +
                 ", MAX_THREAD:" + maxThreadProperty +
@@ -107,9 +118,11 @@ public class ApplicationStartup {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(count, baseEntityService, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
+            executor.submit(new UserGenerator(count, baseEntityService, onFinishListener, i, imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(count, baseEntityService, onFinishListener, i));
+            executor.submit(new AddressGenerator(count, baseEntityService, onFinishListener, i, places));
+
+            runnableCount += 3;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -9,7 +9,6 @@ import life.genny.datagenerator.service.BaseEntityService;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +18,8 @@ public class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
-    public AddressGenerator(int count, BaseEntityService service, long id, List<PlaceDetail> places) {
-        super(count, service, id);
+    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {
+        super(count, service, onFinishListener, id);
         this.places = places;
     }
 

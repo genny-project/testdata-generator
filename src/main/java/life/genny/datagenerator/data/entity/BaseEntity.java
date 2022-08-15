@@ -4,7 +4,6 @@ import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import life.genny.datagenerator.data.DatabaseSchema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.jboss.logging.Logger;
 
 import javax.persistence.*;
 import java.util.ArrayList;

@@ -14,8 +14,6 @@ import java.util.List;
 @Entity(name = "baseentity")
 @Table(schema = DatabaseSchema.CREATE_BASE_ENTITY)
 public class BaseEntity extends PanacheEntityBase {
-    private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
-
     @Column(length = 31, nullable = false, name = "dtype", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 

@@ -20,6 +20,9 @@
         <quarkus.platform.version>2.10.2.Final</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.0.0-M7</surefire-plugin.version>
+        <sonar.projectKey></sonar.projectKey>
+        <sonar.host.url></sonar.host.url>
+        <sonar.login></sonar.login>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -74,14 +77,6 @@
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-resteasy-mutiny</artifactId>
         </dependency>
-        <!--      <dependency>-->
-        <!--          <groupId>io.quarkus</groupId>-->
-        <!--          <artifactId>quarkus-oidc</artifactId>-->
-        <!--      </dependency>-->
-        <!--      <dependency>-->
-        <!--          <groupId>io.quarkus</groupId>-->
-        <!--          <artifactId>quarkus-keycloak-authorization</artifactId>-->
-        <!--      </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>

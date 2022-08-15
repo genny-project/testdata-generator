@@ -11,6 +11,7 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressGenerator extends Generator {
 
@@ -18,8 +19,8 @@ public class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
-    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {
-        super(count, service, onFinishListener, id);
+    public AddressGenerator(int count, BaseEntityService service, long id, List<PlaceDetail> places) {
+        super(count, service, id);
         this.places = places;
     }
 
@@ -55,7 +56,7 @@ public class AddressGenerator extends Generator {
             PlaceDetail place = GeneratorUtils.pickRandomData(places);
             String jsonPlace = "";
 
-            HashMap<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
+            Map<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
             String city = addressMap.get("administrative_area_level_2");
             String state = addressMap.get("administrative_area_level_1");

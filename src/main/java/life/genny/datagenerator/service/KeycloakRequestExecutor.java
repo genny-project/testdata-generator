@@ -104,6 +104,7 @@ public class KeycloakRequestExecutor {
                         Thread.sleep(300);
                     } catch (InterruptedException e) {
                         LOGGER.error(e.getMessage(), e);
+                        Thread.currentThread().interrupt();
                     }
                     List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, user.getEmail());
                     for(KeycloakUser us: users){

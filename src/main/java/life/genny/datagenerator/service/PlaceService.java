@@ -12,15 +12,17 @@ import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.utils.GeneratorUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
 @ApplicationScoped
 public class PlaceService {
+
+    private static final Logger LOGGER = Logger.getLogger(PlaceService.class);
 
     @RestClient
     PlaceProxy placeProxy;
@@ -36,7 +38,6 @@ public class PlaceService {
 
     private String pageToken;
 
-    @Transactional
     public void saveAddress(List<PlaceDetail> details) {
         for (PlaceDetail detail: details) {
             try {
@@ -112,8 +113,9 @@ public class PlaceService {
         try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage());
+            Thread.currentThread().interrupt();
             throw new RuntimeException(e);
         }
     }
-
 }

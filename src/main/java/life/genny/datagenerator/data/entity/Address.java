@@ -1,12 +1,10 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import life.genny.datagenerator.data.DatabaseSchema;
 
 import javax.persistence.*;
 
 @Entity(name = "address")
-@Table(schema = DatabaseSchema.CREATE_ADDRESS)
 public class Address extends PanacheEntityBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

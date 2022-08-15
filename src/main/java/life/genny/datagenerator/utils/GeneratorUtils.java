@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.json.AddressComponent;
 
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,17 +16,21 @@ public class GeneratorUtils {
     public static final boolean DEFAULT_READ_ONLY = false;
     public static final String DEFAULT_REALM = "Genny";
 
-    public static final String[] GENDER = {"MALE", "FEMALE", "OTHER"};
+    protected static final String[] GENDER = {"MALE", "FEMALE", "OTHER"};
     public static final String COMPLETED = "Completed";
     public static final String AVAILABLE = "AVAILABLE";
     public static final String ACTIVE = "ACTIVE";
 
     private static final Faker faker = new Faker();
 
-    private static ObjectMapper objectMapper;
+    private static final Random random = new Random();
+
+    private static ObjectMapper objectMapper = new ObjectMapper();
+
+    public GeneratorUtils() {
+    }
 
     private static int generateRandomNum(int size) {
-        Random random = new Random();
         return random.nextInt(Math.max(10, size));
     }
 
@@ -45,21 +48,21 @@ public class GeneratorUtils {
 
 
     public static String generateEmail(String firstName, String lastName) {
-        int index = (int) Math.floor(Math.random() * 2);
+        int index = (int) Math.floor(generateRandomNum(2));
         String email = "";
         EmailOptions value = EmailOptions.values()[index];
 
         String[] emailHost = new String[]{"@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com"};
-        String host = emailHost[new Random().nextInt(emailHost.length)];
+        String host = emailHost[random.nextInt(emailHost.length)];
         String[] separators = new String[]{".", "_", "-"};
-        String separator = separators[new Random().nextInt(separators.length)];
+        String separator = separators[random.nextInt(separators.length)];
 
         switch (value) {
             case OPTION1:
                 email = firstName.toLowerCase() + separator + lastName.toLowerCase() + host;
                 break;
             case OPTION2:
-                int randomNum = (int) Math.floor(Math.random() * 10);
+                int randomNum = (int) Math.floor(generateRandomNum(100));
                 email = firstName.toLowerCase() + separator + lastName.toLowerCase() + randomNum + host;
                 break;
             default:
@@ -88,7 +91,7 @@ public class GeneratorUtils {
         return data.get(ranInt);
     }
 
-    public static HashMap<String, String> translateAddress(List<AddressComponent> components) {
+    public static Map<String, String> translateAddress(List<AddressComponent> components) {
         HashMap<String, String> addressMap = new HashMap<>();
         for (AddressComponent component: components) {
             if (component.getTypes().contains("street_number")) {
@@ -123,7 +126,6 @@ public class GeneratorUtils {
     }
 
     public static String generateGender() {
-        Random random = new Random();
         int i = random.nextInt(3);
         return GENDER[i];
     }
@@ -134,7 +136,6 @@ public class GeneratorUtils {
     }
 
     public static String generatePhoneNumber() {
-        Random random = new Random();
         int part1 = random.nextInt(600) + 100;
         int part2 = random.nextInt(641) + 100;
         int part3 = random.nextInt(8999) + 1000;
@@ -145,36 +146,11 @@ public class GeneratorUtils {
         return images.get(generateRandomNum(images.size()));
     }
 
-//    public static File generateImage() throws IOException {
-//        Random random = new Random();
-//        BufferedImage bufferedImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
-//        Graphics2D g2d = bufferedImage.createGraphics();
-//        g2d.setColor(Color.red);
-//        File file = new File("image.jpg");
-//        ImageIO.write(bufferedImage, "jpg", file);
-//        return file;
-//    }
-
-    public static HashMap<String, String> generateLngLat() {
-        HashMap<String, String> geoLocation = new HashMap<>();
-        double minLat = 0.00;
-        double maxLat = 30.00;
-        double minLng = 40.00;
-        double maxLng = 55.00;
-        double latitude = minLat + (Math.random() * ((maxLat - minLat) + 1));
-        double longitude = minLng + (Math.random() * ((maxLng - minLng) + 1));
-        DecimalFormat dFormat = new DecimalFormat("#.#######");
-        geoLocation.put("latitude", dFormat.format(latitude));
-        geoLocation.put("longitude", dFormat.format(longitude));
-        return geoLocation;
-    }
-
     public static void setObjectMapper(ObjectMapper objectMapper) {
         GeneratorUtils.objectMapper = objectMapper;
     }
 
     public static String toJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = GeneratorUtils.objectMapper == null ? new ObjectMapper() : GeneratorUtils.objectMapper;
         return objectMapper.writeValueAsString(obj);
     }
 

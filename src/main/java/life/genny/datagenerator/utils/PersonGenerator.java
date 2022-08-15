@@ -16,8 +16,8 @@ public class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
-    public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
-        super(count, service, onFinishListener, id);
+    public PersonGenerator(int count, BaseEntityService service, long id) {
+        super(count, service, id);
     }
 
     public BaseEntityModel createPersonEntity() {

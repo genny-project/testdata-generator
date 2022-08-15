@@ -8,7 +8,10 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.utils.*;
+import life.genny.datagenerator.utils.AddressGenerator;
+import life.genny.datagenerator.utils.GeneratorUtils;
+import life.genny.datagenerator.utils.PersonGenerator;
+import life.genny.datagenerator.utils.UserGenerator;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -17,7 +20,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,13 +34,13 @@ public class ApplicationStartup {
     public static final String LONDON_GEO_LOC = "51.5236688,-1.1831971";
 
     @ConfigProperty(name = "data.total_person_tobe_generated", defaultValue = "50")
-    String totalGeneratedNumber;
+    String totalGeneratedNumberProperty;
 
     @ConfigProperty(name = "data.generator.max.thread", defaultValue = "5")
-    String maxThread;
+    String maxThreadProperty;
 
     @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    String perThread;
+    String perThreadProperty;
 
     @Inject
     ObjectMapper objectMapper;
@@ -54,30 +56,22 @@ public class ApplicationStartup {
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>();
     private final List<PlaceDetail> places = new ArrayList<>();
-    private Date timeStart;
-    private long lastId;
-    private final Generator.OnFinishListener onFinishListener = new Generator.OnFinishListener() {
-        @Override
-        public void onFinish(Long generatorId) {
-            if (generatorId == lastId) {
-                LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
-            }
-        }
-    };
 
     @PostConstruct
     void setUp() {
         GeneratorUtils.setObjectMapper(objectMapper);
-        timeStart = new Date();
-        LOGGER.info("PREPARING SAMPLE DATA TO GENERATE SIZE:" + totalGeneratedNumber + ", MAX_THREAD:" + maxThread + ", PER_THREAD:" + perThread + ", start: " + timeStart);
+        LOGGER.info("PREPARING SAMPLE DATA TO GENERATE SIZE:" + totalGeneratedNumberProperty +
+                ", MAX_THREAD:" + maxThreadProperty +
+                ", PER_THREAD:" + perThreadProperty);
 
         LOGGER.debug("FETCHING IMAGES");
         imagesUrl = imageService.fetchImages();
 
         LOGGER.debug("FETCHING PLACES");
-        places.addAll(placeService.fetchRandomPlaces(MELBOURNE_GEO_LOC, "100000"));
-        places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, "100000"));
-        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, "100000"));
+        int radius = 100000;
+        places.addAll(placeService.fetchRandomPlaces(MELBOURNE_GEO_LOC, String.valueOf(radius)));
+        places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, String.valueOf(radius)));
+        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, String.valueOf(radius)));
 
         LOGGER.info("DATA PREPARED");
         LOGGER.debug("FETCHED: " + imagesUrl.size() + " IMAGES URL, " + places.size() + " PLACES");
@@ -85,11 +79,10 @@ public class ApplicationStartup {
 
     void onStart(@Observes StartupEvent event) {
         LOGGER.info("ApplicationStartup ");
-//        if (baseEntityService.countEntity() > 10000) return;
 
-        int totalRow = Integer.parseInt(totalGeneratedNumber);
-        int perThread = Integer.parseInt(this.perThread);
-        int maxThread = Integer.parseInt(this.maxThread);
+        int totalRow = Integer.parseInt(this.totalGeneratedNumberProperty);
+        int perThread = Integer.parseInt(this.perThreadProperty);
+        int maxThread = Integer.parseInt(this.maxThreadProperty);
 
         executor = Executors.newFixedThreadPool(maxThread);
         int thread = Math.min(totalRow, totalRow / perThread);
@@ -100,11 +93,9 @@ public class ApplicationStartup {
             execute(perThread, i);
             i++;
         }
-        lastId = i-1;
         if ((perThread * thread) < totalRow) {
             int count = totalRow - (perThread * thread);
             execute(count, i);
-            lastId = i;
         }
     }
 
@@ -116,9 +107,9 @@ public class ApplicationStartup {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, onFinishListener, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(count, baseEntityService, onFinishListener, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, onFinishListener, i, places));
+            executor.submit(new UserGenerator(count, baseEntityService, i, imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(count, baseEntityService, i));
+            executor.submit(new AddressGenerator(count, baseEntityService, i, places));
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

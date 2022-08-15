@@ -7,7 +7,7 @@ import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BaseEntityModel extends BaseModel<BaseEntity> {
+public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("dtype")
     private String dType;
     @JsonProperty("id")
@@ -146,6 +146,7 @@ public class BaseEntityModel extends BaseModel<BaseEntity> {
 
     public void setCode(Class<? extends BaseCode> code, String uuid) {
         String prefix = "";
+
         if (code == AttributeCode.DEF_PERSON.class) {
             prefix = "PER_";
         } else if (code == AttributeCode.DEF_APPLICATION.class) {

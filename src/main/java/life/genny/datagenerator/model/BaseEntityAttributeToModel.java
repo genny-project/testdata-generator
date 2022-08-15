@@ -8,5 +8,5 @@ public interface BaseEntityAttributeToModel {
      */
     Object getValue();
 
-    void setValue(Object value) throws Exception;
+    void setValue(Object value) throws IllegalArgumentException;
 }

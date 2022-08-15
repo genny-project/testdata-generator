@@ -55,17 +55,22 @@ public class KeycloakRequestExecutor {
         return null;
     }
 
-    private <E> E executeAuthenticatedRequest(OnRequestListener<E> listener) throws Exception {
+    private <E, F> E executeAuthenticatedRequest(OnRequestListener<E, F> listener) {
         if (auth == null) {
             auth = signIn();
         }
         if (auth == null) return null;
         try {
-            return listener.onRequest("Bearer " + auth.getAccessToken());
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            LOGGER.error(e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+        try {
+            return listener.onRequest("Bearer " + auth.getAccessToken(), listener.getInput());
         } catch (Throwable e) {
             LOGGER.error(e.getMessage(), e);
-            if (e instanceof javax.ws.rs.WebApplicationException) {
-                javax.ws.rs.WebApplicationException wa = (WebApplicationException) e;
+            if (e instanceof WebApplicationException wa) {
                 if (wa.getResponse().getStatus() == 401) {
                     auth = refreshToken();
                     return executeAuthenticatedRequest(listener);
@@ -76,24 +81,83 @@ public class KeycloakRequestExecutor {
     }
 
     public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) throws Exception {
+        if (keycloakService.checkIsEmailAvailable(email)) return null;
+        keycloakService.putEmail(email);
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
         user.setEmailVerified(true);
-        return executeAuthenticatedRequest(bearerToken -> {
-            keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
-            List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, user.getEmail());
-            return users.get(0);
-        });
+
+        boolean result = Boolean.TRUE.equals(executeAuthenticatedRequest(new OnRequestListener<>(user) {
+            @Override
+            public Boolean onRequest(String bearerToken, KeycloakUser user) {
+                try {
+                    keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
+                    return true;
+                } catch (Exception e) {
+                    if (e instanceof WebApplicationException webApplicationException) {
+                        if (webApplicationException.getResponse().getStatus() == 409) {
+                            keycloakService.putEmail(user.getEmail());
+                        } else {
+                            throw e;
+                        }
+                    }
+                    LOGGER.error(e.getMessage(), e);
+                    return false;
+                }
+            }
+        }));
+        if (result) {
+            return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
+                @Override
+                KeycloakUser onRequest(String bearerToken, String s) {
+                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, user.getEmail());
+                    for(KeycloakUser us: users){
+                        if (us.getEmail().equals(user.getEmail())) {
+                            return us;
+                        }
+                    }
+                    return null;
+                }
+            });
+        } else return null;
     }
 
     public void deleteUserKeycloak(String userId) throws Exception {
-        executeAuthenticatedRequest(bearerToken -> {
-            keycloakService.getKeycloakAuthProxy().deleteUser(keycloakService.getRealmName(), bearerToken, userId);
-            return null;
+        executeAuthenticatedRequest(new OnRequestListener<Void, String>(userId) {
+            @Override
+            Void onRequest(String bearerToken, String s) {
+                keycloakService.getKeycloakAuthProxy().deleteUser(keycloakService.getRealmName(), bearerToken, s);
+                return null;
+            }
         });
     }
 
-    interface OnRequestListener<E> {
-        E onRequest(String bearerToken);
+    public KeycloakUser getRegisteredUserFromKeycloak(String email) {
+        return executeAuthenticatedRequest(new OnRequestListener<>(email) {
+            @Override
+            KeycloakUser onRequest(String bearerToken, String email) {
+                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
+                for (KeycloakUser user : users) {
+                    if (user.getEmail().equals(email)) {
+                        return user;
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
+    public abstract static class OnRequestListener<O, I> {
+        private final I input;
+
+        protected OnRequestListener(I input) {
+            this.input = input;
+        }
+
+        public I getInput() {
+            return input;
+        }
+
+        abstract O onRequest(String bearerToken, I input) throws Throwable;
     }
 }

@@ -6,27 +6,22 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
-import life.genny.datagenerator.service.PlaceService;
 import org.jboss.logging.Logger;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    private List<PlaceDetail> places;
+    private final List<PlaceDetail> places;
 
-    public AddressGenerator(int count, BaseEntityService service, long id, List<PlaceDetail> places) {
-        super(count, service, id);
+    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {
+        super(count, service, onFinishListener, id);
         this.places = places;
     }
-
-    @Inject
-    PlaceService placeService;
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
@@ -60,7 +55,7 @@ public class AddressGenerator extends Generator {
             PlaceDetail place = GeneratorUtils.pickRandomData(places);
             String jsonPlace = "";
 
-            HashMap<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
+            Map<String, String> addressMap = GeneratorUtils.convertToMap(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
             String city = addressMap.get("administrative_area_level_2");
             String state = addressMap.get("administrative_area_level_1");

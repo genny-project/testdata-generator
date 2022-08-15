@@ -18,9 +18,6 @@ public class KeycloakUserAccess implements Serializable {
     @JsonProperty("manage")
     private boolean manage;
 
-    public KeycloakUserAccess() {
-    }
-
     public boolean isManageGroupMembership() {
         return manageGroupMembership;
     }

@@ -11,6 +11,10 @@ import java.util.*;
 
 public class GeneratorUtils {
 
+    private GeneratorUtils() {
+        throw new IllegalArgumentException("Utility class " + GeneratorUtils.class.getSimpleName() + " can't be instantiate");
+    }
+
     public static final boolean DEFAULT_INFERRED = false;
     public static final boolean DEFAULT_PRIVACY_FLAG = false;
     public static final boolean DEFAULT_READ_ONLY = false;
@@ -26,9 +30,6 @@ public class GeneratorUtils {
     private static final Random random = new Random();
 
     private static ObjectMapper objectMapper = new ObjectMapper();
-
-    public GeneratorUtils() {
-    }
 
     private static int generateRandomNum(int size) {
         return random.nextInt(size);
@@ -60,7 +61,7 @@ public class GeneratorUtils {
         switch (value) {
             case OPTION1 -> email = firstName.toLowerCase() + separator + lastName.toLowerCase() + host;
             case OPTION2 -> {
-                int randomNum = (int) Math.floor(generateRandomNum(100));
+                int randomNum = generateRandomNum(100);
                 email = firstName.toLowerCase() + separator + lastName.toLowerCase() + randomNum + host;
             }
             default -> email = firstName.toLowerCase() + lastName.toLowerCase() + host;
@@ -87,9 +88,9 @@ public class GeneratorUtils {
         return data.get(ranInt);
     }
 
-    public static Map<String, String> translateAddress(List<AddressComponent> components) {
+    public static Map<String, String> convertToMap(List<AddressComponent> components) {
         HashMap<String, String> addressMap = new HashMap<>();
-        for (AddressComponent component: components) {
+        for (AddressComponent component : components) {
             if (component.getTypes().contains("street_number")) {
                 addressMap.put("street_map", component.getLongName());
             }

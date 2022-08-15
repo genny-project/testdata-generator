@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 
 @Startup
 @ApplicationScoped
-public class ApplicationStartup {
+public class ApplicationStartup implements Generator.OnFinishListener {
 
     private static final Logger LOGGER = Logger.getLogger(ApplicationStartup.class);
     private static final String MELBOURNE_GEO_LOC = "-37.7762758,144.9242811";
@@ -57,15 +57,14 @@ public class ApplicationStartup {
     private Date timeStart;
     private long runnableCount = 0;
     private long runnableFinished = 0;
-    private final Generator.OnFinishListener onFinishListener = new Generator.OnFinishListener() {
-        @Override
-        public void onFinish(Long generatorId) {
-            runnableFinished++;
-            if (runnableFinished == runnableCount) {
-                LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
-            }
+
+    @Override
+    public void onFinish(Long generatorId) {
+        runnableFinished++;
+        if (runnableFinished == runnableCount) {
+            LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
         }
-    };
+    }
 
     @PostConstruct
     void setUp() {
@@ -118,9 +117,9 @@ public class ApplicationStartup {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, onFinishListener, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(count, baseEntityService, onFinishListener, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, onFinishListener, i, places));
+            executor.submit(new UserGenerator(count, baseEntityService, this, i, imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(count, baseEntityService, this, i));
+            executor.submit(new AddressGenerator(count, baseEntityService, this, i, places));
 
             runnableCount += 3;
         } catch (Exception e) {

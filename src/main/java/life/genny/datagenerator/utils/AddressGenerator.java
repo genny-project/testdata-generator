@@ -55,7 +55,7 @@ public class AddressGenerator extends Generator {
             PlaceDetail place = GeneratorUtils.pickRandomData(places);
             String jsonPlace = "";
 
-            Map<String, String> addressMap = GeneratorUtils.translateAddress(place.getAddressComponents());
+            Map<String, String> addressMap = GeneratorUtils.convertToMap(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
             String city = addressMap.get("administrative_area_level_2");
             String state = addressMap.get("administrative_area_level_1");

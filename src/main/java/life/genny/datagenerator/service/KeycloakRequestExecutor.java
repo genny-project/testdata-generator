@@ -94,8 +94,8 @@ public class KeycloakRequestExecutor {
                     keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
                     return true;
                 } catch (Exception e) {
-                    if (e instanceof WebApplicationException) {
-                        if (((WebApplicationException) e).getResponse().getStatus() == 409) {
+                    if (e instanceof WebApplicationException webApplicationException) {
+                        if (webApplicationException.getResponse().getStatus() == 409) {
                             keycloakService.putEmail(user.getEmail());
                         } else {
                             throw e;
@@ -147,17 +147,17 @@ public class KeycloakRequestExecutor {
         });
     }
 
-    public abstract static class OnRequestListener<OUTPUT, INPUT> {
-        private final INPUT input;
+    public abstract static class OnRequestListener<O, I> {
+        private final I input;
 
-        protected OnRequestListener(INPUT input) {
+        protected OnRequestListener(I input) {
             this.input = input;
         }
 
-        public INPUT getInput() {
+        public I getInput() {
             return input;
         }
 
-        abstract OUTPUT onRequest(String bearerToken, INPUT input) throws Throwable;
+        abstract O onRequest(String bearerToken, I input) throws Throwable;
     }
 }

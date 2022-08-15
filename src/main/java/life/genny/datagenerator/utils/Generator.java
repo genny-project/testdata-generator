@@ -6,7 +6,6 @@ import org.jboss.logging.Logger;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public abstract class Generator implements Runnable, GeneratorListener {
     private static final Logger LOGGER = Logger.getLogger(Generator.class);
@@ -15,10 +14,6 @@ public abstract class Generator implements Runnable, GeneratorListener {
     private final long id;
     private Date startTime;
     private final OnFinishListener onFinishListener;
-
-    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener) {
-        this(count, service, onFinishListener, new Random().nextInt(1000));
-    }
 
     public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
         this.count = count;

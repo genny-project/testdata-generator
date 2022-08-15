@@ -1,6 +1,7 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
+import life.genny.datagenerator.data.DatabaseSchema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jboss.logging.Logger;
@@ -11,24 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 @Entity(name = "baseentity")
-@Table(indexes = {
-        @Index(
-                name = "UKb4u1syrco33nx6qj3a96xyihb",
-                columnList = "code,realm"
-        ),
-        @Index(
-                name = "code_idx",
-                columnList = "code,realm"
-        ),
-        @Index(
-                name = "r_s_c",
-                columnList = "realm,status,code"
-        ),
-        @Index(
-                name = "r_s_n",
-                columnList = "realm,status,name"
-        ),
-})
+@Table(schema = DatabaseSchema.CREATE_BASE_ENTITY)
 public class BaseEntity extends PanacheEntityBase {
     private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
 

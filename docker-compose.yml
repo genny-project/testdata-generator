@@ -12,12 +12,14 @@ services:
       - QUARKUS_DATASOURCE_DB-KIND=mysql
       - QUARKUS_DATASOURCE_USERNAME=${PROD_MYSQL_USERNAME}
       - QUARKUS_DATASOURCE_PASSWORD=${PROD_MYSQL_PASSWORD}
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3306/testdb?enabledTLSProtocols=TLSv1.2
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3360/testdb?enabledTLSProtocols=TLSv1.2
       - QUARKUS_HIBERNATE-ORM_DATABASE_GENERATION=update
       - DATA_TOTAL_PERSON_TOBE_GENERATED=${TOTAL_PERSON_TOBE_GENERATED}
+      - DATA_GENERATOR_MAX_THREAD=10
+      - DATA_GENERATOR_RECORDS_PER_THREAD=100
       - DATA_GCP_API_KEY=${GCP_API_KEY}
     ports:
-      - "8080:8080"
+      - "8008:8080"
     volumes:
       - ./:/build/
     networks:
@@ -35,7 +37,7 @@ services:
       - MYSQL_PASSWORD=${PROD_MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${PROD_MYSQL_ROOT_PASSWORD}
     ports:
-      - "3306:3306"
+      - "3360:3306"
     volumes:
       - mysqldb:/var/lib/mysql
     networks:

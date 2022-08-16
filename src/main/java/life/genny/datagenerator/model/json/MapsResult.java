@@ -25,9 +25,6 @@ public class MapsResult {
     @JsonIgnore
     private final Map<String, Object> additionalProperties = new HashMap<>();
 
-    public MapsResult() {
-    }
-
     @JsonIgnore
     public List<Object> getHtmlAttributions() {
         return htmlAttributions;

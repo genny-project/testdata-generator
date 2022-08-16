@@ -3,7 +3,7 @@ package life.genny.datagenerator.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.Address;
 
-public class AddressModel extends BaseModel<Address> {
+public class AddressModel implements BaseModel<Address> {
     @JsonProperty("id")
     private Long id;
     @JsonProperty("json_data")
@@ -18,8 +18,7 @@ public class AddressModel extends BaseModel<Address> {
 
     @Override
     public Address toEntity() {
-        Address address = new Address(this.id, this.jsonData);
-        return address;
+        return new Address(this.id, this.jsonData);
     }
 
     public Long getId() {

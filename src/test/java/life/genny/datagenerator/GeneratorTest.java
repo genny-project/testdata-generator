@@ -2,9 +2,12 @@ package life.genny.datagenerator;
 
 
 import io.quarkus.test.junit.QuarkusTest;
+import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
+import life.genny.datagenerator.service.PlaceService;
+import life.genny.datagenerator.utils.AddressGenerator;
 import life.genny.datagenerator.utils.PersonGenerator;
 import life.genny.datagenerator.utils.UserGenerator;
 import org.junit.jupiter.api.*;
@@ -16,6 +19,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static life.genny.datagenerator.ApplicationStartup.LONDON_GEO_LOC;
+
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GeneratorTest {
@@ -24,11 +29,13 @@ public class GeneratorTest {
     BaseEntityService baseEntityService;
     @Inject
     ImageService imageService;
-
+    @Inject
+    PlaceService placeService;
     @Inject
     KeycloakService keycloakService;
 
     private List<String> imagesUrl = new ArrayList<>();
+    private final List<PlaceDetail> places = new ArrayList<>();
 
     private long dataBefore = 0;
 
@@ -37,6 +44,7 @@ public class GeneratorTest {
         Thread.sleep(1000);
         dataBefore = baseEntityService.countEntity();
         imagesUrl = imageService.fetchImages();
+        places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, "100000"));
     }
 
     @Test
@@ -48,9 +56,9 @@ public class GeneratorTest {
         int threadCount = totalData / perThread;
         ExecutorService executor = Executors.newFixedThreadPool(Math.min(threadCount, 10));
         for (int i = 0; i < threadCount; i++) {
-            executor.submit(new UserGenerator(perThread, baseEntityService, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(perThread, baseEntityService, i));
-//            executor.submit(new AddressGenerator(perThread, baseEntityService, i));
+            executor.submit(new UserGenerator(perThread, baseEntityService, null, i, imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(perThread, baseEntityService, null, i));
+            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i, places));
         }
     }
 

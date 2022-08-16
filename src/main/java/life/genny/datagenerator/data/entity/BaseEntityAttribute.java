@@ -1,7 +1,6 @@
 package life.genny.datagenerator.data.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import life.genny.datagenerator.data.DatabaseSchema;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -10,8 +9,40 @@ import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Date;
 
-@Entity(name = "baseentity_attribute")
-@Table(schema = DatabaseSchema.CREATE_BASE_ENTITY_ATTRIBUTE)
+@Entity
+@Table(
+        name = "baseentity_attribute",
+        indexes = {
+                @Index(
+                        name = "UKfhe6ytcnf3pqww35brvtadvta",
+                        columnList = "attributeCode, baseEntityCode, realm"
+                ),
+                @Index(
+                        name = "FKmqrqcxsqu49b0cliy2tymjoae",
+                        columnList = "BASEENTITY_ID"
+                ),
+                @Index(
+                        name = "id_search",
+                        columnList = "baseEntityCode, attributeCode"
+                ),
+                @Index(
+                        name = "ba_idx",
+                        columnList = "attributeCode, baseEntityCode, realm"
+                ),
+                @Index(
+                        name = "rvsvb2",
+                        columnList = "realm, valueBoolean"
+                ),
+                @Index(
+                        name = "beid_attrcode_valStr_valBool_idx",
+                        columnList = "BASEENTITY_ID, attributeCode, valueBoolean"
+                ),
+                @Index(
+                        name = "FKmqrqcxsqu49b0cliy2tymjoae",
+                        columnList = "BASEENTITY_ID"
+                ),
+        }
+)
 public class BaseEntityAttribute extends PanacheEntityBase {
 
     @Column(

@@ -71,4 +71,8 @@ public class BaseEntityService {
         baseEntityAttributeRepository.deleteAll();
         baseEntityRepository.deleteAll();
     }
+
+    public boolean isEntityAvailable(String code) {
+        return baseEntityRepository.count("code = ?1", code) > 0;
+    }
 }

@@ -22,9 +22,6 @@ public class KeycloakAuthResponse {
     @JsonProperty("scope")
     private String scope;
 
-    public KeycloakAuthResponse() {
-    }
-
     public String getAccessToken() {
         return accessToken;
     }

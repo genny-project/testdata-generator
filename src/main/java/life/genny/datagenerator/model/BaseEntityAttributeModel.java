@@ -10,7 +10,7 @@ import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 
-public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> implements BaseEntityAttributeToModel {
+public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>, BaseEntityAttributeToModel {
 
     @JsonProperty("attribute_code")
     private String attributeCode;
@@ -354,15 +354,14 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
     }
 
     @Override
-    public void setValue(Object value) throws Exception {
-        if (value instanceof Boolean) {
-            this.setValueBoolean((Boolean) value);
-        } else if (value instanceof Byte[]) {
-            this.setValueDateRange((Byte[]) value);
-        } else if (value instanceof Double) {
-            this.setValueDouble((Double) value);
-        } else if (value instanceof Date) {
-            Date dateValue = (Date) value;
+    public void setValue(Object value) throws IllegalArgumentException {
+        if (value instanceof Boolean booleanValue) {
+            this.setValueBoolean(booleanValue);
+        } else if (value instanceof Byte[] bytesValue) {
+            this.setValueDateRange(bytesValue);
+        } else if (value instanceof Double doubleValue) {
+            this.setValueDouble(doubleValue);
+        } else if (value instanceof Date dateValue) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(dateValue);
             if (cal.get(Calendar.HOUR) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
@@ -370,18 +369,18 @@ public class BaseEntityAttributeModel extends BaseModel<BaseEntityAttribute> imp
             } else {
                 this.setValueDateTime(dateValue);
             }
-        } else if (value instanceof Long) {
-            this.setValueLong((Long) value);
-        } else if (value instanceof LocalTime) {
-            this.setValueTime((LocalTime) value);
-        } else if (value instanceof BigDecimal) {
-            this.setMoney((BigDecimal) value);
-        } else if (value instanceof String) {
-            this.setValueString((String) value);
-        } else if (value instanceof Integer) {
-            this.setValueInteger((Integer) value);
+        } else if (value instanceof Long longValue) {
+            this.setValueLong(longValue);
+        } else if (value instanceof LocalTime localTimeValue) {
+            this.setValueTime(localTimeValue);
+        } else if (value instanceof BigDecimal bigDecimalValue) {
+            this.setMoney(bigDecimalValue);
+        } else if (value instanceof String stringValue) {
+            this.setValueString(stringValue);
+        } else if (value instanceof Integer integerValue) {
+            this.setValueInteger(integerValue);
         } else {
-            throw new Exception("Unknown data type");
+            throw new IllegalArgumentException("Unknown data type");
         }
     }
 }

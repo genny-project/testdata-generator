@@ -23,7 +23,7 @@ import static life.genny.datagenerator.ApplicationStartup.LONDON_GEO_LOC;
 
 @QuarkusTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class GeneratorTest {
+class GeneratorTest {
 
     @Inject
     BaseEntityService baseEntityService;
@@ -55,6 +55,8 @@ public class GeneratorTest {
         int totalData = 1000;
         int threadCount = totalData / perThread;
         ExecutorService executor = Executors.newFixedThreadPool(Math.min(threadCount, 10));
+        Assertions.assertNotNull(imagesUrl);
+        Assertions.assertNotNull(keycloakService);
         for (int i = 0; i < threadCount; i++) {
             executor.submit(new UserGenerator(perThread, baseEntityService, null, i, imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(perThread, baseEntityService, null, i));
@@ -68,7 +70,6 @@ public class GeneratorTest {
         Thread.sleep(120000);
         long dataCount = baseEntityService.countEntity();
         long expected = (dataBefore + 2000L);
-        assert dataCount == expected :
-                "Test failed, expected " + expected + " but actually " + dataCount;
+        Assertions.assertEquals(dataCount, expected);
     }
 }

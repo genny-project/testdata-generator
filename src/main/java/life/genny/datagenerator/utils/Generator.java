@@ -15,7 +15,7 @@ public abstract class Generator implements Runnable, GeneratorListener {
     private Date startTime;
     private final OnFinishListener onFinishListener;
 
-    public Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
+    protected Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
         this.count = count;
         this.service = service;
         this.id = id;
@@ -27,12 +27,12 @@ public abstract class Generator implements Runnable, GeneratorListener {
         onStart();
 
         try {
-            LOGGER.info("START GENERATING " + this.getClass().getName() + " id: " + id);
+            LOGGER.info("START GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             List<BaseEntityModel> data = onGenerate(count);
             service.saveAll(data);
             onSuccess();
         } catch (Throwable e) {
-            LOGGER.error("ERROR GENERATING " + this.getClass().getName() + " id: " + id);
+            LOGGER.error("ERROR GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             LOGGER.error(e.getMessage(), e);
             onError(e);
         }
@@ -52,12 +52,11 @@ public abstract class Generator implements Runnable, GeneratorListener {
         }
     }
 
-    abstract List<BaseEntityModel> onGenerate(int count) throws Exception;
+    abstract List<BaseEntityModel> onGenerate(int count) throws Throwable;
 
     @Override
     public void onSuccess() {
-        LOGGER.info("GENERATED " + count + " data " + this.getClass().getName() + " id: " + id);
-        LOGGER.info("GENERATE SUCCESS: " + (new Date().getTime() - startTime.getTime()) + " milliseconds");
+        LOGGER.info("GENERATED %s data %s id: %s in %s milliseconds".formatted(count, this.getClass().getSimpleName(), id, (new Date().getTime() - startTime.getTime())));
     }
 
     @Override

@@ -4,7 +4,7 @@ services:
   data-generator-app:
     build:
       context: .
-      dockerfile: src/main/docker/Dockerfile.fast-jar
+      dockerfile: src/main/docker/Dockerfile.jvm
     restart: unless-stopped
     env_file:
       - .env
@@ -12,12 +12,16 @@ services:
       - QUARKUS_DATASOURCE_DB-KIND=mysql
       - QUARKUS_DATASOURCE_USERNAME=${PROD_MYSQL_USERNAME}
       - QUARKUS_DATASOURCE_PASSWORD=${PROD_MYSQL_PASSWORD}
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3360/testdb?enabledTLSProtocols=TLSv1.2
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3306/${PROD_MYSQL_DB}?enabledTLSProtocols=TLSv1.2
       - QUARKUS_HIBERNATE-ORM_DATABASE_GENERATION=update
-      - DATA_TOTAL_PERSON_TOBE_GENERATED=${TOTAL_PERSON_TOBE_GENERATED}
+      - TOTAL_PERSON_TOBE_GENERATED=${TOTAL_PERSON_TOBE_GENERATED}
       - DATA_GENERATOR_MAX_THREAD=10
       - DATA_GENERATOR_RECORDS_PER_THREAD=100
       - DATA_GCP_API_KEY=${GCP_API_KEY}
+      - KEYCLOAK_SERVER_BASE_URL=https://127.0.0.1:8443/
+      - KEYCLOAK_REALM_NAME=master
+      - KEYCLOAK_CLIENT_ID=admin-cli
+      - KEYCLOAK_CLIENT_SECRET=w8ocspnhJVotzjtD8GshdltUojZAwTm7
     ports:
       - "8008:8080"
     volumes:

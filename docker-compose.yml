@@ -18,10 +18,6 @@ services:
       - DATA_GENERATOR_MAX_THREAD=10
       - DATA_GENERATOR_RECORDS_PER_THREAD=100
       - DATA_GCP_API_KEY=${GCP_API_KEY}
-      - KEYCLOAK_SERVER_BASE_URL=https://127.0.0.1:8443/
-      - KEYCLOAK_REALM_NAME=master
-      - KEYCLOAK_CLIENT_ID=admin-cli
-      - KEYCLOAK_CLIENT_SECRET=w8ocspnhJVotzjtD8GshdltUojZAwTm7
     ports:
       - "8008:8080"
     volumes:

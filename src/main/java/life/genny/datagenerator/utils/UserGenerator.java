@@ -50,7 +50,7 @@ public class UserGenerator extends Generator {
 
     private final List<String> keycloakUserIds = new ArrayList<>();
 
-    public List<BaseEntityModel> generateUserBulk(long count) throws Exception {
+    public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
         while (i < count) {

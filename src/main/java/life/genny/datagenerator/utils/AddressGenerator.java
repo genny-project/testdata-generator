@@ -38,11 +38,7 @@ public class AddressGenerator extends Generator {
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-        try {
-            entity.setValue(value);
-        } catch (Exception e) {
-            LOGGER.error(e);
-        }
+        entity.setValue(value);
         return entity;
     }
 
@@ -68,11 +64,11 @@ public class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY,
-                    Utils.isEmpty(city) ? city : ""
+                    !Utils.isEmpty(city) ? city : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY,
-                    Utils.isEmpty(country) ? country : ""
+                    !Utils.isEmpty(country) ? country : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
@@ -89,15 +85,15 @@ public class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE,
-                    Utils.isEmpty(postalCode) ? postalCode : ""
+                    !Utils.isEmpty(postalCode) ? postalCode : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE,
-                    Utils.isEmpty(state) ? state : ""
+                    !Utils.isEmpty(state) ? state : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB,
-                    Utils.isEmpty(suburb) ? suburb : ""
+                    !Utils.isEmpty(suburb) ? suburb : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,

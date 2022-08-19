@@ -7,6 +7,7 @@ import life.genny.datagenerator.model.json.KeycloakUser;
 import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.KeycloakRequestExecutor;
 import life.genny.datagenerator.service.KeycloakService;
+import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class UserGenerator extends Generator {
 
     private final List<String> keycloakUserIds = new ArrayList<>();
 
-    public List<BaseEntityModel> generateUserBulk(long count) throws Exception {
+    public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>();
         int i = 0;
         while (i < count) {
@@ -76,7 +77,7 @@ public class UserGenerator extends Generator {
                 j++;
             }
             if (user == null) {
-                throw new Exception("Failed to create user with email " + email);
+                throw new GeneratorException("Failed to create user with email " + email);
             }
 
             keycloakUserIds.add(user.getId());

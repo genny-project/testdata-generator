@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 import life.genny.datagenerator.utils.DateUtil;
 
-import javax.lang.model.type.UnknownTypeException;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.Calendar;

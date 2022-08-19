@@ -18,12 +18,22 @@ services:
       - DATA_GENERATOR_MAX_THREAD=10
       - DATA_GENERATOR_RECORDS_PER_THREAD=100
       - DATA_GCP_API_KEY=${GCP_API_KEY}
+      - KEYCLOAK_SERVER-BASE-URL=${KEYCLOAK_SERVER_BASE_URL}
+      - KEYCLOAK_REALM-NAME=${KEYCLOAK_REALM_NAME}
+      - QUARKUS_OIDC_CLIENT-ID=${KEYCLOAK_CLIENT_ID}
+      - QUARKUS_OIDC_CREDENTIALS_SECRET=${KEYCLOAK_CLIENT_SECRET}
+      - QUARKUS_OIDC_TLS_VERIFICATION=none
+      - KEYCLOAK_USER_USERNAME=admin
+      - KEYCLOAK_USER_PASSWORD=admin
+      - QUARKUS_SSL_NATIVE=true
+      - QUARKUS_TLS_TRUST-ALL=true
     ports:
       - "8008:8080"
     volumes:
       - ./:/build/
     networks:
       - mysql-network
+      - keycloak_network
     depends_on:
       mysql:
         condition: service_healthy
@@ -52,4 +62,6 @@ volumes:
 
 networks:
   mysql-network:
+    driver: bridge
+  keycloak_network:
     driver: bridge

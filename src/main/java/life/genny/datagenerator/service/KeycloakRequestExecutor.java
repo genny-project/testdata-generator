@@ -2,6 +2,8 @@ package life.genny.datagenerator.service;
 
 import life.genny.datagenerator.model.json.KeycloakAuthResponse;
 import life.genny.datagenerator.model.json.KeycloakUser;
+import life.genny.datagenerator.utils.Utils;
+import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import javax.ws.rs.WebApplicationException;
@@ -68,20 +70,24 @@ public class KeycloakRequestExecutor {
         }
         try {
             return listener.onRequest("Bearer " + auth.getAccessToken(), listener.getInput());
-        } catch (Throwable e) {
-            LOGGER.error(e.getMessage(), e);
-            if (e instanceof WebApplicationException wa) {
-                if (wa.getResponse().getStatus() == 401) {
-                    auth = refreshToken();
-                    return executeAuthenticatedRequest(listener);
-                }
+        } catch (WebApplicationException wa) {
+            if (wa.getResponse().getStatus() == 401) {
+                auth = refreshToken();
+                return executeAuthenticatedRequest(listener);
+            } else {
+                LOGGER.error(wa.getMessage());
+                return null;
             }
+        } catch (GeneratorException ex) {
+            LOGGER.error(ex.getMessage());
             return null;
         }
     }
 
-    public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) throws Exception {
-        if (keycloakService.checkIsEmailAvailable(email)) return null;
+    public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) {
+        if (keycloakService.checkIsEmailAvailable(email)) {
+            return null;
+        }
         keycloakService.putEmail(email);
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
@@ -93,36 +99,32 @@ public class KeycloakRequestExecutor {
                 try {
                     keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
                     return true;
-                } catch (Exception e) {
-                    if (e instanceof WebApplicationException webApplicationException) {
-                        if (webApplicationException.getResponse().getStatus() == 409) {
-                            keycloakService.putEmail(user.getEmail());
-                        } else {
-                            throw e;
-                        }
+                } catch (WebApplicationException webApplicationException) {
+                    if (webApplicationException.getResponse().getStatus() == 409) {
+                        keycloakService.putEmail(user.getEmail());
+                        return false;
+                    } else {
+                        throw webApplicationException;
                     }
+                } catch (Exception e) {
                     LOGGER.error(e.getMessage(), e);
                     return false;
                 }
             }
         }));
+
         if (result) {
             return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
                 @Override
-                KeycloakUser onRequest(String bearerToken, String s) {
-                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, user.getEmail());
-                    for(KeycloakUser us: users){
-                        if (us.getEmail().equals(user.getEmail())) {
-                            return us;
-                        }
-                    }
-                    return null;
+                KeycloakUser onRequest(String bearerToken, String email) {
+                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
+                    return Utils.findBuEmail(users, email);
                 }
             });
         } else return null;
     }
 
-    public void deleteUserKeycloak(String userId) throws Exception {
+    public void deleteUserKeycloak(String userId) {
         executeAuthenticatedRequest(new OnRequestListener<Void, String>(userId) {
             @Override
             Void onRequest(String bearerToken, String s) {
@@ -137,12 +139,7 @@ public class KeycloakRequestExecutor {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
                 List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                for (KeycloakUser user : users) {
-                    if (user.getEmail().equals(email)) {
-                        return user;
-                    }
-                }
-                return null;
+                return Utils.findBuEmail(users, email);
             }
         });
     }
@@ -158,6 +155,6 @@ public class KeycloakRequestExecutor {
             return input;
         }
 
-        abstract O onRequest(String bearerToken, I input) throws Throwable;
+        abstract O onRequest(String bearerToken, I input) throws GeneratorException;
     }
 }

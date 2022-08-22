@@ -5,7 +5,6 @@ import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.entity.BaseEntityAttribute;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("dtype")
@@ -69,7 +68,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
                 BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
                 attr.setBaseEntity(entity);
                 return attr;
-            }).collect(Collectors.toList());
+            }).toList();
             entity.setAttributes(attributes1);
         }
         return entity;

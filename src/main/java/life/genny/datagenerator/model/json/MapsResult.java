@@ -48,6 +48,10 @@ public class MapsResult {
         return results;
     }
 
+    public boolean isResultsEmpty() {
+        return results == null || results.isEmpty();
+    }
+
     public void setResults(List<Place> results) {
         this.results = results;
     }

@@ -12,8 +12,7 @@ services:
       - QUARKUS_DATASOURCE_DB-KIND=mysql
       - QUARKUS_DATASOURCE_USERNAME=${PROD_MYSQL_USERNAME}
       - QUARKUS_DATASOURCE_PASSWORD=${PROD_MYSQL_PASSWORD}
-      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3360/test_data_generator?enabledTLSProtocols=TLSv1.2
-      - QUARKUS_OIDC_AUTH_SERVER_URL=http://keycloak:8080/auth/realms/dbk
+      - QUARKUS_DATASOURCE_JDBC_URL=jdbc:mysql://mysql:3306/${PROD_MYSQL_DB}?enabledTLSProtocols=TLSv1.2
       - QUARKUS_HIBERNATE-ORM_DATABASE_GENERATION=update
       - DATA_TOTAL_PERSON_TOBE_GENERATED=${TOTAL_PERSON_TOBE_GENERATED}
       - DATA_GENERATOR_MAX_THREAD=10
@@ -49,7 +48,6 @@ services:
       retries: 10
 
 volumes:
-  data-generator-app:
   mysqldb:
 
 networks:

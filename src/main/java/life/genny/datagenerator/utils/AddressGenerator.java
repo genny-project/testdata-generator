@@ -6,16 +6,12 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
-import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class AddressGenerator extends Generator {
-
-    private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
-
     private final List<PlaceDetail> places;
 
     public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {
@@ -38,22 +34,17 @@ public class AddressGenerator extends Generator {
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-        try {
-            entity.setValue(value);
-        } catch (Exception e) {
-            LOGGER.error(e);
-        }
+        entity.setValue(value);
         return entity;
     }
 
-    public List<BaseEntityModel> generateAddressBulk(long count) {
+    public List<BaseEntityModel> generateAddressBulk(long count) throws JsonProcessingException {
         List<BaseEntityModel> models = new ArrayList<>();
-        int i = 0;
-        while (i < count) {
+
+        for (int i = 0; i < count; i++) {
             BaseEntityModel model = createAddressEntity();
 
             PlaceDetail place = GeneratorUtils.pickRandomData(places);
-            String jsonPlace = "";
 
             Map<String, String> addressMap = GeneratorUtils.convertToMap(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
@@ -62,29 +53,19 @@ public class AddressGenerator extends Generator {
             String country = addressMap.get("country");
             String postalCode = addressMap.get("postal_code");
 
-            try {
-                jsonPlace = GeneratorUtils.toJson(place);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            String jsonPlace = GeneratorUtils.toJson(place);
 
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, place.getVicinity()
             ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS2, null
-//            ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY,
-                    (city != null && !city.isEmpty()) ? city : ""
+                    !Utils.isEmpty(city) ? city : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY,
-                    (country != null && !country.isEmpty()) ? country : ""
+                    !Utils.isEmpty(country) ? country : ""
             ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_EXTRA, null
-//            ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
             ));
@@ -100,32 +81,28 @@ public class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE,
-                    (postalCode != null && !postalCode.isEmpty()) ? postalCode : ""
+                    !Utils.isEmpty(postalCode) ? postalCode : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE,
-                    (state != null && !state.isEmpty()) ? state : ""
+                    !Utils.isEmpty(state) ? state : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB,
-                    (suburb != null && !suburb.isEmpty()) ? suburb : ""
+                    !Utils.isEmpty(suburb) ? suburb : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,
                     GeneratorUtils.generateUTCTimeZone(place.getUtcOffset())
             ));
-//            model.addAttribute(createBaseEntityAttributeModel(
-//                    AttributeCode.DEF_ADDRESS.ATT_PRI_TIMEZONE_ID, null
-//            ));
 
             models.add(model);
-            i++;
         }
         return models;
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) {
+    List<BaseEntityModel> onGenerate(int count) throws Exception {
         return generateAddressBulk(count);
     }
 }

@@ -1,7 +1,7 @@
 package life.genny.datagenerator.utils;
 
 public interface GeneratorListener {
-    void onStart();
+        void onStart();
 
     void onFinish();
 

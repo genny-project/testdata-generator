@@ -10,6 +10,7 @@ import life.genny.datagenerator.model.json.MapsResult;
 import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.utils.GeneratorUtils;
+import life.genny.datagenerator.utils.Utils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
@@ -37,21 +38,19 @@ public class PlaceService {
     @Inject
     ObjectMapper objectMapper;
 
-    private String pageToken;
 
-
-    @Transactional
     public void saveAddress(List<PlaceDetail> details) {
         for (PlaceDetail detail : details) {
             try {
                 AddressModel model = new AddressModel(GeneratorUtils.toJson(detail));
                 addressRepository.persist(model.toEntity());
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                LOGGER.warn("A address can't be save: %s, error: %s".formatted(detail.getName(), e.getMessage()));
             }
         }
     }
 
+    @Transactional
     public List<PlaceDetail> fetchRandomPlaces(String geoLoc, String radius) {
         List<PlaceDetail> details = new ArrayList<>();
 
@@ -65,12 +64,12 @@ public class PlaceService {
 
             while (true) {
                 places.addAll(mapsResult.getResults());
-                pageToken = mapsResult.getNextPageToken();
-                if (mapsResult.getNextPageToken() == null || mapsResult.getNextPageToken().isEmpty())
+                String pageToken = mapsResult.getNextPageToken();
+                if (Utils.isEmpty(mapsResult.getNextPageToken()))
                     break;
 
                 MapsResult mapsResultTemp = new MapsResult();
-                while (mapsResultTemp.getResults() == null || mapsResultTemp.getResults().size() == 0)
+                while (mapsResultTemp.isResultsEmpty())
                     mapsResultTemp = this.getNearbyPlacesNextPage(pageToken);
                 mapsResult = mapsResultTemp;
             }

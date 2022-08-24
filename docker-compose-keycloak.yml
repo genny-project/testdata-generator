@@ -1,0 +1,54 @@
+version: "3.10"
+
+services:
+  keycloak:
+    image: jboss/keycloak
+    restart: unless-stopped
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=mysql
+      - DB_ADDR=keycloak_mysql
+      - DB_PORT=3308
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=keycloakpass
+    volumes:
+      - keycloak_realms:/tmp
+    ports:
+      - "8883:8443"
+      - "8888:8080"
+      - "8890:9990"
+    networks:
+      - keycloak_network
+    depends_on:
+      keycloak_mysql:
+        condition: service_healthy
+
+  keycloak_mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      - MYSQL_TCP_PORT=3308
+      - MYSQL_DATABASE=keycloak
+      - MYSQL_USER=keycloak
+      - MYSQL_PASSWORD=keycloakpass
+      - MYSQL_ROOT_PASSWORD=keycloakpass
+    ports:
+      - "3366:3308"
+    volumes:
+      - keycloak_mysql:/var/lib/mysql
+    networks:
+      - keycloak_network
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  keycloak_realms:
+  keycloak_mysql:
+
+networks:
+  keycloak_network:
+    driver: bridge

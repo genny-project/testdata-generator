@@ -10,7 +10,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BaseEntityService {
@@ -23,7 +22,7 @@ public class BaseEntityService {
 
 
     public List<BaseEntityModel> getBaseEntity() {
-        return baseEntityRepository.listAll().stream().map(BaseEntityModel::new).collect(Collectors.toList());
+        return baseEntityRepository.listAll().stream().map(BaseEntityModel::new).toList();
     }
 
     public BaseEntityModel getBaseEntityById(Long id) {
@@ -33,11 +32,6 @@ public class BaseEntityService {
 
     public BaseEntityModel getBaseEntityByCode(String code) {
         BaseEntity entity = baseEntityRepository.find("code=?1", code).firstResult();
-        return new BaseEntityModel(entity);
-    }
-
-    public BaseEntityModel getBaseEntityWithAttribute(Long id) {
-        BaseEntity entity = baseEntityRepository.findById(id);
         return new BaseEntityModel(entity);
     }
 

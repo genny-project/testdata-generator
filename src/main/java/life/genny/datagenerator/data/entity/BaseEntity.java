@@ -30,6 +30,7 @@ import java.util.List;
                 ),
         })
 public class BaseEntity extends PanacheEntityBase {
+
     @Column(length = 31, nullable = false, name = "dtype", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 

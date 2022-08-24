@@ -35,9 +35,11 @@ We recommend you to install keycloak on Docker, so you should install docker fir
 - Set GENERATOR_MAX_THREAD config to define how many threads the computer will use to generate data
 - Set GENERATOR_RECORDS_PER_THREAD config to define how many data per thread will be processed
 - Run ```.mvnw quarkus:dev``` to run the project as development mode
+- If you need to run the project on Test mode, you need set TEST_* config in .env file
 
 ## How to run this project in docker
-- Setup .env file 
+
+- Setup .env file
 - Setup Keycloak, see [How to Setup Keycloak ](#how-to-setup-keycloak)
-- Run ```.mvnw```
-- Run ```docker compose up``` to run
+- Run ```mvn clean package```
+- Run ```docker compose up``` 

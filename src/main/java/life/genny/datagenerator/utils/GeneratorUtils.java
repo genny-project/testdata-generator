@@ -91,32 +91,12 @@ public class GeneratorUtils {
     public static Map<String, String> convertToMap(List<AddressComponent> components) {
         HashMap<String, String> addressMap = new HashMap<>();
         for (AddressComponent component : components) {
-            if (component.getTypes().contains("street_number")) {
-                addressMap.put("street_map", component.getLongName());
-            }
-            if (component.getTypes().contains("route")) {
-                addressMap.put("route", component.getLongName());
-            }
-            if (component.getTypes().contains("locality")) {
-                addressMap.put("locality", component.getLongName());
-            }
-            if (component.getTypes().contains("administrative_area_level_4")) {
-                addressMap.put("administrative_area_level_4", component.getLongName());
-            }
-            if (component.getTypes().contains("administrative_area_level_3")) {
-                addressMap.put("administrative_area_level_3", component.getLongName());
-            }
-            if (component.getTypes().contains("administrative_area_level_2")) {
-                addressMap.put("administrative_area_level_2", component.getLongName());
-            }
-            if (component.getTypes().contains("administrative_area_level_1")) {
-                addressMap.put("administrative_area_level_1", component.getLongName());
-            }
-            if (component.getTypes().contains("country")) {
-                addressMap.put("country", component.getLongName());
-            }
-            if (component.getTypes().contains("postal_code")) {
-                addressMap.put("postal_code", component.getLongName());
+            for (String type : component.getTypes()) {
+                if ("street_number".equals(type)) {
+                    addressMap.put("street_map", component.getLongName());
+                } else {
+                    addressMap.put(type, component.getLongName());
+                }
             }
         }
         return addressMap;

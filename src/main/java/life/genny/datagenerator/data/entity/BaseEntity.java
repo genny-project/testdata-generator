@@ -3,7 +3,6 @@ package life.genny.datagenerator.data.entity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.jboss.logging.Logger;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -31,8 +30,6 @@ import java.util.List;
                 ),
         })
 public class BaseEntity extends PanacheEntityBase {
-    private static final Logger LOGGER = Logger.getLogger(BaseEntity.class.getSimpleName());
-
     @Column(length = 31, nullable = false, name = "dtype", columnDefinition = "VARCHAR(31) DEFAULT \"BaseEntity\"")
     private String dType = "BaseEntity";
 

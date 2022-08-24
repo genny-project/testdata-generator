@@ -62,7 +62,6 @@ public abstract class Generator implements Runnable, GeneratorListener {
     @Override
     public void onSuccess() {
         LOGGER.info("GENERATED " + count + " data " + this.getClass().getName() + " id: " + id);
-        LOGGER.info("GENERATE SUCCESS: " + (new Date().getTime() - startTime.getTime()) + " milliseconds");
     }
 
     @Override

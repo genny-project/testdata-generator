@@ -6,16 +6,12 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
-import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class AddressGenerator extends Generator {
-
-    private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
-
     private final List<PlaceDetail> places;
 
     public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {

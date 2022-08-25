@@ -58,6 +58,8 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private long runnableCount = 0;
     private long runnableFinished = 0;
 
+    private int pThread, aThread, uThread;
+
     @Override
     public void onFinish(Long generatorId) {
         runnableFinished++;
@@ -95,8 +97,12 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         int maxThread = Integer.parseInt(this.maxThreadProperty);
 
         executor = Executors.newFixedThreadPool(maxThread);
-        int thread = Math.min(totalRow, totalRow / perThread);
+        uThread = Math.min(totalRow, totalRow / perThread);
+        pThread = Math.min(totalRow, totalRow / perThread);
+        aThread = Math.min(totalRow, totalRow / perThread);
+
         int i = 0;
+        int thread = uThread + pThread + aThread;
         while (i < thread) {
             final int start = i;
             LOGGER.info("create thread: " + start);
@@ -117,11 +123,20 @@ public class ApplicationStartup implements Generator.OnFinishListener {
      */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, this, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(count, baseEntityService, this, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, this, i, places));
+            runnableCount += 1;
 
-            runnableCount += 3;
+            if (pThread > 0) {
+                executor.submit(new PersonGenerator(count, baseEntityService, this, i));
+                pThread -= 1;
+                return;
+            }
+            if (aThread > 0) {
+                executor.submit(new AddressGenerator(count, baseEntityService, this, i, places));
+                aThread -= 1;
+                return;
+            }
+            executor.submit(new UserGenerator(count, baseEntityService, this, i, imagesUrl, keycloakService));
+            uThread -= 1;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -2,6 +2,26 @@ package life.genny.datagenerator.model;
 
 public class AttributeCode {
 
+    public enum ENTITY_CODE {
+        DEF_ADDRESS,
+        DEF_AGENCY,
+        DEF_AGENT,
+        DEF_APPLICATION,
+        DEF_COMPANY,
+        DEF_CONTACT,
+        DEF_EDU_PRO_REP,
+        DEF_EDU_PROVIDER,
+        DEF_HOST_CPY,
+        DEF_HOST_CPY_REP,
+        DEF_INTERN,
+        DEF_INTERNSHIP,
+        DEF_ORGANISATION,
+        DEF_PERSON,
+        DEF_SUPERVISOR,
+        DEF_USER,
+        TEST
+    }
+
     public enum DEF_ADDRESS implements BaseCode {
         ATT_LNK_SELECT_COUNTRY,
         ATT_PRI_ADDRESS_ADDRESS1,
@@ -277,7 +297,7 @@ public class AttributeCode {
     }
 
     public enum DEF_INTERN implements BaseCode {
-        ATT__LNK_CURRENT_SOFTWARE__PRI_NAME,
+        ATT_LNK_CURRENT_SOFTWARE_PRI_NAME,
         ATT_LNK_AGENT,
         ATT_LNK_APPLICATIONS,
         ATT_LNK_BATCH,

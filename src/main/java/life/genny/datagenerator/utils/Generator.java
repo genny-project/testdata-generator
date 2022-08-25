@@ -1,7 +1,10 @@
 package life.genny.datagenerator.utils;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
+import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import java.util.Date;
@@ -31,7 +34,7 @@ public abstract class Generator implements Runnable, GeneratorListener {
             List<BaseEntityModel> data = onGenerate(count);
             service.saveAll(data);
             onSuccess();
-        } catch (Throwable e) {
+        } catch (GeneratorException | JsonProcessingException e) {
             LOGGER.error("ERROR GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             LOGGER.error(e.getMessage(), e);
             onError(e);
@@ -52,7 +55,7 @@ public abstract class Generator implements Runnable, GeneratorListener {
         }
     }
 
-    abstract List<BaseEntityModel> onGenerate(int count) throws Throwable;
+    abstract List<BaseEntityModel> onGenerate(int count) throws GeneratorException, JsonProcessingException;
 
     @Override
     public void onSuccess() {

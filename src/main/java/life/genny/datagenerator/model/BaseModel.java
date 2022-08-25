@@ -1,5 +1,5 @@
 package life.genny.datagenerator.model;
 
-public interface BaseModel<Entity> {
-    Entity toEntity();
+public interface BaseModel<E> {
+    E toEntity();
 }

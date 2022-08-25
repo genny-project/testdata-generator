@@ -28,7 +28,7 @@ public class UserGenerator extends Generator {
     public BaseEntityModel generateUser(String name, String uuid) {
         BaseEntityModel model = new BaseEntityModel();
         model.setName(name);
-        model.setCode(AttributeCode.DEF_USER.class, uuid);
+        model.setCode(AttributeCode.ENTITY_CODE.DEF_USER, uuid);
         model.setStatus(1);
         return model;
     }
@@ -148,7 +148,7 @@ public class UserGenerator extends Generator {
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) throws Exception {
+    List<BaseEntityModel> onGenerate(int count) throws GeneratorException {
         return generateUserBulk(count);
     }
 

@@ -1,14 +1,35 @@
-# genny-data-generator Project
+# Genny Data Generator
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
-## Requirement
+## Description
+Genny Data Generator is a Java 17 application, built to generate dummy data based on GADA requirements.
+The application uses different services that support dummy data generation, Such as: Keycloak, Google API, MySQL Database.
+<dl>
+  <dt>Main Program</dt>
+  <dd>Responsible to generate dummy data with help from Keycloak and Google API service to retrieve the required information, 
+and load the data into the database.</dd>
+  <dt>Keycloak</dt>
+  <dd>A Random key generator being used to generate Unique Key for each generated Entity, this service can be used to generate
+default password as well. [How to Setup Keycloak ](#how-to-setup-keycloak)</dd>
 
-1. Installed JDK 17
-2. Installed Maven
-3. Installed Docker
+  <dt>Google API</dt>
+  <dd>Used to retrieve address information. [How to get GCP_API_KEY](#how-to-get-gcp_api_key)</dd>
+
+  <dt>MySQL</dt>
+  <dd>A Database for the Main Program to keep generated data.</dd>
+</dl>
+
+<hr>
+
+## Requirements
+1. JDK 17
+2. Maven 3.x
+3. MySQL 8.x
+4. Docker (optional)
+
+<hr>
 
 ## How To Setup for Development
 

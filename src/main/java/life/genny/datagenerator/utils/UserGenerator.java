@@ -11,6 +11,7 @@ import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UserGenerator extends Generator {
@@ -19,7 +20,7 @@ public class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<String> imagesUrl, KeycloakService keycloakService) {
+    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
         super(count, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);

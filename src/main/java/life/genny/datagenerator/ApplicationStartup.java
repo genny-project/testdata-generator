@@ -60,7 +60,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private int uThread = 0, aThread = 0, pThread = 0;
 
     @Override
-    public void onFinish(Long generatorId) {
+    public void onFinish(String generatorId) {
         runnableFinished++;
         if (runnableFinished == runnableCount) {
             LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
@@ -125,16 +125,16 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             runnableCount += 1;
 
             if (pThread > 0) {
-                executor.submit(new PersonGenerator(count, baseEntityService, this, i));
+                executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
                 pThread -= 1;
                 return;
             }
             if (aThread > 0) {
-                executor.submit(new AddressGenerator(count, baseEntityService, this, i, places));
+                executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
                 aThread -= 1;
                 return;
             }
-            executor.submit(new UserGenerator(count, baseEntityService, this, i, imagesUrl, keycloakService));
+            executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
             uThread -= 1;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

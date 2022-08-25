@@ -163,7 +163,7 @@ public class BaseEntityAttribute extends PanacheEntityBase {
     )
     private Long attributeId;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "BASEENTITY_ID", nullable = false)
     private BaseEntity baseEntity;
 

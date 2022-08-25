@@ -11,6 +11,7 @@ import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UserGenerator extends Generator {
@@ -19,7 +20,7 @@ public class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<String> imagesUrl, KeycloakService keycloakService) {
+    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
         super(count, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
@@ -40,15 +41,13 @@ public class UserGenerator extends Generator {
         entity.setPrivacyFlag(GeneratorUtils.DEFAULT_PRIVACY_FLAG);
         entity.setReadOnly(GeneratorUtils.DEFAULT_READ_ONLY);
         entity.setRealm(GeneratorUtils.DEFAULT_REALM);
-        try {
-            entity.setValue(value);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
+        entity.setValue(value);
         return entity;
     }
 
     private final List<String> keycloakUserIds = new ArrayList<>();
+    private long totalTime = 0;
+    private long longest = 0;
 
     public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>();
@@ -58,27 +57,26 @@ public class UserGenerator extends Generator {
             String firstName = GeneratorUtils.generateFirstName();
             String lastName = GeneratorUtils.generateLastName();
             String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
-            String email = GeneratorUtils.generateEmail(firstName, lastName);
-            String username = email.substring(0, email.indexOf("@"));
+            Email email = GeneratorUtils.generateEmail(firstName, lastName);
+            String username = email.getUsername();
 
-            KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
+            Date startReg = new Date();
+            KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
             int j = 0;
-            while ((user == null || !user.getEmail().equals(email)) && j < 5) {
-                if (user != null && !user.getEmail().equals(email)) {
-                    LOGGER.info("RE-LOAD CREATED USER");
-                    user = requestExecutor.getRegisteredUserFromKeycloak(email);
-                } else {
-                    LOGGER.info("RE-CREATE NEW USER");
-                    firstName = GeneratorUtils.generateFirstName();
-                    email = GeneratorUtils.generateEmail(firstName, lastName);
-                    username = email.substring(0, email.indexOf("@"));
-                    user = requestExecutor.registerUserToKeycloak(firstName, lastName, email, username);
-                }
+            while (user == null && j < 5) {
+                LOGGER.info("RE-CREATE NEW USER");
+                firstName = GeneratorUtils.generateFirstName();
+                email = GeneratorUtils.generateEmail(firstName, lastName);
+                username = email.getUsername();
+                user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
                 j++;
             }
             if (user == null) {
                 throw new GeneratorException("Failed to create user with email " + email);
             }
+            long howLong = (new Date().getTime() - startReg.getTime());
+            totalTime += howLong;
+            longest = Math.max(howLong, longest);
 
             keycloakUserIds.add(user.getId());
             BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());
@@ -130,7 +128,7 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_USERNAME,
-                    email
+                    email.toString()
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.UNQ_PRI_EMAIL,
@@ -149,7 +147,9 @@ public class UserGenerator extends Generator {
 
     @Override
     List<BaseEntityModel> onGenerate(int count) throws Exception {
-        return generateUserBulk(count);
+        List<BaseEntityModel> result = generateUserBulk(count);
+        LOGGER.info("KEYCLOAK User Registration: avg: %s millis, longest: %s millis".formatted(totalTime / count, longest));
+        return result;
     }
 
     @Override

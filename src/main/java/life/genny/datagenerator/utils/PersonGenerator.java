@@ -16,7 +16,7 @@ public class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
-    public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
+    public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
     }
 
@@ -73,7 +73,7 @@ public class PersonGenerator extends Generator {
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                        GeneratorUtils.generateEmail(firstName, lastName)
+                        GeneratorUtils.generateEmail(firstName, lastName).toString()
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,

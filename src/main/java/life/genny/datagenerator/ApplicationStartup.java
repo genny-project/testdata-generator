@@ -127,19 +127,19 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             if (pThread > 0) {
                 executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
                 pThread--;
+                runnableCount += 1;
                 return;
             }
             if (aThread > 0) {
                 executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
                 aThread--;
+                runnableCount += 1;
                 return;
             }
             if (uThread > 0) {
                 executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
-                uThread--;
-                return;
+                runnableCount += 1;
             }
-            runnableCount += 3;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

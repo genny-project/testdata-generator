@@ -15,7 +15,7 @@ public class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
-    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id, List<PlaceDetail> places) {
+    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
         super(count, service, onFinishListener, id);
         this.places = places;
     }

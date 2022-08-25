@@ -14,11 +14,11 @@ public abstract class Generator implements Runnable, GeneratorListener {
     private static final Logger LOGGER = Logger.getLogger(Generator.class);
     public final int count;
     public final BaseEntityService service;
-    private final long id;
+    private final String id;
     private Date startTime;
     private final OnFinishListener onFinishListener;
 
-    protected Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, long id) {
+    protected Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         this.count = count;
         this.service = service;
         this.id = id;
@@ -68,6 +68,6 @@ public abstract class Generator implements Runnable, GeneratorListener {
     }
 
     public interface OnFinishListener {
-        void onFinish(Long generatorId);
+        void onFinish(String generatorId);
     }
 }

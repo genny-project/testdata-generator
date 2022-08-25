@@ -57,8 +57,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private Date timeStart;
     private long runnableCount = 0;
     private long runnableFinished = 0;
-
-    private int pThread, aThread, uThread;
+    private int uThread = 0, aThread = 0, pThread = 0;
 
     @Override
     public void onFinish(Long generatorId) {

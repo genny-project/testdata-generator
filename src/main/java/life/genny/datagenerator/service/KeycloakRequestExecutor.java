@@ -34,7 +34,7 @@ public class KeycloakRequestExecutor {
                     form
             );
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage());
         }
         return null;
     }
@@ -51,8 +51,12 @@ public class KeycloakRequestExecutor {
                     keycloakService.getRealmName(),
                     form
             );
+        } catch (WebApplicationException wa) {
+            if (wa.getResponse().getStatus() >= 400 && wa.getResponse().getStatus() <= 499) {
+                return signIn();
+            }
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -62,12 +66,6 @@ public class KeycloakRequestExecutor {
             auth = signIn();
         }
         if (auth == null) return null;
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        }
         try {
             return listener.onRequest("Bearer " + auth.getAccessToken(), listener.getInput());
         } catch (WebApplicationException wa) {
@@ -79,16 +77,12 @@ public class KeycloakRequestExecutor {
                 return null;
             }
         } catch (GeneratorException ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(ex.getMessage(), ex);
             return null;
         }
     }
 
     public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) {
-        if (keycloakService.checkIsEmailAvailable(email)) {
-            return null;
-        }
-        keycloakService.putEmail(email);
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
         user.setEmailVerified(true);
@@ -101,26 +95,32 @@ public class KeycloakRequestExecutor {
                     return true;
                 } catch (WebApplicationException webApplicationException) {
                     if (webApplicationException.getResponse().getStatus() == 409) {
-                        keycloakService.putEmail(user.getEmail());
                         return false;
                     } else {
                         throw webApplicationException;
                     }
                 } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage());
                     return false;
                 }
             }
         }));
 
         if (result) {
-            return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
-                @Override
-                KeycloakUser onRequest(String bearerToken, String email) {
-                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                    return Utils.findBuEmail(users, email);
-                }
-            });
+//            return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
+//                @Override
+//                KeycloakUser onRequest(String bearerToken, String email) {
+//                    try {
+//                        Thread.sleep(200);
+//                    } catch (InterruptedException e) {
+//                        LOGGER.error(e.getMessage(), e);
+//                        Thread.currentThread().interrupt();
+//                    }
+//                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
+//                    return Utils.findByEmail(users, email);
+//                }
+//            });
+            return getRegisteredUserFromKeycloak(user.getEmail());
         } else return null;
     }
 
@@ -139,7 +139,7 @@ public class KeycloakRequestExecutor {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
                 List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                return Utils.findBuEmail(users, email);
+                return Utils.findByEmail(users, email);
             }
         });
     }

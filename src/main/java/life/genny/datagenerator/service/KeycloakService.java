@@ -5,8 +5,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import javax.enterprise.context.ApplicationScoped;
-import java.util.HashSet;
-import java.util.Set;
 
 @ApplicationScoped
 public class KeycloakService {
@@ -24,8 +22,6 @@ public class KeycloakService {
 
     @RestClient
     KeycloakAuthProxy keycloakAuthProxy;
-
-    private final Set<String> createdEmails = new HashSet<>();
 
     public String getClientId() {
         return clientId;
@@ -49,13 +45,5 @@ public class KeycloakService {
 
     public KeycloakAuthProxy getKeycloakAuthProxy() {
         return keycloakAuthProxy;
-    }
-
-    public void putEmail(String email) {
-        this.createdEmails.add(email);
-    }
-
-    public boolean checkIsEmailAvailable(String email) {
-        return createdEmails.contains(email);
     }
 }

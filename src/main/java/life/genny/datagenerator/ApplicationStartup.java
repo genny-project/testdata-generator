@@ -57,7 +57,9 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private Date timeStart;
     private long runnableCount = 0;
     private long runnableFinished = 0;
-    private int uThread = 0, aThread = 0, pThread = 0;
+    private int uThread = 0;
+    private int aThread = 0;
+    private int pThread = 0;
 
     @Override
     public void onFinish(String generatorId) {
@@ -110,7 +112,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             i++;
         }
 
-        /// This operation is for adding a task for each entity if totalRow%perTask != 0
+        // This operation is for adding a task for each entity if totalRow % perTask != 0
         if ((perTask * taskPerEntity) < totalRow) {
             uThread += 1;
             aThread += 1;

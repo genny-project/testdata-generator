@@ -34,7 +34,7 @@ public class BaseEntityResource {
     @GET
     @Path("size")
     @Produces(MediaType.TEXT_PLAIN)
-    public Response GetContactsSize() {
+    public Response getContactsSize() {
         long count = service.countEntity();
         return Response.ok(count).build();
     }

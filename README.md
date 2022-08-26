@@ -17,7 +17,7 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 - Set all PROD_* config in .env file
 - Set all KEYCLOAK_* in config in .env file, see [How to Setup Keycloak ](#how-to-setup-keycloak)
 - Set GCP_API_KEY config in .env file, see [How to get GCP_API_KEY](#how-to-get-gcp_api_key)
-- Set TOTAL_PERSON_TOBE_GENERATED config in .env file to define how many data do want to generate
+- Set TOTAL_PERSON_TOBE_GENERATED config in .env file to define how many data do you want to generate
 - Set GENERATOR_MAX_THREAD config to define how many threads the computer will use to generate data
 - Set GENERATOR_RECORDS_PER_THREAD config to define how many data per thread will be processed
 - Run ```.mvnw quarkus:dev``` to run the project as development mode

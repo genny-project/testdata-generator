@@ -48,28 +48,14 @@ public class GeneratorUtils {
     }
 
 
-    public static String generateEmail(String firstName, String lastName) {
-        int index = generateRandomNum(EmailOptions.values().length);
-        String email = "";
-        EmailOptions value = EmailOptions.values()[index];
-
-        String[] emailHost = new String[]{"@gmail.com", "@hotmail.com", "@outlook.com", "@yahoo.com"};
+    public static Email generateEmail(String firstName, String lastName) {
+        String[] emailHost = new String[]{"gmail.com", "hotmail.com", "outlook.com", "yahoo.com"};
         String host = emailHost[random.nextInt(emailHost.length)];
         String[] separators = new String[]{".", "_", "-"};
         String separator = separators[random.nextInt(separators.length)];
-
-        switch (value) {
-            case OPTION1 -> email = firstName.toLowerCase() + separator + lastName.toLowerCase() + host;
-            case OPTION2 -> {
-                int randomNum = generateRandomNum(100);
-                email = firstName.toLowerCase() + separator + lastName.toLowerCase() + randomNum + host;
-            }
-            default -> email = firstName.toLowerCase() + lastName.toLowerCase() + host;
-        }
-
-        return email;
+        long timestamps = (new Date()).getTime();
+        return new Email(firstName.toLowerCase() + separator + lastName.toLowerCase() + separator + timestamps, host);
     }
-
 
     public static Date generateDOB() throws ParseException {
         GregorianCalendar calendar = new GregorianCalendar();

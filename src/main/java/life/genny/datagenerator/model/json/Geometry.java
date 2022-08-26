@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class Geometry implements Serializable {
 
     @JsonProperty("location")
-    private Location location;
+    private transient Location location;
 
     public Location getLocation() {
         return location;

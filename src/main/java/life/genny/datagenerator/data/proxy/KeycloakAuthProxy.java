@@ -30,7 +30,7 @@ public interface KeycloakAuthProxy {
     );
 
     @GET
-    @Path("admin/realms/{realmName}/users")
+    @Path("admin/realms/{realmName}/users?max=1")
     @Consumes(MediaType.APPLICATION_JSON)
     List<KeycloakUser> getUser(
             @PathParam("realmName") String realmName,

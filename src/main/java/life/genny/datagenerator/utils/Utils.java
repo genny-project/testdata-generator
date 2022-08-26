@@ -13,7 +13,7 @@ public class Utils {
         return s == null || s.trim().isEmpty();
     }
 
-    public static KeycloakUser findBuEmail(List<KeycloakUser> users, String email) {
+    public static KeycloakUser findByEmail(List<KeycloakUser> users, String email) {
         for (KeycloakUser us : users) {
             if (us.getEmail().equals(email)) {
                 return us;

@@ -147,7 +147,9 @@ public class UserGenerator extends Generator {
 
     @Override
     List<BaseEntityModel> onGenerate(int count) throws GeneratorException {
-        return generateUserBulk(count);
+        List<BaseEntityModel> result = generateUserBulk(count);
+        LOGGER.info("KEYCLOAK User Registration: avg: %s millis, longest: %s millis".formatted(totalTime / count, longest));
+        return result;
     }
 
     @Override

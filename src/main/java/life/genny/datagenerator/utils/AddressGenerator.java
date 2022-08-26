@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 public class AddressGenerator extends Generator {
+
     private final List<PlaceDetail> places;
 
     public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
@@ -22,7 +23,7 @@ public class AddressGenerator extends Generator {
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
         model.setName(GeneratorUtils.generateFirstName() + " " + GeneratorUtils.generateLastName());
-        model.setCode(AttributeCode.DEF_ADDRESS.class);
+        model.setCode(AttributeCode.ENTITY_CODE.DEF_ADDRESS);
         model.setStatus(1);
         return model;
     }
@@ -102,7 +103,7 @@ public class AddressGenerator extends Generator {
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) throws Exception {
+    List<BaseEntityModel> onGenerate(int count) throws JsonProcessingException {
         return generateAddressBulk(count);
     }
 }

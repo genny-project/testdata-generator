@@ -25,7 +25,7 @@ public class PersonGenerator extends Generator {
         BaseEntityModel entity = new BaseEntityModel();
         entity.setStatus(1);
         entity.setName(faker.address().firstName() + " " + faker.address().lastName());
-        entity.setCode(AttributeCode.DEF_PERSON.class);
+        entity.setCode(AttributeCode.ENTITY_CODE.DEF_PERSON);
         return entity;
     }
 

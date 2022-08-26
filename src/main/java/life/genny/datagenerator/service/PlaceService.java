@@ -83,7 +83,7 @@ public class PlaceService {
                     PlaceDetail placeDetail = objectMapper.readValue(address.getJsonData(), PlaceDetail.class);
                     details.add(placeDetail);
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -117,7 +117,7 @@ public class PlaceService {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage());
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            LOGGER.error(e.getMessage());
         }
     }
 }

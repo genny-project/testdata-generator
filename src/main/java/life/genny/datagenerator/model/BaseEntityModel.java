@@ -143,48 +143,32 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
         return code;
     }
 
-    public void setCode(Class<? extends BaseCode> code, String uuid) {
+    public void setCode(AttributeCode.ENTITY_CODE code, String uuid) {
         String prefix = "";
+        prefix = switch (code) {
+            case DEF_ADDRESS -> "ADD_";
+            case DEF_AGENCY -> "AGE_";
+            case DEF_AGENT -> "AGN_";
+            case DEF_APPLICATION -> "APP_";
+            case DEF_COMPANY -> "COM_";
+            case DEF_CONTACT -> "CON_";
+            case DEF_EDU_PRO_REP -> "EDR_";
+            case DEF_EDU_PROVIDER -> "EDP_";
+            case DEF_HOST_CPY -> "HCP_";
+            case DEF_HOST_CPY_REP -> "HCR_";
+            case DEF_INTERN -> "NTRN_";
+            case DEF_INTERNSHIP -> "NTRS_";
+            case DEF_ORGANISATION -> "ORG_";
+            case DEF_PERSON -> "PER_";
+            case DEF_SUPERVISOR -> "SPV_";
+            case DEF_USER -> "USR_";
+            default -> "UNKW_";
+        };
 
-        if (code == AttributeCode.DEF_PERSON.class) {
-            prefix = "PER_";
-        } else if (code == AttributeCode.DEF_APPLICATION.class) {
-            prefix = "APP_";
-        } else if (code == AttributeCode.DEF_ADDRESS.class) {
-            prefix = "ADD_";
-        } else if (code == AttributeCode.DEF_AGENCY.class) {
-            prefix = "AGE_";
-        } else if (code == AttributeCode.DEF_AGENT.class) {
-            prefix = "AGN_";
-        } else if (code == AttributeCode.DEF_COMPANY.class) {
-            prefix = "COM_";
-        } else if (code == AttributeCode.DEF_CONTACT.class) {
-            prefix = "CON_";
-        } else if (code == AttributeCode.DEF_EDU_PRO_REP.class) {
-            prefix = "EDR_";
-        } else if (code == AttributeCode.DEF_EDU_PROVIDER.class) {
-            prefix = "EDP_";
-        } else if (code == AttributeCode.DEF_HOST_CPY.class) {
-            prefix = "HCP_";
-        } else if (code == AttributeCode.DEF_INTERN.class) {
-            prefix = "NTRN_";
-        } else if (code == AttributeCode.DEF_HOST_CPY_REP.class) {
-            prefix = "HCR_";
-        } else if (code == AttributeCode.DEF_SUPERVISOR.class) {
-            prefix = "SPV_";
-        } else if (code == AttributeCode.DEF_INTERNSHIP.class) {
-            prefix = "NTRS_";
-        } else if (code == AttributeCode.DEF_USER.class) {
-            prefix = "USR_";
-        } else if (code == AttributeCode.DEF_ORGANISATION.class) {
-            prefix = "ORG_";
-        } else {
-            prefix = "UNKW_";
-        }
         this.code = prefix + uuid.toUpperCase();
     }
 
-    public void setCode(Class<? extends BaseCode> defUser) {
+    public void setCode(AttributeCode.ENTITY_CODE defUser) {
         this.setCode(defUser, UUID.randomUUID().toString());
     }
 

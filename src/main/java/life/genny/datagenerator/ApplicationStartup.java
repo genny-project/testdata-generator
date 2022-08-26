@@ -96,50 +96,46 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         int maxThread = Integer.parseInt(this.maxThreadProperty);
 
         executor = Executors.newFixedThreadPool(maxThread);
-        int generatorTaskCount = Math.min(totalRow, totalRow / perTask);
+        int taskPerEntity = Math.min(totalRow, totalRow / perTask);
+        uThread = taskPerEntity;
+        pThread = taskPerEntity;
+        aThread = taskPerEntity;
+
         int i = 0;
-        uThread = generatorTaskCount;
-        aThread = generatorTaskCount;
-        pThread = generatorTaskCount;
-        while (i < generatorTaskCount * 3) {
+        int thread = uThread + pThread + aThread;
+        while (i < thread) {
             final int start = i;
             LOGGER.info("create generator task: " + start);
             execute(perTask, i);
             i++;
         }
-        if ((perTask * generatorTaskCount) < totalRow) {
+
+        /// This operation is for adding a task for each entity if totalRow%perTask != 0
+        if ((perTask * taskPerEntity) < totalRow) {
             uThread += 1;
             aThread += 1;
             pThread += 1;
-            int count = totalRow - (perTask * generatorTaskCount);
+            int count = totalRow - (perTask * taskPerEntity);
             execute(count, i);
         }
     }
 
-    /**
-     * executor.submit( Generator instance )
-     *
-     * @param count
-     * @param i
-     */
     private void execute(int count, int i) {
         try {
+            runnableCount ++;
+
             if (pThread > 0) {
                 executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
                 pThread--;
-                runnableCount += 1;
                 return;
             }
             if (aThread > 0) {
                 executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
                 aThread--;
-                runnableCount += 1;
                 return;
             }
-            if (uThread > 0) {
-                executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
-                runnableCount += 1;
-            }
+            executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
+            uThread --;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

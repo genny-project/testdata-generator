@@ -125,7 +125,7 @@ public class KeycloakRequestExecutor {
         return executeAuthenticatedRequest(new OnRequestListener<>(email) {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
-                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
+                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email, 1);
                 return Utils.findByEmail(users, email);
             }
         });

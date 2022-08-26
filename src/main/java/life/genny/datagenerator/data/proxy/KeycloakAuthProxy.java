@@ -30,12 +30,13 @@ public interface KeycloakAuthProxy {
     );
 
     @GET
-    @Path("admin/realms/{realmName}/users?max=1")
+    @Path("admin/realms/{realmName}/users")
     @Consumes(MediaType.APPLICATION_JSON)
     List<KeycloakUser> getUser(
             @PathParam("realmName") String realmName,
             @HeaderParam("Authorization") String bearerToken,
-            @QueryParam("search") String email
+            @QueryParam("search") String email,
+            @QueryParam("max") int max
     );
 
     @POST

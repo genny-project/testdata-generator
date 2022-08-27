@@ -64,7 +64,7 @@ public class UserGenerator extends Generator {
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
             int j = 0;
             while (user == null && j < 5) {
-                LOGGER.info("RE-CREATE NEW USER");
+                LOGGER.debug("RE-CREATE NEW USER");
                 firstName = GeneratorUtils.generateFirstName();
                 email = GeneratorUtils.generateEmail(firstName, lastName);
                 username = email.getUsername();
@@ -113,7 +113,6 @@ public class UserGenerator extends Generator {
                     AttributeCode.DEF_USER.ATT_PRI_PROGRESS,
                     GeneratorUtils.AVAILABLE
             ));
-
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_STATUS,
                     GeneratorUtils.ACTIVE

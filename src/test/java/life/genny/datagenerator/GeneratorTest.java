@@ -61,7 +61,7 @@ class GeneratorTest {
         for (int i = 0; i < threadCount; i++) {
             executor.submit(new UserGenerator(perThread, baseEntityService, null, i + "", imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(perThread, baseEntityService, null, i + ""));
-            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i + "-0", places));
+            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i + "", places));
         }
     }
 
@@ -83,7 +83,7 @@ class GeneratorTest {
         generator.run();
         generator = new PersonGenerator(10, baseEntityService, listener, 1 + "");
         generator.run();
-        generator = new UserGenerator(10, baseEntityService, listener, 2 + "-0", imagesUrl, keycloakService);
+        generator = new UserGenerator(10, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
         generator.run();
         Assertions.assertTrue(true);
     }

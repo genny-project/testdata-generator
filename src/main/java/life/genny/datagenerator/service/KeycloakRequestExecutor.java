@@ -107,19 +107,6 @@ public class KeycloakRequestExecutor {
         }));
 
         if (result) {
-//            return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
-//                @Override
-//                KeycloakUser onRequest(String bearerToken, String email) {
-//                    try {
-//                        Thread.sleep(200);
-//                    } catch (InterruptedException e) {
-//                        LOGGER.error(e.getMessage(), e);
-//                        Thread.currentThread().interrupt();
-//                    }
-//                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-//                    return Utils.findByEmail(users, email);
-//                }
-//            });
             return getRegisteredUserFromKeycloak(user.getEmail());
         } else return null;
     }
@@ -138,7 +125,7 @@ public class KeycloakRequestExecutor {
         return executeAuthenticatedRequest(new OnRequestListener<>(email) {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
-                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
+                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email, 1);
                 return Utils.findByEmail(users, email);
             }
         });

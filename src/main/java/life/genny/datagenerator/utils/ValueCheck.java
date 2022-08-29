@@ -4,8 +4,8 @@ import life.genny.datagenerator.model.json.KeycloakUser;
 
 import java.util.List;
 
-public class Utils {
-    private Utils() {
+public class ValueCheck {
+    private ValueCheck() {
         throw new IllegalArgumentException("Class %s can't be initiate".formatted(this.getClass().getName()));
     }
 

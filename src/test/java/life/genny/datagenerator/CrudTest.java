@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 @QuarkusTest
-public class CrudTest {
+class CrudTest {
     @Inject
     BaseEntityService baseEntityService;
 

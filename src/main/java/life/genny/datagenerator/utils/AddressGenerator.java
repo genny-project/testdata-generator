@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AddressGenerator extends Generator {
+public final class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
@@ -61,11 +61,11 @@ public class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_CITY,
-                    !Utils.isEmpty(city) ? city : ""
+                    !ValueCheck.isEmpty(city) ? city : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_COUNTRY,
-                    !Utils.isEmpty(country) ? country : ""
+                    !ValueCheck.isEmpty(country) ? country : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_FULL, place.getFormattedAddress()
@@ -82,15 +82,15 @@ public class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_POSTCODE,
-                    !Utils.isEmpty(postalCode) ? postalCode : ""
+                    !ValueCheck.isEmpty(postalCode) ? postalCode : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_STATE,
-                    !Utils.isEmpty(state) ? state : ""
+                    !ValueCheck.isEmpty(state) ? state : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_SUBURB,
-                    !Utils.isEmpty(suburb) ? suburb : ""
+                    !ValueCheck.isEmpty(suburb) ? suburb : ""
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,

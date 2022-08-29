@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class UserGenerator extends Generator {
+public final class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
     private final List<String> imagesUrl;
@@ -46,7 +46,6 @@ public class UserGenerator extends Generator {
     }
 
     private final List<String> keycloakUserIds = new ArrayList<>();
-    private long totalTime = 0;
     private long longest = 0;
 
     public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
@@ -75,7 +74,6 @@ public class UserGenerator extends Generator {
                 throw new GeneratorException("Failed to create user with email " + email);
             }
             long howLong = (new Date().getTime() - startReg.getTime());
-            totalTime += howLong;
             longest = Math.max(howLong, longest);
 
             keycloakUserIds.add(user.getId());

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class PersonGenerator extends Generator {
+public final class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 

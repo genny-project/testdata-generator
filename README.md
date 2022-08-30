@@ -40,6 +40,7 @@ Run ``$sudo cp .env.example .env``
 1. Replace all \<description\> inside with the correct parameter
 1. For database configuration, can be differentiated between Development(DEV_) and Production(PROD_*)
 
+
 ## Keycloak Setup
 **The project required Keycloak to be installed and configured before running**. It is recommended to install keycloak on Docker, 
 Below are the steps to install and configure access on keycloak:
@@ -55,8 +56,8 @@ Below are the steps to install and configure access on keycloak:
 1. click **Credential** Tab, and copy the **Secret Key** and put it to ```KEYCLOAK_CLIENT_SECRET=``` on ```.env```
   file
 
-## GCP Place API Setup {#setup-gcp}
 
+## GCP Place API Setup
 1. Go to https://console.cloud.google.com/apis/dashboard
 1. Create **New Project** and Enable the **Place API** 
 1. Go to **API & Service** page and click **Credential** 
@@ -67,14 +68,13 @@ Below are the steps to install and configure access on keycloak:
 
 # Running the Project
 Before running the project, make sure all required setup above have been done.
-- Setup Keycloak [How to Setup Keycloak ](#keycloak-setup)
-- Setup GCP Place API and get the credential [How to get GCP_API_KEY](#setup-gcp)
+- [Install Keycloak](#installation) and [get Access Key](#keycloak-setup)
+- Setup GCP Place API and get the credential [How to get GCP_API_KEY](#gcp_place-api-setup)
 - Setup configuration file [How to setup .env file](#config-setup)
 
 ### Run Dev Mode
 1. Go to project root directory
 2. Execute ``$mvn quarkus:dev`` to run the project as development mode
-3. Setup GCP Place API and get the credential [How to get GCP_API_KEY](#setup-gcp)
 4. To run the project on Test mode, you need set TEST_* config in .env file
 
 ### Run Production Mode

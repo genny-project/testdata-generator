@@ -6,28 +6,31 @@ If you want to learn more about Quarkus, please visit its website: https://quark
 ---
 
 ## Description
-Genny Data Generator is a Java 17 application, built to generate dummy data based on GADA requirements.
-The application uses different services that support dummy data generation, Such as: Keycloak, Google API, MySQL Database.
+Genny Data Generator is a Java 17 application, built to generate dummy data for performance testing purposes.
+The application uses different **Services** that support dummy data generation, Such as: Keycloak, Google API, MySQL Database.
 
-**Main Program**
-: Responsible to generate dummy data with help from Keycloak and Google API service to retrieve the required information, 
-and load the data into the database.
-
-**Keycloak**
-: A Random key generator being used to generate Unique Key for each generated Entity, this service can be used to generate
-default password as well. [How to Setup Keycloak ](#how-to-setup-keycloak)
-
-**Google API**
-: Used to retrieve address information. [How to get GCP_API_KEY](#how-to-get-gcp_api_key)
-
-**MySQL**
-: A Database for the Main Program to keep generated data.
+> ### Main Program
+> - Responsible to generate dummy data with help from Keycloak and Google API service to retrieve the required information, 
+> and load the data into the database.
+> 
+> ### Keycloak
+> - A Random key generator being used to generate Unique Key for each generated Entity, this service can be used to generate
+> default password as well. [How to setup Keycloak](#keycloak-setup)
+> 
+> ### Google Place API
+> - Used to retrieve address information. [How to setup Google Placa API](#gcp-place-api-setup)
+> 
+> ### MySQL
+> - A Database for the Main Program to keep generated data.
 
 ## Dependencies
-1. JDK 17
-2. Maven 3.x
-3. MySQL 8.x
-4. Docker
+
+```
+  JDK 17
+  Maven 3.x
+  MySQL 8.x
+  Docker
+```
 
 ---
 
@@ -68,8 +71,8 @@ Below are the steps to install and configure access on keycloak:
 
 # Running the Project
 Before running the project, make sure all required setup above have been done.
-- [Install Keycloak](#installation) and [get Access Key](#keycloak-setup)
-- Setup GCP Place API and get the credential [How to get GCP_API_KEY](#gcp_place-api-setup)
+- [Install Keycloak](#keycloak-setup) and [get Access Key](#setup-access)
+- Setup GCP Place API and get the [Credential Key](#gcp-place-api-setup)
 - Setup configuration file [How to setup .env file](#config-setup)
 
 ### Run Dev Mode

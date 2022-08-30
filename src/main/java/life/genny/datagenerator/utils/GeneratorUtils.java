@@ -31,7 +31,7 @@ public class GeneratorUtils {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    private static int generateRandomNum(int size) {
+    public static int generateRandomNum(int size) {
         return random.nextInt(size);
     }
 

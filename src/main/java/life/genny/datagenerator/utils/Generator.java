@@ -1,6 +1,5 @@
 package life.genny.datagenerator.utils;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
@@ -38,9 +37,9 @@ public abstract class Generator implements Runnable, GeneratorListener {
             LOGGER.error("ERROR GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             LOGGER.error(e.getMessage(), e);
             onError(e);
+        } finally {
+            onFinish();
         }
-
-        onFinish();
     }
 
     @Override

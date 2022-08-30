@@ -3,6 +3,8 @@
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
+---
+
 ## Description
 Genny Data Generator is a Java 17 application, built to generate dummy data based on GADA requirements.
 The application uses different services that support dummy data generation, Such as: Keycloak, Google API, MySQL Database.
@@ -21,26 +23,24 @@ default password as well. [How to Setup Keycloak ](#how-to-setup-keycloak)
 **MySQL**
 : A Database for the Main Program to keep generated data.
 
-<hr>
-
 ## Dependencies
 1. JDK 17
 2. Maven 3.x
 3. MySQL 8.x
 4. Docker
 
-<hr>
+---
 
 # Building the Project and Dependencies
 
-## Config Setup {#setup-config}
+## Config Setup
 The program uses **.env** file as the config file. Below are the steps to setup the config file:
 1. Create .env from .env.example file for configuration,
 Run ``$sudo cp .env.example .env``
 1. Replace all \<description\> inside with the correct parameter
 1. For database configuration, can be differentiated between Development(DEV_) and Production(PROD_*)
 
-## Keycloak Setup {#setup-keycloak}
+## Keycloak Setup
 **The project required Keycloak to be installed and configured before running**. It is recommended to install keycloak on Docker, 
 Below are the steps to install and configure access on keycloak:
 
@@ -63,11 +63,13 @@ Below are the steps to install and configure access on keycloak:
 1. Click + **Create Credentials** and select **API Key**
 1. Copy the **API Key** and put it to ```GCP_API_KEY``` config on ```.env``` file.
 
+---
+
 # Running the Project
 Before running the project, make sure all required setup above have been done.
-- Setup Keycloak [How to Setup Keycloak ](#setup-keycloak)
+- Setup Keycloak [How to Setup Keycloak ](#keycloak-setup)
 - Setup GCP Place API and get the credential [How to get GCP_API_KEY](#setup-gcp)
-- Setup configuration file [How to setup .env file](#setup-config)
+- Setup configuration file [How to setup .env file](#config-setup)
 
 ### Run Dev Mode
 1. Go to project root directory

@@ -10,14 +10,15 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
 
 
 public class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
-    public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
-        super(count, service, onFinishListener, id);
+    public PersonGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+        super(count, executorService, service, onFinishListener, id);
     }
 
     public BaseEntityModel createPersonEntity() {

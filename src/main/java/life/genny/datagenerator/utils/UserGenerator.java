@@ -13,6 +13,7 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
@@ -20,8 +21,8 @@ public class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
-        super(count, service, onFinishListener, id);
+    public UserGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
+        super(count, executorService, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }
@@ -98,10 +99,6 @@ public class UserGenerator extends Generator {
                     false
             ));
             model.addAttribute(this.createUserAttribute(
-                    AttributeCode.DEF_USER.ATT_PRI_KEYCLOAK_UUID,
-                    user.getId()
-            ));
-            model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_PREFERRED_NAME,
                     firstName
             ));
@@ -135,6 +132,11 @@ public class UserGenerator extends Generator {
             ));
             model.addAttribute(this.createUserAttribute(
                     AttributeCode.DEF_USER.ATT_PRI_UUID,
+                    user.getId()
+            ));
+
+            model.addAttribute(this.createUserAttribute(
+                    AttributeCode.DEF_USER.ATT_PRI_KEYCLOAK_UUID,
                     user.getId()
             ));
 

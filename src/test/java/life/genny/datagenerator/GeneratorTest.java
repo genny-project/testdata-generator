@@ -7,10 +7,7 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.utils.AddressGenerator;
-import life.genny.datagenerator.utils.Generator;
-import life.genny.datagenerator.utils.PersonGenerator;
-import life.genny.datagenerator.utils.UserGenerator;
+import life.genny.datagenerator.utils.*;
 import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
@@ -84,6 +81,8 @@ class GeneratorTest {
         generator = new PersonGenerator(10, baseEntityService, listener, 1 + "");
         generator.run();
         generator = new UserGenerator(10, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
+        generator.run();
+        generator = new ContactGenerator(10, baseEntityService, listener, 3 + "");
         generator.run();
         Assertions.assertTrue(true);
     }

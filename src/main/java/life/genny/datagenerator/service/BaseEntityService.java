@@ -53,7 +53,7 @@ public class BaseEntityService {
     public void saveAll(List<BaseEntityModel> models) {
         Date date = new Date();
         baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
-        LOGGER.debug("Saving data in %s milliseconds".formatted(new Date().getTime() - date.getTime()));
+        LOGGER.info("Saving data in %s milliseconds".formatted(new Date().getTime() - date.getTime()));
     }
 
     public long countEntity() {

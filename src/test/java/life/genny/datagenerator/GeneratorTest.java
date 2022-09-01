@@ -36,7 +36,7 @@ class GeneratorTest {
     private final List<PlaceDetail> places = new ArrayList<>();
 
     private long dataBefore = 0;
-    private ExecutorService saveExecutor = Executors.newFixedThreadPool(3);
+    private final ExecutorService saveExecutor = Executors.newFixedThreadPool(3);
 
     @BeforeEach
     void setup() throws InterruptedException {
@@ -53,13 +53,14 @@ class GeneratorTest {
         int perThread = 200;
         int totalData = 1000;
         int threadCount = totalData / perThread;
-        ExecutorService executor = Executors.newFixedThreadPool(Math.min(threadCount, 10));
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         Assertions.assertNotNull(imagesUrl);
         Assertions.assertNotNull(keycloakService);
         for (int i = 0; i < threadCount; i++) {
             executor.submit(new UserGenerator(perThread, saveExecutor, baseEntityService, null, i + "", imagesUrl, keycloakService));
             executor.submit(new PersonGenerator(perThread, saveExecutor, baseEntityService, null, i + ""));
             executor.submit(new AddressGenerator(perThread, saveExecutor, baseEntityService, null, i + "", places));
+            executor.submit(new ContactGenerator(perThread, saveExecutor, baseEntityService, null, i + ""));
         }
     }
 
@@ -83,7 +84,7 @@ class GeneratorTest {
         generator.run();
         generator = new UserGenerator(10, saveExecutor, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
         generator.run();
-        generator = new ContactGenerator(10, baseEntityService, listener, 3 + "");
+        generator = new ContactGenerator(10, saveExecutor, baseEntityService, listener, 3 + "");
         generator.run();
         Assertions.assertTrue(true);
     }

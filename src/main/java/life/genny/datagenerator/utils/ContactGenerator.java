@@ -1,24 +1,20 @@
 package life.genny.datagenerator.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.javafaker.Faker;
-import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
-import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.concurrent.ExecutorService;
 
-public class ContactGenerator extends Generator{
+public final class ContactGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
 
-    public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
-        super(count, service, onFinishListener, id);
+    public ContactGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+        super(count, executorService, service, onFinishListener, id);
     }
 
     public BaseEntityModel createContactEntity(String fname, String lname) {
@@ -66,7 +62,7 @@ public class ContactGenerator extends Generator{
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_LINKEDIN_URL,
-                        GeneratorUtils.generateLinkedInURL(firstName, lastName).toString()
+                        GeneratorUtils.generateLinkedInURL(firstName, lastName)
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_MOBILE,
@@ -89,7 +85,7 @@ public class ContactGenerator extends Generator{
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) throws GeneratorException, JsonProcessingException {
+    List<BaseEntityModel> onGenerate(int count) {
         return generate(count);
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 public abstract sealed class Generator implements Runnable, GeneratorListener
-        permits PersonGenerator, UserGenerator, AddressGenerator {
+        permits PersonGenerator, UserGenerator, AddressGenerator, ContactGenerator {
     private static final Logger LOGGER = Logger.getLogger(Generator.class);
     public final int count;
     public final BaseEntityService service;

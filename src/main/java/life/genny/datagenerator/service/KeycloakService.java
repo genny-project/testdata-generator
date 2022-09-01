@@ -3,7 +3,7 @@ package life.genny.datagenerator.service;
 import life.genny.datagenerator.data.proxy.KeycloakAuthProxy;
 import life.genny.datagenerator.model.json.KeycloakAuthResponse;
 import life.genny.datagenerator.model.json.KeycloakUser;
-import life.genny.datagenerator.utils.Utils;
+import life.genny.datagenerator.utils.ValueCheck;
 import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -165,7 +165,7 @@ public class KeycloakService {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
                 List<KeycloakUser> users = getKeycloakAuthProxy().getUser(getRealmName(), bearerToken, email, 1);
-                return Utils.findByEmail(users, email);
+                return ValueCheck.findByEmail(users, email);
             }
         });
     }

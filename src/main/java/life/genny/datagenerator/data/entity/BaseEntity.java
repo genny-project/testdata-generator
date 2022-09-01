@@ -62,20 +62,6 @@ public class BaseEntity extends PanacheEntityBase {
     @OneToMany(mappedBy = "baseEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BaseEntityAttribute> attributes;
 
-    public BaseEntity() {
-    }
-
-    public BaseEntity(String dType, Long id, Date created, String name, String realm, Date updated, String code, int status) {
-        this.dType = dType == null ? "BaseEntity" : dType;
-        this.id = id;
-        this.created = created;
-        this.name = name;
-        this.realm = realm == null ? "genny" : realm;
-        this.updated = updated;
-        this.code = code;
-        this.status = status;
-    }
-
     public List<BaseEntityAttribute> getAttributes() {
         if (attributes == null) attributes = new ArrayList<>();
         return attributes;

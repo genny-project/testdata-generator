@@ -48,6 +48,7 @@ public final class UserGenerator extends Generator {
 
     private final List<String> keycloakUserIds = new ArrayList<>();
     private long longest = 0;
+    private long totalTime = 0;
 
     public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>();
@@ -76,6 +77,7 @@ public final class UserGenerator extends Generator {
             }
             long howLong = (new Date().getTime() - startReg.getTime());
             longest = Math.max(howLong, longest);
+            totalTime += howLong;
 
             keycloakUserIds.add(user.getId());
             BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());

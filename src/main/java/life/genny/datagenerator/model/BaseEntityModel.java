@@ -62,7 +62,15 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public BaseEntity toEntity() {
-        BaseEntity entity = new BaseEntity(dType, id, created, name, realm, updated, code, status);
+        final BaseEntity entity = new BaseEntity();
+        entity.setdType(dType);
+        entity.setCode(code);
+        entity.setName(name);
+        entity.setRealm(realm);
+        entity.setStatus(status);
+        entity.setCreated(created);
+        entity.setUpdated(updated);
+        entity.setId(id);
         if (attributeMap != null) {
             List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
                 BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();

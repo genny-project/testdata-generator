@@ -13,7 +13,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 
 
-public class PersonGenerator extends Generator {
+public final class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 

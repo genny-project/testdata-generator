@@ -51,5 +51,4 @@ public class BaseEntityResource {
         return Response.ok(params).build();
     }
 
-
 }

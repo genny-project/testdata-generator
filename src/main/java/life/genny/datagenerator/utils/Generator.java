@@ -10,7 +10,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-public abstract class Generator implements Runnable, GeneratorListener {
+public abstract sealed class Generator implements Runnable, GeneratorListener
+        permits PersonGenerator, UserGenerator, AddressGenerator {
     private static final Logger LOGGER = Logger.getLogger(Generator.class);
     public final int count;
     public final BaseEntityService service;

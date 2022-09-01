@@ -61,6 +61,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private int uThread = 0;
     private int aThread = 0;
     private int pThread = 0;
+    private int cThread = 0;
 
     @Override
     public void onFinish(String generatorId) {
@@ -105,9 +106,10 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         uThread = taskPerEntity;
         pThread = taskPerEntity;
         aThread = taskPerEntity;
+        cThread = taskPerEntity;
 
         int i = 0;
-        int thread = uThread + pThread + aThread;
+        int thread = uThread + pThread + aThread + cThread;
         while (i < thread) {
             final int start = i;
             LOGGER.info("create generator task: " + start);
@@ -117,7 +119,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
 
         // This operation is for adding a task for each entity if totalRow % perTask != 0
         if ((perTask * taskPerEntity) < totalRow) {
-            uThread += 2;
+            uThread += 1;
             aThread += 1;
             pThread += 1;
             int count = totalRow - (perTask * taskPerEntity);
@@ -128,6 +130,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private void execute(int count, int i) {
         try {
             runnableCount ++;
+
             if (pThread > 0) {
                 executor.submit(new PersonGenerator(count, saverExecutor, baseEntityService, this, i + ""));
                 pThread--;
@@ -136,6 +139,11 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             if (aThread > 0) {
                 executor.submit(new AddressGenerator(count, saverExecutor, baseEntityService, this, i + "", places));
                 aThread--;
+                return;
+            }
+            if (cThread > 0) {
+                executor.submit(new ContactGenerator(count, saverExecutor, baseEntityService, this, i + ""));
+                cThread--;
                 return;
             }
             executor.submit(new UserGenerator(count, saverExecutor, baseEntityService, this, i + "-0", imagesUrl, keycloakService));

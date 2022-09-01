@@ -179,4 +179,20 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     public void setStatus(int status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "BaseEntityModel{" +
+                "dType='" + dType + '\'' +
+                ", id=" + id +
+                ", created=" + created +
+                ", name='" + name + '\'' +
+                ", realm='" + realm + '\'' +
+                ", updated=" + updated +
+                ", code='" + code + '\'' +
+                ", status=" + status +
+                ", attributes=" + attributes +
+                ", attributeMap=" + attributeMap +
+                '}';
+    }
 }

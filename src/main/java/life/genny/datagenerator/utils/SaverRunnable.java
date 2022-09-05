@@ -2,10 +2,12 @@ package life.genny.datagenerator.utils;
 
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
+import org.jboss.logging.Logger;
 
 import java.util.List;
 
 public class SaverRunnable implements Runnable{
+    private static final Logger LOGGER = Logger.getLogger(SaverRunnable.class);
     private final BaseEntityService service;
     private final List<BaseEntityModel> baseEntityModels;
     private final GeneratorListener listener;
@@ -21,6 +23,7 @@ public class SaverRunnable implements Runnable{
         try {
             service.saveAll(baseEntityModels);
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
             if (listener != null) listener.onError(e);
         }
     }

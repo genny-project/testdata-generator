@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
 import java.util.List;
 
 public class KeycloakRequestExecutor {
@@ -20,7 +21,19 @@ public class KeycloakRequestExecutor {
         this.keycloakService = keycloakService;
     }
 
+
+    private static final List<KeycloakAuthResponse> signedSession = new ArrayList<>();
+
+    public void close() {
+        if (auth != null)
+            signedSession.add(auth);
+    }
+
     private KeycloakAuthResponse signIn() {
+        if (!signedSession.isEmpty()) {
+            return signedSession.remove(0);
+        }
+
         MultivaluedMap<String, Object> form = new MultivaluedHashMap<>();
         form.putSingle("username", keycloakService.getKeycloakAdminUsername());
         form.putSingle("password", keycloakService.getKeycloakAdminPassword());

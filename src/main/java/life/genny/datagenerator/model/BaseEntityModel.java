@@ -8,7 +8,7 @@ import java.util.*;
 
 public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("dtype")
-    private String dType;
+    private String dType = "BaseEntity";
     @JsonProperty("id")
     private Long id;
     @JsonProperty("created")
@@ -16,7 +16,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("name")
     private String name;
     @JsonProperty("realm")
-    private String realm;
+    private String realm = "Genny";
     @JsonProperty("updated")
     private Date updated;
     @JsonProperty("code")
@@ -104,7 +104,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public void setdType(String dType) {
-        this.dType = dType;
+        this.dType = dType == null ? "BaseEntity" : dType;
     }
 
     public Long getId() {
@@ -136,7 +136,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public void setRealm(String realm) {
-        this.realm = realm;
+        this.realm = realm == null ? "Genny" : realm;
     }
 
     public Date getUpdated() {

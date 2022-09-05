@@ -41,6 +41,9 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
             LOGGER.error("ERROR GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             LOGGER.error(e.getMessage(), e);
             onError(e);
+        } catch (Exception ex) {
+            LOGGER.error(ex.getMessage(), ex);
+            onError(ex);
         } finally {
             onFinish();
         }

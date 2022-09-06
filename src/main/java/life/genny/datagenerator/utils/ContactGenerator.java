@@ -8,13 +8,12 @@ import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public final class ContactGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
 
-    public ContactGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id) {
-        super(count, executorService, service, onFinishListener, id);
+    public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+        super(count, service, onFinishListener, id);
     }
 
     public BaseEntityModel createContactEntity(String fname, String lname) {

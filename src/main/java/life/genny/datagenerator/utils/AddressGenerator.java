@@ -10,14 +10,13 @@ import life.genny.datagenerator.service.BaseEntityService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 public final class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
-    public AddressGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
-        super(count, executorService, service, onFinishListener, id);
+    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
+        super(count, service, onFinishListener, id);
         this.places = places;
     }
 

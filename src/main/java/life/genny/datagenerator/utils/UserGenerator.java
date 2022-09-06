@@ -13,7 +13,6 @@ import org.jboss.logging.Logger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public final class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
@@ -21,8 +20,8 @@ public final class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, ExecutorService executorService, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
-        super(count, executorService, service, onFinishListener, id);
+    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
+        super(count, service, onFinishListener, id);
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }
@@ -144,12 +143,6 @@ public final class UserGenerator extends Generator {
             i++;
         }
         return models;
-    }
-
-    @Override
-    public void onFinish() {
-        super.onFinish();
-        requestExecutor.close();
     }
 
     @Override

@@ -8,7 +8,6 @@ import org.jboss.logging.Logger;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public abstract sealed class Generator implements Runnable, GeneratorListener
         permits PersonGenerator, UserGenerator, AddressGenerator, ContactGenerator {
@@ -18,14 +17,12 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
     private final String id;
     private Date startTime;
     private final OnFinishListener onFinishListener;
-    private final ExecutorService saverExecutor;
 
-    protected Generator(int count, ExecutorService saverExecutor, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+    protected Generator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         this.count = count;
         this.service = service;
         this.id = id;
         this.onFinishListener = onFinishListener;
-        this.saverExecutor = saverExecutor;
     }
 
     @Override
@@ -35,7 +32,7 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
         try {
             LOGGER.info("START GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             List<BaseEntityModel> data = onGenerate(count);
-            saverExecutor.submit(new SaverRunnable(service, data, this));
+            service.saveAll(data);
             onSuccess();
         } catch (GeneratorException | JsonProcessingException e) {
             LOGGER.error("ERROR GENERATING %s id: %s".formatted(this.getClass().getName(), id));

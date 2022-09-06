@@ -52,7 +52,6 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     KeycloakService keycloakService;
 
     private ExecutorService executor;
-    private ExecutorService saverExecutor;
     private List<String> imagesUrl = new ArrayList<>();
     private final List<PlaceDetail> places = new ArrayList<>();
     private Date timeStart;
@@ -100,8 +99,6 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         int maxThread = Integer.parseInt(this.maxThreadProperty);
 
         executor = Executors.newFixedThreadPool(maxThread);
-        saverExecutor = Executors.newFixedThreadPool(maxThread);
-
         int taskPerEntity = Math.min(totalRow, totalRow / perTask);
         uThread = taskPerEntity;
         pThread = taskPerEntity;
@@ -132,22 +129,22 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             runnableCount ++;
 
             if (pThread > 0) {
-                executor.submit(new PersonGenerator(count, saverExecutor, baseEntityService, this, i + ""));
+                executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
                 pThread--;
                 return;
             }
             if (aThread > 0) {
-                executor.submit(new AddressGenerator(count, saverExecutor, baseEntityService, this, i + "", places));
+                executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
                 aThread--;
                 return;
             }
             if (cThread > 0) {
-                executor.submit(new ContactGenerator(count, saverExecutor, baseEntityService, this, i + ""));
+                executor.submit(new ContactGenerator(count, baseEntityService, this, i + ""));
                 cThread--;
                 return;
             }
-            executor.submit(new UserGenerator(count, saverExecutor, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
-            uThread --;
+            executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
+            uThread--;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

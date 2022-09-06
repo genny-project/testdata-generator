@@ -30,7 +30,7 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
         onStart();
 
         try {
-            LOGGER.info("START GENERATING %s id: %s".formatted(this.getClass().getName(), id));
+            LOGGER.debug("START GENERATING %s id: %s".formatted(this.getClass().getName(), id));
             List<BaseEntityModel> data = onGenerate(count);
             service.saveAll(data);
             onSuccess();

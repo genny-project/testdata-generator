@@ -32,13 +32,13 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     public static final String LONDON_GEO_LOC = "51.5236688,-1.1831971";
 
     @ConfigProperty(name = "data.total_person_tobe_generated", defaultValue = "50")
-    String totalGeneratedNumberProperty;
+    int totalGeneratedNumberProperty;
 
     @ConfigProperty(name = "data.generator.max.thread", defaultValue = "5")
-    String maxThreadProperty;
+    int maxThreadProperty;
 
     @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    String perThreadProperty;
+    int perThreadProperty;
 
     @Inject
     ObjectMapper objectMapper;
@@ -92,11 +92,11 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     }
 
     void onStart(@Observes StartupEvent event) {
-        LOGGER.info("ApplicationStartup ");
+        LOGGER.debug("ApplicationStartup ");
 
-        int totalRow = Integer.parseInt(this.totalGeneratedNumberProperty);
-        int perTask = Integer.parseInt(this.perThreadProperty);
-        int maxThread = Integer.parseInt(this.maxThreadProperty);
+        int totalRow = this.totalGeneratedNumberProperty;
+        int perTask = this.perThreadProperty;
+        int maxThread = this.maxThreadProperty;
 
         executor = Executors.newFixedThreadPool(maxThread);
         int taskPerEntity = Math.min(totalRow, totalRow / perTask);
@@ -107,9 +107,8 @@ public class ApplicationStartup implements Generator.OnFinishListener {
 
         int i = 0;
         int thread = uThread + pThread + aThread + cThread;
+        LOGGER.info("creating " + thread + " generator tasks");
         while (i < thread) {
-            final int start = i;
-            LOGGER.info("create generator task: " + start);
             execute(perTask, i);
             i++;
         }

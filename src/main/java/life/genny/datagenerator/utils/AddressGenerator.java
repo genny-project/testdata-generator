@@ -6,12 +6,16 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public final class AddressGenerator extends Generator {
+
+    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
+    int perThreadProperty;
 
     private final List<PlaceDetail> places;
 
@@ -40,7 +44,7 @@ public final class AddressGenerator extends Generator {
     }
 
     public List<BaseEntityModel> generateAddressBulk(long count) throws JsonProcessingException {
-        List<BaseEntityModel> models = new ArrayList<>();
+        List<BaseEntityModel> models = new ArrayList<>(perThreadProperty);
 
         for (int i = 0; i < count; i++) {
             BaseEntityModel model = createAddressEntity();

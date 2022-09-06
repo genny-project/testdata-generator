@@ -5,6 +5,7 @@ import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import java.util.Locale;
 public final class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
+
+    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
+    int perThreadProperty;
 
     public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);

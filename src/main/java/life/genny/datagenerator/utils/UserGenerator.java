@@ -8,14 +8,17 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.KeycloakRequestExecutor;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.utils.exception.GeneratorException;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public final class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
+
+    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
+    int perThreadProperty;
 
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
@@ -45,9 +48,7 @@ public final class UserGenerator extends Generator {
         return entity;
     }
 
-    private final List<String> keycloakUserIds = new ArrayList<>();
-    private long longest = 0;
-    private long totalTime = 0;
+    private final List<String> keycloakUserIds = new ArrayList<>(perThreadProperty);
 
     public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>();
@@ -60,7 +61,6 @@ public final class UserGenerator extends Generator {
             Email email = GeneratorUtils.generateEmail(firstName, lastName);
             String username = email.getUsername();
 
-            Date startReg = new Date();
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
             int j = 0;
             while (user == null && j < 5) {
@@ -74,9 +74,6 @@ public final class UserGenerator extends Generator {
             if (user == null) {
                 throw new GeneratorException("Failed to create user with email " + email);
             }
-            long howLong = (new Date().getTime() - startReg.getTime());
-            longest = Math.max(howLong, longest);
-            totalTime += howLong;
 
             keycloakUserIds.add(user.getId());
             BaseEntityModel model = this.generateUser(firstName + " " + lastName, user.getId());
@@ -148,7 +145,6 @@ public final class UserGenerator extends Generator {
     @Override
     List<BaseEntityModel> onGenerate(int count) throws GeneratorException {
         List<BaseEntityModel> result = generateUserBulk(count);
-        LOGGER.info("KEYCLOAK User Registration: avg: %s millis, longest: %s millis".formatted(totalTime / count, longest));
         return result;
     }
 

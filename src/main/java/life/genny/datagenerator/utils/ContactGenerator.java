@@ -4,6 +4,7 @@ import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import java.util.List;
 
 public final class ContactGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
+
+    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
+    int perThreadProperty;
 
     public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
@@ -40,7 +44,7 @@ public final class ContactGenerator extends Generator {
     }
 
     public List<BaseEntityModel> generate(int totalIndex) {
-        List<BaseEntityModel> contactEntities = new ArrayList<>();
+        List<BaseEntityModel> contactEntities = new ArrayList<>(perThreadProperty);
         int i = 0;
         while (i < totalIndex) {
 

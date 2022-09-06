@@ -57,10 +57,10 @@ class GeneratorTest {
         Assertions.assertNotNull(imagesUrl);
         Assertions.assertNotNull(keycloakService);
         for (int i = 0; i < threadCount; i++) {
-            executor.submit(new UserGenerator(perThread, saveExecutor, baseEntityService, null, i + "", imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(perThread, saveExecutor, baseEntityService, null, i + ""));
-            executor.submit(new AddressGenerator(perThread, saveExecutor, baseEntityService, null, i + "", places));
-            executor.submit(new ContactGenerator(perThread, saveExecutor, baseEntityService, null, i + ""));
+            executor.submit(new UserGenerator(perThread, baseEntityService, null, i + "", imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(perThread, baseEntityService, null, i + ""));
+            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i + "", places));
+            executor.submit(new ContactGenerator(perThread, baseEntityService, null, i + ""));
         }
     }
 
@@ -78,13 +78,13 @@ class GeneratorTest {
     void testGeneratorClass() {
         Generator.OnFinishListener listener = generatorId -> {
         };
-        Generator generator = new AddressGenerator(10, saveExecutor,  baseEntityService, listener, 0 + "", places);
+        Generator generator = new AddressGenerator(10, baseEntityService, listener, 0 + "", places);
         generator.run();
-        generator = new PersonGenerator(10, saveExecutor, baseEntityService, listener, 1 + "");
+        generator = new PersonGenerator(10, baseEntityService, listener, 1 + "");
         generator.run();
-        generator = new UserGenerator(10, saveExecutor, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
+        generator = new UserGenerator(10, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
         generator.run();
-        generator = new ContactGenerator(10, saveExecutor, baseEntityService, listener, 3 + "");
+        generator = new ContactGenerator(10, baseEntityService, listener, 3 + "");
         generator.run();
         Assertions.assertTrue(true);
     }

@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 //@QuarkusTest
 //@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -25,7 +24,7 @@ class ContactGeneratorTest {
         Generator.OnFinishListener listener = generatorId -> {};
         //Generator generator = new ContactGenerator(2, baseEntityService, listener, 3 + "");
         //generator.run();
-        ContactGenerator generator = new ContactGenerator(2, Executors.newSingleThreadExecutor(), baseEntityService, listener, 3 + "");
+        ContactGenerator generator = new ContactGenerator(2, baseEntityService, listener, 3 + "");
 
         List<BaseEntityModel> contactData = generator.generate(2);
         System.out.println(contactData);

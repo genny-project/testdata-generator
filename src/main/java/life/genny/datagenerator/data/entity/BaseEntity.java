@@ -36,7 +36,8 @@ public class BaseEntity extends PanacheEntityBase {
 
     @Id
     @Column(length = 20)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="emp_baseentity_sequence")
+    @SequenceGenerator(name="emp_baseentity_sequence", sequenceName = "emp_baseentity_id_seq", allocationSize = 1000)
     private Long id;
 
     @CreationTimestamp

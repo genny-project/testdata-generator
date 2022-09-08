@@ -4,6 +4,7 @@ import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
 import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.model.BaseEntityModel;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -53,7 +54,8 @@ public class BaseEntityService {
     public void saveAll(List<BaseEntityModel> models) {
         Date date = new Date();
         baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
-        LOGGER.debug("Saving data in %s milliseconds".formatted(new Date().getTime() - date.getTime()));
+        baseEntityRepository.flush();
+        LOGGER.debug("Saving data in %s ms".formatted(new Date().getTime() - date.getTime()));
     }
 
     public long countEntity() {

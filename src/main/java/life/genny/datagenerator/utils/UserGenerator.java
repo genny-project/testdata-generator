@@ -17,9 +17,6 @@ import java.util.List;
 public final class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
 
-    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    int perThreadProperty;
-
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
@@ -48,10 +45,10 @@ public final class UserGenerator extends Generator {
         return entity;
     }
 
-    private final List<String> keycloakUserIds = new ArrayList<>(perThreadProperty);
+    private final List<String> keycloakUserIds = new ArrayList<>();
 
-    public List<BaseEntityModel> generateUserBulk(long count) throws GeneratorException {
-        List<BaseEntityModel> models = new ArrayList<>();
+    public List<BaseEntityModel> generateUserBulk(int count) throws GeneratorException {
+        List<BaseEntityModel> models = new ArrayList<>(count);
         int i = 0;
         while (i < count) {
 

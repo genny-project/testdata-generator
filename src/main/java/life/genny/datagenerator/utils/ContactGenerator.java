@@ -13,9 +13,6 @@ import java.util.List;
 public final class ContactGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
 
-    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    int perThreadProperty;
-
     public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
     }
@@ -44,7 +41,7 @@ public final class ContactGenerator extends Generator {
     }
 
     public List<BaseEntityModel> generate(int totalIndex) {
-        List<BaseEntityModel> contactEntities = new ArrayList<>(perThreadProperty);
+        List<BaseEntityModel> contactEntities = new ArrayList<>(totalIndex);
         int i = 0;
         while (i < totalIndex) {
 

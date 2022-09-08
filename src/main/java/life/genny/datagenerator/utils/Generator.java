@@ -62,7 +62,7 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
 
     @Override
     public void onSuccess() {
-        LOGGER.info("GENERATED %s data %s id: %s in %s milliseconds".formatted(count, this.getClass().getSimpleName(), id, (new Date().getTime() - startTime.getTime())));
+        LOGGER.info("GENERATED %s data %s id: %s in %s ms".formatted(count, this.getClass().getSimpleName(), id, (new Date().getTime() - startTime.getTime())));
     }
 
     @Override

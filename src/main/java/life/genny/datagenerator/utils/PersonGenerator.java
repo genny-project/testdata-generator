@@ -17,9 +17,6 @@ public final class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
-    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    int perThreadProperty;
-
     public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
     }
@@ -49,7 +46,7 @@ public final class PersonGenerator extends Generator {
     }
 
     public List<BaseEntityModel> generate(int totalIndex) {
-        List<BaseEntityModel> entityModels = new ArrayList<>();
+        List<BaseEntityModel> entityModels = new ArrayList<>(totalIndex);
         int i = 0;
         while (i < totalIndex) {
             BaseEntityModel entityModel = this.createPersonEntity();

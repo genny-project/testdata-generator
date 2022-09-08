@@ -14,9 +14,6 @@ import java.util.Map;
 
 public final class AddressGenerator extends Generator {
 
-    @ConfigProperty(name = "data.generator.records.per.thread", defaultValue = "100")
-    int perThreadProperty;
-
     private final List<PlaceDetail> places;
 
     public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
@@ -43,8 +40,8 @@ public final class AddressGenerator extends Generator {
         return entity;
     }
 
-    public List<BaseEntityModel> generateAddressBulk(long count) throws JsonProcessingException {
-        List<BaseEntityModel> models = new ArrayList<>(perThreadProperty);
+    public List<BaseEntityModel> generateAddressBulk(int count) throws JsonProcessingException {
+        List<BaseEntityModel> models = new ArrayList<>(count);
 
         for (int i = 0; i < count; i++) {
             BaseEntityModel model = createAddressEntity();

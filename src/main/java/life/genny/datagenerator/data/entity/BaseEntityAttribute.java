@@ -154,7 +154,8 @@ public class BaseEntityAttribute extends PanacheEntityBase {
     private LocalTime valueTime;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator="emp_attribute_sequence")
+    @SequenceGenerator(name="emp_attribute_sequence", sequenceName = "emp_attribute_id_seq", allocationSize = 1000)
     @Column(
             name = "ATTRIBUTE_ID",
             columnDefinition = "bigint(20) NOT NULL AUTO_INCREMENT"

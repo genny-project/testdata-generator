@@ -33,7 +33,6 @@ services:
       - ./:/build/
     networks:
       - mysql-network
-      - keycloak_network
     depends_on:
       mysql:
         condition: service_healthy
@@ -62,6 +61,4 @@ volumes:
 
 networks:
   mysql-network:
-    driver: bridge
-  keycloak_network:
     driver: bridge

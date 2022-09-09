@@ -2,20 +2,17 @@ FROM maven:3-openjdk-17 as BUILDER
 
 WORKDIR /build/app
 
-ARG PACKAGE_TYPE=mutable-jar
+ARG PACKAGE_TYPE=fast-jar
 ARG SKIP_TESTS=true
 
 COPY ../../../pom.xml ./
-# RUN mvn -f ./pom.xml -B de.qaware.maven:go-offline-maven-plugin:resolve-dependencies install
+
 RUN mvn -f ./pom.xml install
 
 COPY ../../../.env ./
 COPY ../.. ./src
-# RUN mvn -DskipTests=${SKIP_TESTS} -Dquarkus.package.type=${PACKAGE_TYPE}  \
-#     -B de.qaware.maven:go-oflline-maven-plugin:resolve-dependencies \
-#     clean package
-RUN mvn -DskipTests=${SKIP_TESTS} -Dquarkus.package.type=${PACKAGE_TYPE} clean package
 
+RUN mvn -DskipTests=${SKIP_TESTS} -Dquarkus.package.type=${PACKAGE_TYPE} clean package
 
 FROM registry.access.redhat.com/ubi8/ubi-minimal:8.5
 

@@ -62,11 +62,6 @@
       <artifactId>quarkus-arc</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.github.javafaker</groupId>
-      <artifactId>javafaker</artifactId>
-      <version>1.0.2</version>
-    </dependency>
-    <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client</artifactId>
     </dependency>
@@ -193,6 +188,9 @@
       <properties>
         <skipITs>false</skipITs>
         <quarkus.package.type>native</quarkus.package.type>
+        <quarkus.native.additional-build-args>
+          --initialize-at-run-time=java.util.Random --no-fallback -J-Xmx6G -J-Xms2G
+        </quarkus.native.additional-build-args>
       </properties>
     </profile>
   </profiles>

@@ -4,7 +4,6 @@ import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -12,6 +11,8 @@ import java.util.List;
 
 public final class ContactGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(ContactGenerator.class.getSimpleName());
+
+    private final GeneratorUtils generator = new GeneratorUtils();
 
     public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
@@ -45,9 +46,9 @@ public final class ContactGenerator extends Generator {
         int i = 0;
         while (i < totalIndex) {
 
-            String firstName = GeneratorUtils.generateFirstName();
-            String lastName = GeneratorUtils.generateLastName();
-            Email email = GeneratorUtils.generateEmail(firstName, lastName);
+            String firstName = generator.generateFirstName();
+            String lastName = generator.generateLastName();
+            Email email = generator.generateEmail(firstName, lastName);
 
             BaseEntityModel contactEntity = this.createContactEntity(firstName, lastName);
 
@@ -58,19 +59,19 @@ public final class ContactGenerator extends Generator {
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_LANDLINE,
-                        GeneratorUtils.generatePhoneNumber()
+                        generator.generatePhoneNumber()
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_LINKEDIN_URL,
-                        GeneratorUtils.generateLinkedInURL(firstName, lastName)
+                        generator.generateLinkedInURL(firstName, lastName)
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_MOBILE,
-                        GeneratorUtils.generatePhoneNumber()
+                        generator.generatePhoneNumber()
                 ));
                 contactEntity.addAttribute(createAttribute(
                         AttributeCode.DEF_CONTACT.ATT_PRI_PHONE,
-                        GeneratorUtils.generatePhoneNumber()
+                        generator.generatePhoneNumber()
                 ));
 
                 contactEntities.add(contactEntity);

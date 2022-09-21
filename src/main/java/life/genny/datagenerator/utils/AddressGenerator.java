@@ -6,7 +6,6 @@ import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.service.BaseEntityService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +15,8 @@ public final class AddressGenerator extends Generator {
 
     private final List<PlaceDetail> places;
 
+    private final GeneratorUtils generator = new GeneratorUtils();
+
     public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
         super(count, service, onFinishListener, id);
         this.places = places;
@@ -23,7 +24,7 @@ public final class AddressGenerator extends Generator {
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
-        model.setName(GeneratorUtils.generateFirstName() + " " + GeneratorUtils.generateLastName());
+        model.setName(generator.generateFirstName() + " " + generator.generateLastName());
         model.setCode(AttributeCode.ENTITY_CODE.DEF_ADDRESS);
         model.setStatus(1);
         return model;
@@ -46,16 +47,16 @@ public final class AddressGenerator extends Generator {
         for (int i = 0; i < count; i++) {
             BaseEntityModel model = createAddressEntity();
 
-            PlaceDetail place = GeneratorUtils.pickRandomData(places);
+            PlaceDetail place = generator.pickRandomData(places);
 
-            Map<String, String> addressMap = GeneratorUtils.convertToMap(place.getAddressComponents());
+            Map<String, String> addressMap = generator.convertToMap(place.getAddressComponents());
             String suburb = addressMap.get("administrative_area_level_3");
             String city = addressMap.get("administrative_area_level_2");
             String state = addressMap.get("administrative_area_level_1");
             String country = addressMap.get("country");
             String postalCode = addressMap.get("postal_code");
 
-            String jsonPlace = GeneratorUtils.toJson(place);
+            String jsonPlace = generator.toJson(place);
 
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_ADDRESS_ADDRESS1, place.getVicinity()
@@ -95,7 +96,7 @@ public final class AddressGenerator extends Generator {
             ));
             model.addAttribute(createBaseEntityAttributeModel(
                     AttributeCode.DEF_ADDRESS.ATT_PRI_TIME_ZONE,
-                    GeneratorUtils.generateUTCTimeZone(place.getUtcOffset())
+                    generator.generateUTCTimeZone(place.getUtcOffset())
             ));
 
             models.add(model);

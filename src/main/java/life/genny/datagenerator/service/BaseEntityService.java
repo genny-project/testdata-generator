@@ -4,7 +4,6 @@ import life.genny.datagenerator.data.entity.BaseEntity;
 import life.genny.datagenerator.data.repository.BaseEntityAttributeRepository;
 import life.genny.datagenerator.data.repository.BaseEntityRepository;
 import life.genny.datagenerator.model.BaseEntityModel;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;

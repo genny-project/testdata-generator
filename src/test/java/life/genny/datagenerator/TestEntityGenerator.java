@@ -1,6 +1,5 @@
 package life.genny.datagenerator;
 
-import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
@@ -12,14 +11,15 @@ import java.util.Locale;
 public class TestEntityGenerator {
     private static final Logger LOGGER = Logger.getLogger(TestEntityGenerator.class);
 
+    private GeneratorUtils generator = new GeneratorUtils();
+
     public TestEntityGenerator() {
     }
 
     public BaseEntityModel createEntity() {
-        Faker faker = new Faker(new Locale("en-AU"));
         BaseEntityModel entity = new BaseEntityModel();
         entity.setStatus(1);
-        entity.setName(faker.address().firstName() + " " + faker.address().lastName());
+        entity.setName(generator.generateFirstName() + " " + generator.generateLastName());
         entity.setCode(AttributeCode.ENTITY_CODE.TEST);
         return entity;
     }
@@ -38,6 +38,4 @@ public class TestEntityGenerator {
         }
         return entity;
     }
-
-
 }

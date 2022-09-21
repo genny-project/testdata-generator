@@ -8,7 +8,6 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.KeycloakRequestExecutor;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.utils.exception.GeneratorException;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
@@ -16,6 +15,8 @@ import java.util.List;
 
 public final class UserGenerator extends Generator {
     private static final Logger LOGGER = Logger.getLogger(UserGenerator.class.getSimpleName());
+
+    private final GeneratorUtils generator = new GeneratorUtils();
 
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
@@ -52,18 +53,18 @@ public final class UserGenerator extends Generator {
         int i = 0;
         while (i < count) {
 
-            String firstName = GeneratorUtils.generateFirstName();
-            String lastName = GeneratorUtils.generateLastName();
-            String imageUrl = GeneratorUtils.generateImageUrl(imagesUrl);
-            Email email = GeneratorUtils.generateEmail(firstName, lastName);
+            String firstName = generator.generateFirstName();
+            String lastName = generator.generateLastName();
+            String imageUrl = generator.generateImageUrl(imagesUrl);
+            Email email = generator.generateEmail(firstName, lastName);
             String username = email.getUsername();
 
             KeycloakUser user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
             int j = 0;
             while (user == null && j < 5) {
                 LOGGER.debug("RE-CREATE NEW USER");
-                firstName = GeneratorUtils.generateFirstName();
-                email = GeneratorUtils.generateEmail(firstName, lastName);
+                firstName = generator.generateFirstName();
+                email = generator.generateEmail(firstName, lastName);
                 username = email.getUsername();
                 user = requestExecutor.registerUserToKeycloak(firstName, lastName, email.toString(), username);
                 j++;
@@ -141,8 +142,7 @@ public final class UserGenerator extends Generator {
 
     @Override
     List<BaseEntityModel> onGenerate(int count) throws GeneratorException {
-        List<BaseEntityModel> result = generateUserBulk(count);
-        return result;
+        return generateUserBulk(count);
     }
 
     @Override

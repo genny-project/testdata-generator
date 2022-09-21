@@ -1,31 +1,29 @@
 package life.genny.datagenerator.utils;
 
-import com.github.javafaker.Faker;
 import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 
 public final class PersonGenerator extends Generator {
 
     private static final Logger LOGGER = Logger.getLogger(PersonGenerator.class.getSimpleName());
 
+    private final GeneratorUtils generator = new GeneratorUtils();
+
     public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
     }
 
     public BaseEntityModel createPersonEntity() {
-        Faker faker = new Faker(new Locale("en-AU"));
         BaseEntityModel entity = new BaseEntityModel();
         entity.setStatus(1);
-        entity.setName(faker.address().firstName() + " " + faker.address().lastName());
+        entity.setName(generator.generateFirstName() + " " + generator.generateLastName());
         entity.setCode(AttributeCode.ENTITY_CODE.DEF_PERSON);
         return entity;
     }
@@ -51,10 +49,11 @@ public final class PersonGenerator extends Generator {
         while (i < totalIndex) {
             BaseEntityModel entityModel = this.createPersonEntity();
             try {
-                String firstName = GeneratorUtils.generateFirstName();
-                String lastName = GeneratorUtils.generateLastName();
+                String[] name = entityModel.getName().split(" ");
+                String firstName = name[0];
+                String lastName = name[1];
 
-                String gender = GeneratorUtils.generateGender();
+                String gender = generator.generateGender();
 
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_FIRSTNAME,
@@ -70,19 +69,19 @@ public final class PersonGenerator extends Generator {
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_DOB,
-                        GeneratorUtils.generateDOB()
+                        generator.generateDOB()
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_EMAIL,
-                        GeneratorUtils.generateEmail(firstName, lastName).toString()
+                        generator.generateEmail(firstName, lastName).toString()
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_LINKEDIN_URL,
-                        GeneratorUtils.generateLinkedInURL(firstName, lastName)
+                        generator.generateLinkedInURL(firstName, lastName)
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_PHONE_NUMBER,
-                        GeneratorUtils.generatePhoneNumber()
+                        generator.generatePhoneNumber()
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_LNK_SEND_EMAIL,
@@ -98,7 +97,7 @@ public final class PersonGenerator extends Generator {
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.ATT_PRI_PROCESS_ID,
-                        GeneratorUtils.generateUUID()
+                        generator.generateUUID()
                 ));
                 entityModel.addAttribute(this.createAttribute(
                         AttributeCode.DEF_PERSON.PRI_PREFIX,

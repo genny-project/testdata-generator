@@ -26,6 +26,8 @@ public class PlaceService {
 
     private static final Logger LOGGER = Logger.getLogger(PlaceService.class);
 
+    private final GeneratorUtils generator = new GeneratorUtils();
+
     @RestClient
     PlaceProxy placeProxy;
 
@@ -38,11 +40,10 @@ public class PlaceService {
     @Inject
     ObjectMapper objectMapper;
 
-
     public void saveAddress(List<PlaceDetail> details) {
         for (PlaceDetail detail : details) {
             try {
-                AddressModel model = new AddressModel(GeneratorUtils.toJson(detail));
+                AddressModel model = new AddressModel(generator.toJson(detail));
                 addressRepository.persist(model.toEntity());
             } catch (JsonProcessingException e) {
                 LOGGER.warn("A address can't be save: %s, error: %s".formatted(detail.getName(), e.getMessage()));

@@ -51,6 +51,8 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     @Inject
     KeycloakService keycloakService;
 
+    private final GeneratorUtils generator = new GeneratorUtils();
+
     private ExecutorService executor;
     private List<String> imagesUrl = new ArrayList<>(200);
     private List<PlaceDetail> places = new ArrayList<>(400);
@@ -68,14 +70,16 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         runnableFinished++;
         if (runnableFinished == runnableTotal && runnableTotal < totalThread)
             generateRunnable();
-        if (runnableFinished == totalThread)
+        if (runnableFinished == totalThread) {
+            if (!imagesUrl.isEmpty()) imagesUrl = new ArrayList<>(200);
             LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + "ms");
+        }
     }
 
     @PostConstruct
     void setUp() {
         timeStart = new Date();
-        GeneratorUtils.setObjectMapper(objectMapper);
+        generator.setObjectMapper(objectMapper);
         LOGGER.info("DATA TO GENERATE SIZE:" + totalRow +
                 ", MAX_THREAD:" + maxThread +
                 ", PER_THREAD:" + perTask);
@@ -137,12 +141,12 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             }
 
             if (aThread > 0) {
-                if (places.size() < 1) fetchPlaces();
+                if (places.isEmpty()) fetchPlaces();
                 executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
                 aThread--;
                 return;
             }
-            if (places.size() > 0) places = new ArrayList<>(400);
+            if (!places.isEmpty()) places = new ArrayList<>(400);
 
             if (cThread > 0) {
                 executor.submit(new ContactGenerator(count, baseEntityService, this, i + ""));
@@ -150,10 +154,9 @@ public class ApplicationStartup implements Generator.OnFinishListener {
                 return;
             }
 
-            if (imagesUrl.size() < 1) fetchImages();
+            if (imagesUrl.isEmpty()) fetchImages();
             executor.submit(new UserGenerator(count, baseEntityService, this, i + "", imagesUrl, keycloakService));
             uThread--;
-            if (imagesUrl.size() > 0) imagesUrl = new ArrayList<>(200);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

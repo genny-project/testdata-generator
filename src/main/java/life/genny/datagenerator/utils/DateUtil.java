@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Random;
 
 public class DateUtil {
-    private static final Random random = new Random();
+    private final Random random = new Random();
 
     /* Pick a random int value from a certain range */
     public int pickRandom(int start, int end) {

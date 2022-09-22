@@ -57,9 +57,13 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private Date timeStart;
     private long runnableCount = 0;
     private long runnableFinished = 0;
+    private int uThread = 0;
+    private int aThread = 0;
+    private int pThread = 0;
+    private int cThread = 0;
 
     @Override
-    public void onFinish(Long generatorId) {
+    public void onFinish(String generatorId) {
         runnableFinished++;
         if (runnableFinished == runnableCount) {
             LOGGER.info("GENERATOR FINISHED: " + (new Date().getTime() - timeStart.getTime()) + " milliseconds");
@@ -91,37 +95,61 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         LOGGER.info("ApplicationStartup ");
 
         int totalRow = Integer.parseInt(this.totalGeneratedNumberProperty);
-        int perThread = Integer.parseInt(this.perThreadProperty);
+        int perTask = Integer.parseInt(this.perThreadProperty);
         int maxThread = Integer.parseInt(this.maxThreadProperty);
 
         executor = Executors.newFixedThreadPool(maxThread);
-        int thread = Math.min(totalRow, totalRow / perThread);
+        int taskPerEntity = Math.min(totalRow, totalRow / perTask);
+        uThread = taskPerEntity;
+        pThread = taskPerEntity;
+        aThread = taskPerEntity;
+        cThread = taskPerEntity;
+
         int i = 0;
+        int thread = uThread + pThread + aThread + cThread;
         while (i < thread) {
             final int start = i;
-            LOGGER.info("create thread: " + start);
-            execute(perThread, i);
+            LOGGER.info("create generator task: " + start);
+            execute(perTask, i);
             i++;
         }
-        if ((perThread * thread) < totalRow) {
-            int count = totalRow - (perThread * thread);
-            execute(count, i);
+
+        // This operation is for adding a task for each entity if totalRow % perTask != 0
+        if ((perTask * taskPerEntity) < totalRow) {
+            uThread += 1;
+            aThread += 1;
+            pThread += 1;
+            cThread += 1;
+            int count = totalRow - (perTask * taskPerEntity);
+            for (int j = 0; j < 4; j++) {
+                execute(count, i);
+            }
         }
     }
 
-    /**
-     * executor.submit( Generator instance )
-     *
-     * @param count
-     * @param i
-     */
     private void execute(int count, int i) {
         try {
-            executor.submit(new UserGenerator(count, baseEntityService, this, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(count, baseEntityService, this, i));
-            executor.submit(new AddressGenerator(count, baseEntityService, this, i, places));
+            runnableCount ++;
 
-            runnableCount += 3;
+            if (pThread > 0) {
+                executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
+                pThread--;
+                return;
+            }
+            if (aThread > 0) {
+                executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
+                aThread--;
+                return;
+            }
+            if (cThread > 0) {
+                executor.submit(new ContactGenerator(count, baseEntityService, this, i + ""));
+                cThread--;
+                return;
+            }
+            if (uThread > 0) {
+                executor.submit(new UserGenerator(count, baseEntityService, this, i + "-0", imagesUrl, keycloakService));
+                uThread--;
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

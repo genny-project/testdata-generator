@@ -7,10 +7,7 @@ import life.genny.datagenerator.service.BaseEntityService;
 import life.genny.datagenerator.service.ImageService;
 import life.genny.datagenerator.service.KeycloakService;
 import life.genny.datagenerator.service.PlaceService;
-import life.genny.datagenerator.utils.AddressGenerator;
-import life.genny.datagenerator.utils.Generator;
-import life.genny.datagenerator.utils.PersonGenerator;
-import life.genny.datagenerator.utils.UserGenerator;
+import life.genny.datagenerator.utils.*;
 import org.junit.jupiter.api.*;
 
 import javax.inject.Inject;
@@ -39,6 +36,7 @@ class GeneratorTest {
     private final List<PlaceDetail> places = new ArrayList<>();
 
     private long dataBefore = 0;
+    private final ExecutorService saveExecutor = Executors.newFixedThreadPool(3);
 
     @BeforeEach
     void setup() throws InterruptedException {
@@ -55,13 +53,14 @@ class GeneratorTest {
         int perThread = 200;
         int totalData = 1000;
         int threadCount = totalData / perThread;
-        ExecutorService executor = Executors.newFixedThreadPool(Math.min(threadCount, 10));
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         Assertions.assertNotNull(imagesUrl);
         Assertions.assertNotNull(keycloakService);
         for (int i = 0; i < threadCount; i++) {
-            executor.submit(new UserGenerator(perThread, baseEntityService, null, i, imagesUrl, keycloakService));
-            executor.submit(new PersonGenerator(perThread, baseEntityService, null, i));
-            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i, places));
+            executor.submit(new UserGenerator(perThread, baseEntityService, null, i + "", imagesUrl, keycloakService));
+            executor.submit(new PersonGenerator(perThread, baseEntityService, null, i + ""));
+            executor.submit(new AddressGenerator(perThread, baseEntityService, null, i + "", places));
+            executor.submit(new ContactGenerator(perThread, baseEntityService, null, i + ""));
         }
     }
 
@@ -79,11 +78,13 @@ class GeneratorTest {
     void testGeneratorClass() {
         Generator.OnFinishListener listener = generatorId -> {
         };
-        Generator generator = new AddressGenerator(10, baseEntityService, listener, 0, places);
+        Generator generator = new AddressGenerator(10, baseEntityService, listener, 0 + "", places);
         generator.run();
-        generator = new PersonGenerator(10, baseEntityService, listener, 1);
+        generator = new PersonGenerator(10, baseEntityService, listener, 1 + "");
         generator.run();
-        generator = new UserGenerator(10, baseEntityService, listener, 2, imagesUrl, keycloakService);
+        generator = new UserGenerator(10, baseEntityService, listener, 2 + "", imagesUrl, keycloakService);
+        generator.run();
+        generator = new ContactGenerator(10, baseEntityService, listener, 3 + "");
         generator.run();
         Assertions.assertTrue(true);
     }

@@ -3,9 +3,9 @@ package life.genny.datagenerator.utils;
 public interface GeneratorListener {
         void onStart();
 
-    void onFinish();
+        void onFinish();
 
-    void onSuccess();
+        void onSuccess();
 
-    void onError(Throwable throwable);
+        void onError(Throwable throwable);
 }

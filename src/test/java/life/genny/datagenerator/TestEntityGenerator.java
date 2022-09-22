@@ -1,6 +1,7 @@
 package life.genny.datagenerator;
 
 import com.github.javafaker.Faker;
+import life.genny.datagenerator.model.AttributeCode;
 import life.genny.datagenerator.model.BaseEntityAttributeModel;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.utils.GeneratorUtils;
@@ -19,7 +20,7 @@ public class TestEntityGenerator {
         BaseEntityModel entity = new BaseEntityModel();
         entity.setStatus(1);
         entity.setName(faker.address().firstName() + " " + faker.address().lastName());
-        entity.setCode(TestAttributeCode.class);
+        entity.setCode(AttributeCode.ENTITY_CODE.TEST);
         return entity;
     }
 

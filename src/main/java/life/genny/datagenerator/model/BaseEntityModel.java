@@ -8,7 +8,7 @@ import java.util.*;
 
 public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("dtype")
-    private String dType;
+    private String dType = "BaseEntity";
     @JsonProperty("id")
     private Long id;
     @JsonProperty("created")
@@ -16,7 +16,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     @JsonProperty("name")
     private String name;
     @JsonProperty("realm")
-    private String realm;
+    private String realm = "Genny";
     @JsonProperty("updated")
     private Date updated;
     @JsonProperty("code")
@@ -62,7 +62,15 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public BaseEntity toEntity() {
-        BaseEntity entity = new BaseEntity(dType, id, created, name, realm, updated, code, status);
+        final BaseEntity entity = new BaseEntity();
+        entity.setdType(dType);
+        entity.setCode(code);
+        entity.setName(name);
+        entity.setRealm(realm);
+        entity.setStatus(status);
+        entity.setCreated(created);
+        entity.setUpdated(updated);
+        entity.setId(id);
         if (attributeMap != null) {
             List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
                 BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
@@ -96,7 +104,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public void setdType(String dType) {
-        this.dType = dType;
+        this.dType = dType == null ? "BaseEntity" : dType;
     }
 
     public Long getId() {
@@ -128,7 +136,7 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
     }
 
     public void setRealm(String realm) {
-        this.realm = realm;
+        this.realm = realm == null ? "Genny" : realm;
     }
 
     public Date getUpdated() {
@@ -143,48 +151,32 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
         return code;
     }
 
-    public void setCode(Class<? extends BaseCode> code, String uuid) {
+    public void setCode(AttributeCode.ENTITY_CODE code, String uuid) {
         String prefix = "";
+        prefix = switch (code) {
+            case DEF_ADDRESS -> "ADD_";
+            case DEF_AGENCY -> "AGE_";
+            case DEF_AGENT -> "AGN_";
+            case DEF_APPLICATION -> "APP_";
+            case DEF_COMPANY -> "COM_";
+            case DEF_CONTACT -> "CON_";
+            case DEF_EDU_PRO_REP -> "EDR_";
+            case DEF_EDU_PROVIDER -> "EDP_";
+            case DEF_HOST_CPY -> "HCP_";
+            case DEF_HOST_CPY_REP -> "HCR_";
+            case DEF_INTERN -> "NTRN_";
+            case DEF_INTERNSHIP -> "NTRS_";
+            case DEF_ORGANISATION -> "ORG_";
+            case DEF_PERSON -> "PER_";
+            case DEF_SUPERVISOR -> "SPV_";
+            case DEF_USER -> "USR_";
+            default -> "UNKW_";
+        };
 
-        if (code == AttributeCode.DEF_PERSON.class) {
-            prefix = "PER_";
-        } else if (code == AttributeCode.DEF_APPLICATION.class) {
-            prefix = "APP_";
-        } else if (code == AttributeCode.DEF_ADDRESS.class) {
-            prefix = "ADD_";
-        } else if (code == AttributeCode.DEF_AGENCY.class) {
-            prefix = "AGE_";
-        } else if (code == AttributeCode.DEF_AGENT.class) {
-            prefix = "AGN_";
-        } else if (code == AttributeCode.DEF_COMPANY.class) {
-            prefix = "COM_";
-        } else if (code == AttributeCode.DEF_CONTACT.class) {
-            prefix = "CON_";
-        } else if (code == AttributeCode.DEF_EDU_PRO_REP.class) {
-            prefix = "EDR_";
-        } else if (code == AttributeCode.DEF_EDU_PROVIDER.class) {
-            prefix = "EDP_";
-        } else if (code == AttributeCode.DEF_HOST_CPY.class) {
-            prefix = "HCP_";
-        } else if (code == AttributeCode.DEF_INTERN.class) {
-            prefix = "NTRN_";
-        } else if (code == AttributeCode.DEF_HOST_CPY_REP.class) {
-            prefix = "HCR_";
-        } else if (code == AttributeCode.DEF_SUPERVISOR.class) {
-            prefix = "SPV_";
-        } else if (code == AttributeCode.DEF_INTERNSHIP.class) {
-            prefix = "NTRS_";
-        } else if (code == AttributeCode.DEF_USER.class) {
-            prefix = "USR_";
-        } else if (code == AttributeCode.DEF_ORGANISATION.class) {
-            prefix = "ORG_";
-        } else {
-            prefix = "UNKW_";
-        }
         this.code = prefix + uuid.toUpperCase();
     }
 
-    public void setCode(Class<? extends BaseCode> defUser) {
+    public void setCode(AttributeCode.ENTITY_CODE defUser) {
         this.setCode(defUser, UUID.randomUUID().toString());
     }
 
@@ -194,5 +186,21 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "BaseEntityModel{" +
+                "dType='" + dType + '\'' +
+                ", id=" + id +
+                ", created=" + created +
+                ", name='" + name + '\'' +
+                ", realm='" + realm + '\'' +
+                ", updated=" + updated +
+                ", code='" + code + '\'' +
+                ", status=" + status +
+                ", attributes=" + attributes +
+                ", attributeMap=" + attributeMap +
+                '}';
     }
 }

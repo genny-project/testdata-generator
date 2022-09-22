@@ -10,7 +10,7 @@ import life.genny.datagenerator.model.json.MapsResult;
 import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.model.json.PlaceDetail;
 import life.genny.datagenerator.utils.GeneratorUtils;
-import life.genny.datagenerator.utils.Utils;
+import life.genny.datagenerator.utils.ValueCheck;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
@@ -65,7 +65,7 @@ public class PlaceService {
             while (true) {
                 places.addAll(mapsResult.getResults());
                 String pageToken = mapsResult.getNextPageToken();
-                if (Utils.isEmpty(mapsResult.getNextPageToken()))
+                if (ValueCheck.isEmpty(mapsResult.getNextPageToken()))
                     break;
 
                 MapsResult mapsResultTemp = new MapsResult();
@@ -83,7 +83,7 @@ public class PlaceService {
                     PlaceDetail placeDetail = objectMapper.readValue(address.getJsonData(), PlaceDetail.class);
                     details.add(placeDetail);
                 } catch (JsonProcessingException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.error(e.getMessage());
                 }
             }
         }
@@ -117,7 +117,7 @@ public class PlaceService {
         } catch (InterruptedException e) {
             LOGGER.error(e.getMessage());
             Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
+            LOGGER.error(e.getMessage());
         }
     }
 }

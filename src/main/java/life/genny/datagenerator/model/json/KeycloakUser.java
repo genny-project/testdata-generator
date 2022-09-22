@@ -3,10 +3,10 @@ package life.genny.datagenerator.model.json;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class KeycloakUser {
+public class KeycloakUser implements Serializable {
     @JsonProperty("id")
     private String id;
     @JsonProperty("createdTimestamp")
@@ -25,14 +25,6 @@ public class KeycloakUser {
     private String lastName;
     @JsonProperty("email")
     private String email;
-    @JsonProperty("disableableCredentialTypes")
-    private List<Object> disableableCredentialTypes = null;
-    @JsonProperty("requiredActions")
-    private List<Object> requiredActions = null;
-    @JsonProperty("notBefore")
-    private int notBefore;
-    @JsonProperty("access")
-    private KeycloakUserAccess access;
 
     public KeycloakUser() {
     }
@@ -114,37 +106,5 @@ public class KeycloakUser {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public List<Object> getDisableableCredentialTypes() {
-        return disableableCredentialTypes;
-    }
-
-    public void setDisableableCredentialTypes(List<Object> disableableCredentialTypes) {
-        this.disableableCredentialTypes = disableableCredentialTypes;
-    }
-
-    public List<Object> getRequiredActions() {
-        return requiredActions;
-    }
-
-    public void setRequiredActions(List<Object> requiredActions) {
-        this.requiredActions = requiredActions;
-    }
-
-    public int getNotBefore() {
-        return notBefore;
-    }
-
-    public void setNotBefore(int notBefore) {
-        this.notBefore = notBefore;
-    }
-
-    public KeycloakUserAccess getAccess() {
-        return access;
-    }
-
-    public void setAccess(KeycloakUserAccess access) {
-        this.access = access;
     }
 }

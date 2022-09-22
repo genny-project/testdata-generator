@@ -2,13 +2,14 @@ package life.genny.datagenerator.service;
 
 import life.genny.datagenerator.model.json.KeycloakAuthResponse;
 import life.genny.datagenerator.model.json.KeycloakUser;
-import life.genny.datagenerator.utils.Utils;
+import life.genny.datagenerator.utils.ValueCheck;
 import life.genny.datagenerator.utils.exception.GeneratorException;
 import org.jboss.logging.Logger;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
+import java.util.ArrayList;
 import java.util.List;
 
 public class KeycloakRequestExecutor {
@@ -20,7 +21,19 @@ public class KeycloakRequestExecutor {
         this.keycloakService = keycloakService;
     }
 
+
+    private static final List<KeycloakAuthResponse> signedSession = new ArrayList<>();
+
+    public void close() {
+        if (auth != null)
+            signedSession.add(auth);
+    }
+
     private KeycloakAuthResponse signIn() {
+        if (!signedSession.isEmpty()) {
+            return signedSession.remove(0);
+        }
+
         MultivaluedMap<String, Object> form = new MultivaluedHashMap<>();
         form.putSingle("username", keycloakService.getKeycloakAdminUsername());
         form.putSingle("password", keycloakService.getKeycloakAdminPassword());
@@ -34,7 +47,7 @@ public class KeycloakRequestExecutor {
                     form
             );
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage());
         }
         return null;
     }
@@ -51,8 +64,12 @@ public class KeycloakRequestExecutor {
                     keycloakService.getRealmName(),
                     form
             );
+        } catch (WebApplicationException wa) {
+            if (wa.getResponse().getStatus() >= 400 && wa.getResponse().getStatus() <= 499) {
+                return signIn();
+            }
         } catch (Exception e) {
-            LOGGER.error(e);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -62,12 +79,6 @@ public class KeycloakRequestExecutor {
             auth = signIn();
         }
         if (auth == null) return null;
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            LOGGER.error(e.getMessage(), e);
-            Thread.currentThread().interrupt();
-        }
         try {
             return listener.onRequest("Bearer " + auth.getAccessToken(), listener.getInput());
         } catch (WebApplicationException wa) {
@@ -79,16 +90,12 @@ public class KeycloakRequestExecutor {
                 return null;
             }
         } catch (GeneratorException ex) {
-            LOGGER.error(ex.getMessage());
+            LOGGER.error(ex.getMessage(), ex);
             return null;
         }
     }
 
     public KeycloakUser registerUserToKeycloak(String firstName, String lastName, String email, String username) {
-        if (keycloakService.checkIsEmailAvailable(email)) {
-            return null;
-        }
-        keycloakService.putEmail(email);
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
         user.setEmailVerified(true);
@@ -101,26 +108,19 @@ public class KeycloakRequestExecutor {
                     return true;
                 } catch (WebApplicationException webApplicationException) {
                     if (webApplicationException.getResponse().getStatus() == 409) {
-                        keycloakService.putEmail(user.getEmail());
                         return false;
                     } else {
                         throw webApplicationException;
                     }
                 } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage());
                     return false;
                 }
             }
         }));
 
         if (result) {
-            return executeAuthenticatedRequest(new OnRequestListener<>(user.getEmail()) {
-                @Override
-                KeycloakUser onRequest(String bearerToken, String email) {
-                    List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                    return Utils.findBuEmail(users, email);
-                }
-            });
+            return getRegisteredUserFromKeycloak(user.getEmail());
         } else return null;
     }
 
@@ -138,8 +138,8 @@ public class KeycloakRequestExecutor {
         return executeAuthenticatedRequest(new OnRequestListener<>(email) {
             @Override
             KeycloakUser onRequest(String bearerToken, String email) {
-                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email);
-                return Utils.findBuEmail(users, email);
+                List<KeycloakUser> users = keycloakService.getKeycloakAuthProxy().getUser(keycloakService.getRealmName(), bearerToken, email, 1);
+                return ValueCheck.findByEmail(users, email);
             }
         });
     }

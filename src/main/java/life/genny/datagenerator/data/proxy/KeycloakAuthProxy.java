@@ -35,7 +35,8 @@ public interface KeycloakAuthProxy {
     List<KeycloakUser> getUser(
             @PathParam("realmName") String realmName,
             @HeaderParam("Authorization") String bearerToken,
-            @QueryParam("search") String email
+            @QueryParam("search") String email,
+            @QueryParam("max") int max
     );
 
     @POST

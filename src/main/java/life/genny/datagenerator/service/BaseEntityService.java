@@ -9,6 +9,7 @@ import org.jboss.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -50,10 +51,10 @@ public class BaseEntityService {
 
     @Transactional
     public void saveAll(List<BaseEntityModel> models) {
+        Date date = new Date();
         baseEntityRepository.persist(models.stream().map(BaseEntityModel::toEntity));
-
-        LOGGER.debug("flushing");
         baseEntityRepository.flush();
+        LOGGER.info("Saving data in %s milliseconds".formatted(new Date().getTime() - date.getTime()));
     }
 
     public long countEntity() {

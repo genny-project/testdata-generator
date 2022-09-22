@@ -16,7 +16,7 @@ public class PlaceDetail implements Serializable {
     @JsonProperty("formatted_address")
     private String formattedAddress;
     @JsonProperty("geometry")
-    private Geometry geometry;
+    private transient Geometry geometry;
     @JsonProperty("icon")
     private String icon;
     @JsonProperty("icon_background_color")
@@ -37,7 +37,8 @@ public class PlaceDetail implements Serializable {
     private int utcOffset;
     @JsonProperty("vicinity")
     private String vicinity;
-    private final static long serialVersionUID = 9195246243174947242L;
+
+    private static final long serialVersionUID = 9195246243174947242L;
 
     public List<AddressComponent> getAddressComponents() {
         return addressComponents;

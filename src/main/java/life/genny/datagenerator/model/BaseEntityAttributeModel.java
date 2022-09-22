@@ -81,6 +81,34 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
     @JsonProperty("confirmation_flag")
     private boolean confirmationFlag;
 
+    public BaseEntityAttributeModel() {
+    }
+
+    public BaseEntityAttributeModel(BaseEntityAttribute entity) {
+        this.attributeCode = entity.getAttributeCode();
+        this.baseEntityCode = entity.getBaseEntityCode();
+        this.created = entity.getCreated();
+        this.inferred = entity.isInferred();
+        this.privacyFlag = entity.isPrivacyFlag();
+        this.readOnly = entity.isReadOnly();
+        this.realm = entity.getRealm();
+        this.updated = entity.getUpdated();
+        this.valueBoolean = entity.getValueBoolean();
+        this.valueDate = entity.getValueDate();
+        this.valueDateRange = entity.getValueDateRange();
+        this.valueDateTime = entity.getValueDateTime();
+        this.valueDouble = entity.getValueDouble();
+        this.valueInteger = entity.getValueInteger();
+        this.valueLong = entity.getValueLong();
+        this.money = entity.getMoney();
+        this.valueString = entity.getValueString();
+        this.valueTime = entity.getValueTime();
+        this.attributeId = entity.getAttributeId();
+        this.weight = entity.getWeight();
+        this.icon = entity.getIcon();
+        this.confirmationFlag = entity.isConfirmationFlag();
+    }
+
     @JsonIgnore
     @Override
     public String getAttributeCode() {
@@ -271,59 +299,31 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.confirmationFlag = confirmationFlag;
     }
 
-    public BaseEntityAttributeModel() {
-    }
-
-    public BaseEntityAttributeModel(BaseEntityAttribute entity) {
-        this.attributeCode = entity.getAttributeCode();
-        this.baseEntityCode = entity.getBaseEntityCode();
-        this.created = entity.getCreated();
-        this.inferred = entity.isInferred();
-        this.privacyFlag = entity.isPrivacyFlag();
-        this.readOnly = entity.isReadOnly();
-        this.realm = entity.getRealm();
-        this.updated = entity.getUpdated();
-        this.valueBoolean = entity.getValueBoolean();
-        this.valueDate = entity.getValueDate();
-        this.valueDateRange = entity.getValueDateRange();
-        this.valueDateTime = entity.getValueDateTime();
-        this.valueDouble = entity.getValueDouble();
-        this.valueInteger = entity.getValueInteger();
-        this.valueLong = entity.getValueLong();
-        this.money = entity.getMoney();
-        this.valueString = entity.getValueString();
-        this.valueTime = entity.getValueTime();
-        this.attributeId = entity.getAttributeId();
-        this.weight = entity.getWeight();
-        this.icon = entity.getIcon();
-        this.confirmationFlag = entity.isConfirmationFlag();
-    }
-
     public BaseEntityAttribute toEntity() {
-        return new BaseEntityAttribute(
-                this.attributeCode,
-                this.baseEntityCode,
-                this.created,
-                this.inferred,
-                this.privacyFlag,
-                this.readOnly,
-                this.realm,
-                this.updated,
-                this.valueBoolean,
-                this.valueDate,
-                this.valueDateRange,
-                this.valueDateTime,
-                this.valueDouble,
-                this.valueInteger,
-                this.valueLong,
-                this.money,
-                this.valueString,
-                this.valueTime,
-                this.attributeId,
-                this.weight,
-                this.icon,
-                this.confirmationFlag
-        );
+        BaseEntityAttribute attribute = new BaseEntityAttribute();
+        attribute.setAttributeCode(this.attributeCode);
+        attribute.setBaseEntityCode(this.baseEntityCode);
+        attribute.setCreated(this.created);
+        attribute.setInferred(this.inferred);
+        attribute.setPrivacyFlag(this.privacyFlag);
+        attribute.setReadOnly(this.readOnly);
+        attribute.setRealm(this.realm);
+        attribute.setUpdated(this.updated);
+        attribute.setValueBoolean(this.valueBoolean);
+        attribute.setValueDate(this.valueDate);
+        attribute.setValueDateRange(this.valueDateRange);
+        attribute.setValueDateTime(this.valueDateTime);
+        attribute.setValueDouble(this.valueDouble);
+        attribute.setValueInteger(this.valueInteger);
+        attribute.setValueLong(this.valueLong);
+        attribute.setMoney(this.money);
+        attribute.setValueString(this.valueString);
+        attribute.setValueTime(this.valueTime);
+        attribute.setAttributeId(this.attributeId);
+        attribute.setWeight(this.weight);
+        attribute.setIcon(this.icon);
+        attribute.setConfirmationFlag(this.confirmationFlag);
+        return attribute;
     }
 
     @Override

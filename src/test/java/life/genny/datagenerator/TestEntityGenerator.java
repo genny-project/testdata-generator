@@ -6,12 +6,10 @@ import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.utils.GeneratorUtils;
 import org.jboss.logging.Logger;
 
-import java.util.Locale;
-
 public class TestEntityGenerator {
     private static final Logger LOGGER = Logger.getLogger(TestEntityGenerator.class);
 
-    private GeneratorUtils generator = new GeneratorUtils();
+    private final GeneratorUtils generator = new GeneratorUtils();
 
     public TestEntityGenerator() {
     }

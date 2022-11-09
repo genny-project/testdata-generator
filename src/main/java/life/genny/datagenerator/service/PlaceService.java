@@ -2,22 +2,23 @@ package life.genny.datagenerator.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import life.genny.datagenerator.data.entity.Address;
+import life.genny.datagenerator.configs.MySQLCatalogueConfig;
 import life.genny.datagenerator.data.proxy.PlaceProxy;
-import life.genny.datagenerator.data.repository.AddressRepository;
-import life.genny.datagenerator.model.AddressModel;
+import life.genny.datagenerator.model.Address;
 import life.genny.datagenerator.model.json.MapsResult;
 import life.genny.datagenerator.model.json.Place;
 import life.genny.datagenerator.model.json.PlaceDetail;
+import life.genny.datagenerator.utils.DatabaseUtils;
 import life.genny.datagenerator.utils.GeneratorUtils;
 import life.genny.datagenerator.utils.ValueCheck;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.transaction.Transactional;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,42 +26,55 @@ import java.util.List;
 public class PlaceService {
 
     private static final Logger LOGGER = Logger.getLogger(PlaceService.class);
+    private static final String TABLE_NAME = "address";
 
     private final GeneratorUtils generator = new GeneratorUtils();
 
     @RestClient
     PlaceProxy placeProxy;
 
-    @ConfigProperty(name = "data.gcp.api_key")
-    String apiKey;
-
-    @Inject
-    AddressRepository addressRepository;
+//    @ConfigProperty(name = "data.gcp.api_key")
+    String apiKey = "";
 
     @Inject
     ObjectMapper objectMapper;
 
+    @Inject
+    private MySQLCatalogueConfig mysqlConfig;
+
+    @Inject
+    private DatabaseUtils dbUtils;
+
     public void saveAddress(List<PlaceDetail> details) {
         for (PlaceDetail detail : details) {
             try {
-                AddressModel model = new AddressModel(generator.toJson(detail));
-                addressRepository.persist(model.toEntity());
+                Address model = new Address(generator.toJson(detail));
+                dbUtils.initConnection(mysqlConfig).insertIntoMysql(TABLE_NAME, model.getJsonData());
             } catch (JsonProcessingException e) {
                 LOGGER.warn("A address can't be save: %s, error: %s".formatted(detail.getName(), e.getMessage()));
+                e.printStackTrace();
+            } catch (SQLException e) {
+                LOGGER.error("SQLException: " + e.getMessage());
+                e.printStackTrace();
             }
         }
     }
 
-    @Transactional
     public List<PlaceDetail> fetchRandomPlaces(String geoLoc, String radius) {
         List<PlaceDetail> details = new ArrayList<>();
+        int count = 0;
+        try {
+            count = dbUtils.initConnection(mysqlConfig).getCountFromMysql(TABLE_NAME);
+        } catch (SQLException e) {
+            LOGGER.error(e.getMessage());
+            e.printStackTrace();
+        }
 
-        if (addressRepository.count() < 100) {
+        if (count < 100) {
             sleep(300);
 
             MapsResult mapsResult = placeProxy.getNearbyPlace(apiKey, geoLoc, radius)
                     .await().indefinitely();
-
             List<Place> places = new ArrayList<>();
 
             while (true) {
@@ -76,9 +90,20 @@ public class PlaceService {
             }
 
             details = getAllPlaceDetails(places);
+            LOGGER.debug(details.size() + ", " + details.get(0).getName());
             saveAddress(details);
         } else {
-            List<Address> addresses = addressRepository.listAll();
+            List<Address> addresses = new ArrayList<>();
+            try {
+                ResultSet result = dbUtils.initConnection(mysqlConfig).selectAllFromMysql(TABLE_NAME);
+                while (result.next()) {
+                    Address address = new Address(result.getLong("id"), result.getString("json_data"));
+                    addresses.add(address);
+                }
+            } catch (SQLException e) {
+                LOGGER.error(e.getMessage());
+                e.printStackTrace();
+            }
             for (Address address: addresses) {
                 try {
                     PlaceDetail placeDetail = objectMapper.readValue(address.getJsonData(), PlaceDetail.class);

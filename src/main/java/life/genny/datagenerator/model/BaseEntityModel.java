@@ -1,64 +1,43 @@
 package life.genny.datagenerator.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import life.genny.datagenerator.data.entity.BaseEntity;
-import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import life.genny.datagenerator.data.schemas.BaseEntity;
+import life.genny.datagenerator.data.schemas.MessageKey;
 
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 public class BaseEntityModel implements BaseModel<BaseEntity> {
-    @JsonProperty("dtype")
     private String dType = "BaseEntity";
-    @JsonProperty("id")
     private Long id;
-    @JsonProperty("created")
-    private Date created;
-    @JsonProperty("name")
+    private LocalDateTime created;
     private String name;
-    @JsonProperty("realm")
     private String realm = "Genny";
-    @JsonProperty("updated")
-    private Date updated;
-    @JsonProperty("code")
+    private LocalDateTime updated;
     private String code;
-    @JsonProperty("status")
     private int status;
-
-    @JsonProperty("attributes")
-    private Map<String, Object> attributes;
-
-    private Map<String, BaseEntityAttributeModel> attributeMap = new HashMap<>();
+    private List<BaseEntityAttributeModel> attributes = new ArrayList<>();
 
     public BaseEntityModel() {
     }
 
-
     public BaseEntityModel(BaseEntity entity) {
-        setdType(entity.getdType());
-        setId(entity.getId());
+        this.dType = entity.getdType();
+        this.id = entity.getId();
         this.code = entity.getCode();
-        setCreated(entity.getCreated());
-        setName(entity.getName());
-        setRealm(entity.getRealm());
-        setStatus(entity.getStatus());
-        setUpdated(entity.getUpdated());
-
-        if (entity.getAttributes() != null) {
-            this.attributes = new HashMap<>();
-            this.attributeMap = new HashMap<>();
-            for (BaseEntityAttribute attr : entity.getAttributes()) {
-                BaseEntityAttributeModel attrModel = new BaseEntityAttributeModel(attr);
-                attrModel.setBaseEntityModel(this);
-                this.attributeMap.put(attr.getAttributeCode(), attrModel);
-                this.attributes.put(attr.getAttributeCode(), attrModel.getValue());
-            }
-        }
+        this.created = entity.getCreated();
+        this.name = entity.getName();
+        this.realm = entity.getRealm();
+        this.updated = entity.getUpdated();
+        this.status = entity.getStatus();
+        this.attributes.addAll(entity.getAttributes().stream().map(BaseEntityAttributeModel::new).toList());
     }
 
     public void addAttribute(BaseEntityAttributeModel attribute) {
         attribute.setBaseEntityCode(getCode());
         attribute.setBaseEntityModel(this);
-        attributeMap.put(attribute.getAttributeCode(), attribute);
+        attributes.add(attribute);
     }
 
     public BaseEntity toEntity() {
@@ -71,31 +50,20 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
         entity.setCreated(created);
         entity.setUpdated(updated);
         entity.setId(id);
-        if (attributeMap != null) {
-            List<BaseEntityAttribute> attributes1 = attributeMap.values().stream().map(baseEntityAttributeModel -> {
-                BaseEntityAttribute attr = baseEntityAttributeModel.toEntity();
-                attr.setBaseEntity(entity);
-                return attr;
-            }).toList();
-            entity.setAttributes(attributes1);
-        }
+        entity.setAttributes(this.attributes.stream().map(BaseEntityAttributeModel::toEntity).toList());
         return entity;
     }
 
-    public Map<String, BaseEntityAttributeModel> getAttributeMap() {
-        return attributeMap;
+    @Override
+    public MessageKey getMessageKey() {
+        return this.toEntity().getMessageKey();
     }
 
-    public Object getAttribute(String code) {
-        if (attributes == null || attributes.isEmpty()) return null;
-        return attributes.get(code);
-    }
-
-    public Map<String, Object> getAttributes() {
+    public List<BaseEntityAttributeModel> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Map<String, Object> attributes) {
+    public void setAttributes(List<BaseEntityAttributeModel> attributes) {
         this.attributes = attributes;
     }
 
@@ -115,11 +83,11 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
         this.id = id;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
@@ -139,11 +107,11 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
         this.realm = realm == null ? "Genny" : realm;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
@@ -200,7 +168,6 @@ public class BaseEntityModel implements BaseModel<BaseEntity> {
                 ", code='" + code + '\'' +
                 ", status=" + status +
                 ", attributes=" + attributes +
-                ", attributeMap=" + attributeMap +
                 '}';
     }
 }

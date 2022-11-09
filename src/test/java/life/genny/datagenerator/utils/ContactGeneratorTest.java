@@ -1,6 +1,6 @@
 package life.genny.datagenerator.utils;
 
-import life.genny.datagenerator.data.entity.BaseEntity;
+import life.genny.datagenerator.data.schemas.BaseEntity;
 import life.genny.datagenerator.model.BaseEntityModel;
 import life.genny.datagenerator.service.BaseEntityService;
 import org.junit.jupiter.api.Assertions;
@@ -24,9 +24,9 @@ class ContactGeneratorTest {
         Generator.OnFinishListener listener = generatorId -> {};
         //Generator generator = new ContactGenerator(2, baseEntityService, listener, 3 + "");
         //generator.run();
-        ContactGenerator generator = new ContactGenerator(2, baseEntityService, listener, 3 + "");
+        ContactGenerator generator = new ContactGenerator(0, 2, baseEntityService, listener, 3 + "");
 
-        List<BaseEntityModel> contactData = generator.generate(2);
+        List<BaseEntityModel> contactData = generator.generate(baseEntityService, 2);
         System.out.println(contactData);
         // TRY TO PRINT OUT THE DATA
 //        for (BaseEntity cd : contactData) {

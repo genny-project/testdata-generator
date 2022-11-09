@@ -17,13 +17,17 @@ public final class AddressGenerator extends Generator {
 
     private final GeneratorUtils generator = new GeneratorUtils();
 
-    public AddressGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
+    private int startId;
+
+    public AddressGenerator(int startId, int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<PlaceDetail> places) {
         super(count, service, onFinishListener, id);
         this.places = places;
+        this.startId = startId;
     }
 
     public BaseEntityModel createAddressEntity() {
         BaseEntityModel model = new BaseEntityModel();
+        model.setId((long) startId);
         model.setName(generator.generateFirstName() + " " + generator.generateLastName());
         model.setCode(AttributeCode.ENTITY_CODE.DEF_ADDRESS);
         model.setStatus(1);
@@ -41,7 +45,7 @@ public final class AddressGenerator extends Generator {
         return entity;
     }
 
-    public List<BaseEntityModel> generateAddressBulk(int count) throws JsonProcessingException {
+    public List<BaseEntityModel> generateAddressBulk(BaseEntityService service, int count) throws JsonProcessingException {
         List<BaseEntityModel> models = new ArrayList<>(count);
 
         for (int i = 0; i < count; i++) {
@@ -100,12 +104,14 @@ public final class AddressGenerator extends Generator {
             ));
 
             models.add(model);
+
+            startId++;
         }
         return models;
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) throws JsonProcessingException {
-        return generateAddressBulk(count);
+    List<BaseEntityModel> onGenerate(BaseEntityService service, int count) throws JsonProcessingException {
+        return generateAddressBulk(service, count);
     }
 }

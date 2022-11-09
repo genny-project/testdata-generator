@@ -1,24 +1,19 @@
 package life.genny.datagenerator.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import life.genny.datagenerator.data.entity.Address;
-
-public class AddressModel implements BaseModel<Address> {
-    @JsonProperty("id")
+public class Address implements Entity {
     private Long id;
-    @JsonProperty("json_data")
     private String jsonData;
 
-    public AddressModel() {
+    public Address() {
     }
 
-    public AddressModel(String jsonData) {
+    public Address(Long id, String jsonData) {
+        this.id = id;
         this.jsonData = jsonData;
     }
 
-    @Override
-    public Address toEntity() {
-        return new Address(this.id, this.jsonData);
+    public Address(String jsonData) {
+        this.jsonData = jsonData;
     }
 
     public Long getId() {

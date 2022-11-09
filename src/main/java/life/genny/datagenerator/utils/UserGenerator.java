@@ -21,14 +21,18 @@ public final class UserGenerator extends Generator {
     private final List<String> imagesUrl;
     private final KeycloakRequestExecutor requestExecutor;
 
-    public UserGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
+    private int startId;
+
+    public UserGenerator(int startId, int count, BaseEntityService service, OnFinishListener onFinishListener, String id, List<String> imagesUrl, KeycloakService keycloakService) {
         super(count, service, onFinishListener, id);
+        this.startId = startId;
         this.imagesUrl = imagesUrl;
         this.requestExecutor = new KeycloakRequestExecutor(keycloakService);
     }
 
     public BaseEntityModel generateUser(String name, String uuid) {
         BaseEntityModel model = new BaseEntityModel();
+        model.setId((long) startId);
         model.setName(name);
         model.setCode(AttributeCode.ENTITY_CODE.DEF_USER, uuid);
         model.setStatus(1);
@@ -48,7 +52,7 @@ public final class UserGenerator extends Generator {
 
     private final List<String> keycloakUserIds = new ArrayList<>();
 
-    public List<BaseEntityModel> generateUserBulk(int count) throws GeneratorException {
+    public List<BaseEntityModel> generateUserBulk(BaseEntityService service, int count) throws GeneratorException {
         List<BaseEntityModel> models = new ArrayList<>(count);
         int i = 0;
         while (i < count) {
@@ -135,14 +139,16 @@ public final class UserGenerator extends Generator {
             ));
 
             models.add(model);
+
+            startId++;
             i++;
         }
         return models;
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) throws GeneratorException {
-        return generateUserBulk(count);
+    List<BaseEntityModel> onGenerate(BaseEntityService service, int count) throws GeneratorException {
+        return generateUserBulk(service, count);
     }
 
     @Override

@@ -1,84 +1,38 @@
 package life.genny.datagenerator.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import life.genny.datagenerator.data.entity.BaseEntityAttribute;
+import life.genny.datagenerator.data.schemas.BaseEntityAttribute;
+import life.genny.datagenerator.data.schemas.MessageKey;
 import life.genny.datagenerator.utils.DateUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Calendar;
-import java.util.Date;
 
 public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>, BaseEntityAttributeToModel {
 
-    @JsonProperty("attribute_code")
     private String attributeCode;
-
-    @JsonProperty("base_entity_code")
     private String baseEntityCode;
-
-    @JsonProperty("created")
-    private Date created;
-
-    @JsonProperty("inferred")
+    private LocalDateTime created;
     private boolean inferred;
-
-    @JsonProperty("privacy_fLag")
     private boolean privacyFlag;
-
-    @JsonProperty("read_only")
     private boolean readOnly;
-
-    @JsonProperty("realm")
     private String realm;
-
-    @JsonProperty("updated")
-    private Date updated;
-
-    @JsonProperty("value_boolean")
+    private LocalDateTime updated;
     private Boolean valueBoolean;
-
-    @JsonProperty("value_date")
-    private Date valueDate;
-
-    @JsonProperty("value_range")
+    private LocalDate valueDate;
     private Byte[] valueDateRange;
-
-    @JsonProperty("value_date_time")
-    private Date valueDateTime;
-
-    @JsonProperty("value_double")
+    private LocalDateTime valueDateTime;
     private Double valueDouble;
-
-    @JsonProperty("value_integer")
     private Integer valueInteger;
-
-    @JsonProperty("value_long")
     private Long valueLong;
-
-    @JsonProperty("money")
     private BigDecimal money;
-
-    @JsonProperty("value_String")
     private String valueString;
-
-    @JsonProperty("value_time")
     private LocalTime valueTime;
-
-    @JsonProperty("attribute_id")
     private Long attributeId;
-
-    @JsonIgnore
     private BaseEntityModel baseEntityModel;
-
-    @JsonProperty("weight")
     private Double weight;
-
-    @JsonProperty("icon")
     private String icon;
-
-    @JsonProperty("confirmation_flag")
     private boolean confirmationFlag;
 
     public BaseEntityAttributeModel() {
@@ -88,14 +42,14 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.attributeCode = entity.getAttributeCode();
         this.baseEntityCode = entity.getBaseEntityCode();
         this.created = entity.getCreated();
-        this.inferred = entity.isInferred();
-        this.privacyFlag = entity.isPrivacyFlag();
-        this.readOnly = entity.isReadOnly();
+        this.inferred = entity.getInferred();
+        this.privacyFlag = entity.getPrivacyFlag();
+        this.readOnly = entity.getReadOnly();
         this.realm = entity.getRealm();
         this.updated = entity.getUpdated();
         this.valueBoolean = entity.getValueBoolean();
         this.valueDate = entity.getValueDate();
-        this.valueDateRange = entity.getValueDateRange();
+//        this.valueDateRange = entity.getValueDateRange();
         this.valueDateTime = entity.getValueDateTime();
         this.valueDouble = entity.getValueDouble();
         this.valueInteger = entity.getValueInteger();
@@ -103,13 +57,12 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.money = entity.getMoney();
         this.valueString = entity.getValueString();
         this.valueTime = entity.getValueTime();
-        this.attributeId = entity.getAttributeId();
+        this.attributeId = entity.getATTRIBUTE_ID();
         this.weight = entity.getWeight();
         this.icon = entity.getIcon();
-        this.confirmationFlag = entity.isConfirmationFlag();
+        this.confirmationFlag = entity.getConfirmationFlag();
     }
 
-    @JsonIgnore
     @Override
     public String getAttributeCode() {
         return attributeCode;
@@ -131,11 +84,11 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.baseEntityCode = baseEntityCode;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
@@ -171,11 +124,11 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.realm = realm;
     }
 
-    public Date getUpdated() {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
@@ -187,11 +140,11 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.valueBoolean = valueBoolean;
     }
 
-    public Date getValueDate() {
+    public LocalDate getValueDate() {
         return valueDate;
     }
 
-    public void setValueDate(Date valueDate) {
+    public void setValueDate(LocalDate valueDate) {
         this.valueDate = valueDate;
     }
 
@@ -203,11 +156,11 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.valueDateRange = valueDateRange;
     }
 
-    public Date getValueDateTime() {
+    public LocalDateTime getValueDateTime() {
         return valueDateTime;
     }
 
-    public void setValueDateTime(Date valueDateTime) {
+    public void setValueDateTime(LocalDateTime valueDateTime) {
         this.valueDateTime = valueDateTime;
     }
 
@@ -299,8 +252,10 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         this.confirmationFlag = confirmationFlag;
     }
 
+    @Override
     public BaseEntityAttribute toEntity() {
         BaseEntityAttribute attribute = new BaseEntityAttribute();
+        attribute.setBASEENTITY_ID(this.baseEntityModel.getId());
         attribute.setAttributeCode(this.attributeCode);
         attribute.setBaseEntityCode(this.baseEntityCode);
         attribute.setCreated(this.created);
@@ -311,7 +266,7 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         attribute.setUpdated(this.updated);
         attribute.setValueBoolean(this.valueBoolean);
         attribute.setValueDate(this.valueDate);
-        attribute.setValueDateRange(this.valueDateRange);
+//        attribute.setValueDateRange(this.valueDateRange);
         attribute.setValueDateTime(this.valueDateTime);
         attribute.setValueDouble(this.valueDouble);
         attribute.setValueInteger(this.valueInteger);
@@ -319,11 +274,16 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
         attribute.setMoney(this.money);
         attribute.setValueString(this.valueString);
         attribute.setValueTime(this.valueTime);
-        attribute.setAttributeId(this.attributeId);
+        attribute.setATTRIBUTE_ID(this.attributeId);
         attribute.setWeight(this.weight);
         attribute.setIcon(this.icon);
         attribute.setConfirmationFlag(this.confirmationFlag);
         return attribute;
+    }
+
+    @Override
+    public MessageKey getMessageKey() {
+        return this.toEntity().getMessageKey();
     }
 
     @Override
@@ -357,30 +317,22 @@ public class BaseEntityAttributeModel implements BaseModel<BaseEntityAttribute>,
     public void setValue(Object value) throws IllegalArgumentException {
         if (value instanceof Boolean booleanValue) {
             this.setValueBoolean(booleanValue);
-        } else if (value instanceof Byte[] bytesValue) {
-            this.setValueDateRange(bytesValue);
-        } else if (value instanceof Double doubleValue) {
+        }  else if (value instanceof Double doubleValue) {
             this.setValueDouble(doubleValue);
-        } else if (value instanceof Date dateValue) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(dateValue);
-            if (cal.get(Calendar.HOUR) == 0 && cal.get(Calendar.MINUTE) == 0 && cal.get(Calendar.SECOND) == 0) {
-                this.setValueDate(dateValue);
-            } else {
-                this.setValueDateTime(dateValue);
-            }
+        } else if (value instanceof LocalDateTime dateTimeValue) {
+            this.setValueDateTime(dateTimeValue);
+        } else if (value instanceof LocalDate dateValue) {
+            this.setValueDate(dateValue);
         } else if (value instanceof Long longValue) {
             this.setValueLong(longValue);
-        } else if (value instanceof LocalTime localTimeValue) {
-            this.setValueTime(localTimeValue);
-        } else if (value instanceof BigDecimal bigDecimalValue) {
-            this.setMoney(bigDecimalValue);
+        } else if (value instanceof LocalTime timeValue) {
+            this.setValueTime(timeValue);
         } else if (value instanceof String stringValue) {
             this.setValueString(stringValue);
         } else if (value instanceof Integer integerValue) {
             this.setValueInteger(integerValue);
         } else {
-            throw new IllegalArgumentException("Unknown data type");
+            throw new IllegalArgumentException("Unknown data type for: " + value);
         }
     }
 }

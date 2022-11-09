@@ -14,12 +14,16 @@ public final class ContactGenerator extends Generator {
 
     private final GeneratorUtils generator = new GeneratorUtils();
 
-    public ContactGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+    private int startId;
+
+    public ContactGenerator(int startId, int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
+        this.startId = startId;
     }
 
     public BaseEntityModel createContactEntity(String fname, String lname) {
         BaseEntityModel entity = new BaseEntityModel();
+        entity.setId((long) startId);
         entity.setName(fname + " " + lname);
         entity.setCode(AttributeCode.ENTITY_CODE.DEF_CONTACT);
         entity.setStatus(1);
@@ -41,7 +45,7 @@ public final class ContactGenerator extends Generator {
         return entity;
     }
 
-    public List<BaseEntityModel> generate(int totalIndex) {
+    public List<BaseEntityModel> generate(BaseEntityService service, int totalIndex) {
         List<BaseEntityModel> contactEntities = new ArrayList<>(totalIndex);
         int i = 0;
         while (i < totalIndex) {
@@ -76,6 +80,8 @@ public final class ContactGenerator extends Generator {
 
                 contactEntities.add(contactEntity);
 
+                startId++;
+
             } catch (Exception e) {
                 LOGGER.error(e);
             }
@@ -86,7 +92,7 @@ public final class ContactGenerator extends Generator {
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) {
-        return generate(count);
+    List<BaseEntityModel> onGenerate(BaseEntityService service, int count) {
+        return generate(service, count);
     }
 }

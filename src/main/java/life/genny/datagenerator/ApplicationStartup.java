@@ -58,6 +58,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     private List<PlaceDetail> places = new ArrayList<>(400);
     private Date timeStart;
     private int runnableTotal = 0;
+    private int startId = 1;
     private int runnableFinished = 0;
     private int totalThread = 0;
     private int uThread = 0;
@@ -79,6 +80,10 @@ public class ApplicationStartup implements Generator.OnFinishListener {
     @PostConstruct
     void setUp() {
         timeStart = new Date();
+        baseEntityService.onStart();
+        startId = baseEntityService.count();
+        runnableFinished += startId;
+        runnableTotal += startId;
         generator.setObjectMapper(objectMapper);
         LOGGER.info("DATA TO GENERATE SIZE:" + totalRow +
                 ", MAX_THREAD:" + maxThread +
@@ -93,7 +98,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         aThread = taskPerEntity;
         cThread = taskPerEntity;
 
-        totalThread = uThread + pThread + aThread + cThread;
+        totalThread = startId + uThread + pThread + aThread + cThread;
         LOGGER.info("creating " + totalThread + " generator tasks");
         generateRunnable();
 
@@ -103,7 +108,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
             aThread += 1;
             pThread += 1;
             int count = totalRow - (perTask * taskPerEntity);
-            execute(count, runnableFinished);
+            execute(startId, count, runnableFinished);
         }
     }
 
@@ -111,7 +116,8 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         int i = runnableFinished;
         int threadQueue = totalThread > 2 * maxThread ? 2 * maxThread : totalThread;
         while (threadQueue > 0) {
-            execute(perTask, i);
+            startId += perTask;
+            execute(startId, perTask, i);
             i++;
             threadQueue--;
         }
@@ -123,6 +129,7 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         places.addAll(placeService.fetchRandomPlaces(MELBOURNE_GEO_LOC, String.valueOf(radius)));
         places.addAll(placeService.fetchRandomPlaces(NEW_YORK_GEO_LOC, String.valueOf(radius)));
         places.addAll(placeService.fetchRandomPlaces(LONDON_GEO_LOC, String.valueOf(radius)));
+        LOGGER.debug(places.size() + " places fetched.");
     }
 
     private void fetchImages() {
@@ -130,32 +137,32 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         imagesUrl = imageService.fetchImages();
     }
 
-    private void execute(int count, int i) {
+    private void execute(int startId, int count, int i) {
         try {
             runnableTotal++;
 
             if (pThread > 0) {
-                executor.submit(new PersonGenerator(count, baseEntityService, this, i + ""));
+                executor.submit(new PersonGenerator(startId, count, baseEntityService, this, i + ""));
                 pThread--;
                 return;
             }
 
             if (aThread > 0) {
                 if (places.isEmpty()) fetchPlaces();
-                executor.submit(new AddressGenerator(count, baseEntityService, this, i + "", places));
+                executor.submit(new AddressGenerator(startId, count, baseEntityService, this, i + "", places));
                 aThread--;
                 return;
             }
             if (!places.isEmpty()) places = new ArrayList<>(400);
 
             if (cThread > 0) {
-                executor.submit(new ContactGenerator(count, baseEntityService, this, i + ""));
+                executor.submit(new ContactGenerator(startId, count, baseEntityService, this, i + ""));
                 cThread--;
                 return;
             }
 
             if (imagesUrl.isEmpty()) fetchImages();
-            executor.submit(new UserGenerator(count, baseEntityService, this, i + "", imagesUrl, keycloakService));
+            executor.submit(new UserGenerator(startId, count, baseEntityService, this, i + "", imagesUrl, keycloakService));
             uThread--;
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

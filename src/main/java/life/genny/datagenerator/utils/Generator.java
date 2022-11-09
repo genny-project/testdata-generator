@@ -31,7 +31,7 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
 
         try {
             LOGGER.debug("START GENERATING %s id: %s".formatted(this.getClass().getName(), id));
-            List<BaseEntityModel> data = onGenerate(count);
+            List<BaseEntityModel> data = onGenerate(service, count);
             service.saveAll(data);
             onSuccess();
         } catch (GeneratorException | JsonProcessingException e) {
@@ -58,7 +58,7 @@ public abstract sealed class Generator implements Runnable, GeneratorListener
         }
     }
 
-    abstract List<BaseEntityModel> onGenerate(int count) throws GeneratorException, JsonProcessingException;
+    abstract List<BaseEntityModel> onGenerate(BaseEntityService service, int count) throws GeneratorException, JsonProcessingException;
 
     @Override
     public void onSuccess() {

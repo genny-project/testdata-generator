@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import life.genny.datagenerator.model.json.AddressComponent;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 
 public class GeneratorUtils {
@@ -62,7 +64,7 @@ public class GeneratorUtils {
         return new Email(firstName.toLowerCase() + separator + lastName.toLowerCase() + separator + timestamps, host);
     }
 
-    public Date generateDOB() throws ParseException {
+    public LocalDate generateDOB() throws ParseException {
         GregorianCalendar calendar = new GregorianCalendar();
         DateUtil dtUtil = new DateUtil();
         int year = dtUtil.pickRandom(1970, 2000);
@@ -71,7 +73,7 @@ public class GeneratorUtils {
         calendar.set(Calendar.DAY_OF_YEAR, day);
         String generatedDate = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.DAY_OF_MONTH) + "-" + calendar.get(Calendar.MONTH);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return dateFormat.parse(generatedDate);
+        return Timestamp.from(dateFormat.parse(generatedDate).toInstant()).toLocalDateTime().toLocalDate();
     }
 
     public <E> E pickRandomData(List<E> data) {

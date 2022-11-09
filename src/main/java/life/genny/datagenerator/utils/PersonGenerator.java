@@ -16,12 +16,16 @@ public final class PersonGenerator extends Generator {
 
     private final GeneratorUtils generator = new GeneratorUtils();
 
-    public PersonGenerator(int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
+    private int startId;
+
+    public PersonGenerator(int startId, int count, BaseEntityService service, OnFinishListener onFinishListener, String id) {
         super(count, service, onFinishListener, id);
+        this.startId = startId;
     }
 
     public BaseEntityModel createPersonEntity() {
         BaseEntityModel entity = new BaseEntityModel();
+        entity.setId((long) startId);
         entity.setStatus(1);
         entity.setName(generator.generateFirstName() + " " + generator.generateLastName());
         entity.setCode(AttributeCode.ENTITY_CODE.DEF_PERSON);
@@ -43,7 +47,7 @@ public final class PersonGenerator extends Generator {
         return entity;
     }
 
-    public List<BaseEntityModel> generate(int totalIndex) {
+    public List<BaseEntityModel> generate(BaseEntityService service, int totalIndex) {
         List<BaseEntityModel> entityModels = new ArrayList<>(totalIndex);
         int i = 0;
         while (i < totalIndex) {
@@ -106,6 +110,8 @@ public final class PersonGenerator extends Generator {
 
                 entityModels.add(entityModel);
 
+                startId++;
+
             } catch (Exception e) {
                 LOGGER.error(e);
             }
@@ -117,7 +123,7 @@ public final class PersonGenerator extends Generator {
     }
 
     @Override
-    List<BaseEntityModel> onGenerate(int count) {
-        return generate(count);
+    List<BaseEntityModel> onGenerate(BaseEntityService service, int count) {
+        return generate(service, count);
     }
 }

@@ -1,14 +1,15 @@
-<distributed-cache segments="255">
+<distributed-cache>
     <encoding>
         <key media-type="application/x-protostream"/>
         <value media-type="application/x-protostream"/>
     </encoding>
     <persistence passivation="false">
-        <store shared="false"
-               preload="true"
-               purge="false" />
+        store
         <table-jdbc-store xmlns="urn:infinispan:config:store:sql:13.0"
                           segmented="false"
+                          shared="false"
+                          preload="true"
+                          purge="false"
                           table-name="TABLE_NAME"
                           dialect="MYSQL"
                           db-major-version="8"

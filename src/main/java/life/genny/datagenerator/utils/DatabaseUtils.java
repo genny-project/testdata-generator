@@ -12,8 +12,8 @@ public class DatabaseUtils {
 
     private static Logger LOGGER = Logger.getLogger(DatabaseUtils.class);
 
-    private Connection conn;
-    private Statement statement;
+    private static Connection conn;
+    private static Statement statement;
 
     public DatabaseUtils() {
     }
@@ -23,16 +23,14 @@ public class DatabaseUtils {
         this.statement = statement;
     }
 
-    public DatabaseUtils initConnection(MySQLCatalogueConfig mysqlConfig) throws SQLException {
+    public static DatabaseUtils initConnection(MySQLCatalogueConfig mysqlConfig) throws SQLException {
         String url = "jdbc:mysql://" + mysqlConfig.host() + ":" + mysqlConfig.port() + "/" + mysqlConfig.database();
         Connection conn = DriverManager.getConnection(url, mysqlConfig.user(), mysqlConfig.password());
-        LOGGER.debug("Connection is created successfully:");
         Statement statement = conn.createStatement();
         return new DatabaseUtils(conn, statement);
     }
 
-    public ResultSet selectAllFromMysql(String table) throws SQLException {
-//        if (statement == null) initConnection();
+    public static ResultSet selectAllFromMysql(String table) throws SQLException {
         String query = "SELECT * FROM %s".formatted(table);
         ResultSet result = null;
         result = statement.executeQuery(query);
@@ -40,14 +38,12 @@ public class DatabaseUtils {
     }
 
     public void insertIntoMysql(String table, String jsonData) throws SQLException {
-//        if (statement == null) initConnection();
         String query = "INSERT INTO `%s`(`json_data`) VALUES ('%s')".formatted(table, jsonData);
         statement.executeUpdate(query);
         conn.close();
     }
 
     public int getCountFromMysql(String table) throws SQLException {
-//        if (statement == null) initConnection();
         int total = -1;
         String query = "SELECT COUNT(id) as total FROM %s".formatted(table);
         ResultSet result = statement.executeQuery(query);

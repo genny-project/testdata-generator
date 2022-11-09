@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 public class CacheUtils {
@@ -89,7 +90,7 @@ public class CacheUtils {
 
         try {
             if (value != null) {
-                cache.put(key, value);
+                cache.put(key, value, 10, TimeUnit.SECONDS);
                 Thread.sleep(20);
             } else {
                 LOGGER.warn("[" + cacheName + "]: Value for " + key.getKeyString() + " is null, nothing to be added.");
@@ -109,7 +110,7 @@ public class CacheUtils {
 
         try {
             if (entities.size() > 0) {
-                cache.putAll(entities);
+                cache.putAll(entities, 10, TimeUnit.SECONDS);
                 Thread.sleep(20);
             } else {
                 LOGGER.warn("[" + cacheName + "]: entities size is " + entities.size() + ", nothing to be added.");

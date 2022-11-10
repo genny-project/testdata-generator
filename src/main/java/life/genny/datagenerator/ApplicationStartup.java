@@ -82,8 +82,6 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         timeStart = new Date();
         baseEntityService.onStart();
         startId = baseEntityService.count();
-        runnableFinished += startId;
-        runnableTotal += startId;
         generator.setObjectMapper(objectMapper);
         LOGGER.info("DATA TO GENERATE SIZE:" + totalRow +
                 ", MAX_THREAD:" + maxThread +

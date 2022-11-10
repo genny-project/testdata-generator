@@ -90,7 +90,7 @@ public class CacheUtils {
 
         try {
             if (value != null) {
-                cache.put(key, value, 10, TimeUnit.SECONDS);
+                cache.put(key, value);
                 Thread.sleep(20);
             } else {
                 LOGGER.warn("[" + cacheName + "]: Value for " + key.getKeyString() + " is null, nothing to be added.");
@@ -110,7 +110,7 @@ public class CacheUtils {
 
         try {
             if (entities.size() > 0) {
-                cache.putAll(entities, 10, TimeUnit.SECONDS);
+                cache.putAll(entities);
                 Thread.sleep(20);
             } else {
                 LOGGER.warn("[" + cacheName + "]: entities size is " + entities.size() + ", nothing to be added.");

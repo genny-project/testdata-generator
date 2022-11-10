@@ -4,12 +4,11 @@
         <value media-type="application/x-protostream"/>
     </encoding>
     <persistence passivation="false">
-        store
+        <store shared="false"
+               preload="true"
+               purge="false" />
         <table-jdbc-store xmlns="urn:infinispan:config:store:sql:13.0"
                           segmented="false"
-                          shared="false"
-                          preload="true"
-                          purge="false"
                           table-name="TABLE_NAME"
                           dialect="MYSQL"
                           db-major-version="8"

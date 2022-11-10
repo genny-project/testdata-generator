@@ -43,7 +43,7 @@ CREATE TABLE `baseentity_attribute` (
   `valueString` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `valueTime` time DEFAULT NULL,
   `weight` double DEFAULT NULL,
-  `ATTRIBUTE_ID` bigint NOT NULL,
+  `ATTRIBUTE_ID` bigint NULL,
   `BASEENTITY_ID` bigint NOT NULL,
   PRIMARY KEY (`realm`,`baseEntityCode`,`attributeCode`),
   UNIQUE KEY `unique_key` (`ATTRIBUTE_ID`,`BASEENTITY_ID`),

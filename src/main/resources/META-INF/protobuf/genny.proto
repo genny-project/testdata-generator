@@ -23,6 +23,7 @@ message BaseEntity {
    */
   optional string code = 7;
   optional int32 status = 8;
+  optional string capreqs = 9;
 }
 
 message BaseEntityAttributeKey {
@@ -70,4 +71,5 @@ message BaseEntityAttribute {
   optional int64 BASEENTITY_ID = 21;
   optional string icon = 22;
   optional bool confirmationFlag = 23;
+  optional string capreqs = 24;
 }

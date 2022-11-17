@@ -16,6 +16,7 @@ public interface InfinispanCatalogueConfig {
 
     String driver();
 
+    @WithDefault("genny")
     String packageName();
 
     @WithDefault("baseentites")

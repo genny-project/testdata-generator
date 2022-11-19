@@ -12,6 +12,7 @@ import java.util.List;
 @RegisterRestClient
 @Produces(MediaType.APPLICATION_JSON)
 public interface KeycloakAuthProxy {
+
     @POST
     @Path("realms/{realmName}/protocol/openid-connect/token")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
@@ -22,11 +23,11 @@ public interface KeycloakAuthProxy {
 
     @POST
     @Path("admin/realms/{realmName}/users")
-    @Consumes(MediaType.APPLICATION_JSON)
-    void createUser(
+    @Consumes(MediaType.TEXT_PLAIN)
+    String createUser(
             @PathParam("realmName") String realmName,
             @HeaderParam("Authorization") String bearerToken,
-            KeycloakUser user
+            String json
     );
 
     @GET

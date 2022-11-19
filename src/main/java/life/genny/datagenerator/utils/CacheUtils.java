@@ -111,7 +111,6 @@ public class CacheUtils {
         try {
             if (entities.size() > 0) {
                 cache.putAll(entities);
-                Thread.sleep(20);
             } else {
                 LOGGER.warn("[" + cacheName + "]: entities size is " + entities.size() + ", nothing to be added.");
             }

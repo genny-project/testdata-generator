@@ -68,6 +68,11 @@
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-jdbc-mysql</artifactId>
     </dependency>
+   <dependency>
+     <groupId>life.genny</groupId>
+     <artifactId>serviceq</artifactId>
+     <version>10.2.0</version>
+   </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>

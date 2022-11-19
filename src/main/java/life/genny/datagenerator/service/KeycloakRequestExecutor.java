@@ -29,6 +29,23 @@ public class KeycloakRequestExecutor {
             signedSession.add(auth);
     }
 
+    private KeycloakAuthResponse getAdmin() {
+        MultivaluedMap<String, Object> form = new MultivaluedHashMap<>();
+        form.putSingle("username", keycloakService.getKeycloakAdminUsername());
+        form.putSingle("password", keycloakService.getKeycloakAdminPassword());
+        form.putSingle("grant_type", "password");
+        form.putSingle("client_id", keycloakService.getClientId());
+        form.putSingle("client_secret", keycloakService.getCredentialSecret());
+
+        try {
+            return keycloakService.getKeycloakAuthProxy().signIn(keycloakService.getRealmName(), form);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+
+        return null;
+    }
+
     private KeycloakAuthResponse signIn() {
         if (!signedSession.isEmpty()) {
             return signedSession.remove(0);
@@ -99,29 +116,52 @@ public class KeycloakRequestExecutor {
         final KeycloakUser user = new KeycloakUser(username, firstName, lastName, email);
         user.setEnabled(true);
         user.setEmailVerified(true);
+        String pass = "Qq121212";
+        String json = "{ " + "\"username\" : \"" + user.getUsername() + "\"," + "\"email\" : \"" + user.getEmail() + "\" , "
+                + "\"enabled\" : true, " + "\"emailVerified\" : true, " + "\"firstName\" : \"" + user.getFirstName() + "\", "
+                + "\"lastName\" : \"" + user.getLastName() + "\", " + "\"groups\" : [" + " \"users\" " + "], "
+                + "\"requiredActions\" : [\"terms_and_conditions\"], "
+                + "\"realmRoles\" : [\"user\"],\"credentials\": [{"
+                + "\"type\":\"password\","
+                + "\"value\":\"" + pass + "\","
+                + "\"temporary\":true }]}";
+        LOGGER.info(json);
 
-        boolean result = Boolean.TRUE.equals(executeAuthenticatedRequest(new OnRequestListener<>(user) {
-            @Override
-            public Boolean onRequest(String bearerToken, KeycloakUser user) {
-                try {
-                    keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, user);
-                    return true;
-                } catch (WebApplicationException webApplicationException) {
-                    if (webApplicationException.getResponse().getStatus() == 409) {
-                        return false;
-                    } else {
-                        throw webApplicationException;
-                    }
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage());
-                    return false;
-                }
-            }
-        }));
+        LOGGER.info(keycloakService.getKeycloakAdminUsername());
+        LOGGER.info(keycloakService.getKeycloakAdminPassword());
+        LOGGER.info(keycloakService.getClientId());
+        LOGGER.info(keycloakService.getCredentialSecret());
 
-        if (result) {
-            return getRegisteredUserFromKeycloak(user.getEmail());
-        } else return null;
+//        String response = getAdmin().toString();
+//        LOGGER.info(response);
+
+//        boolean result = Boolean.TRUE.equals(executeAuthenticatedRequest(new OnRequestListener<>(user) {
+//            @Override
+//            public Boolean onRequest(String bearerToken, KeycloakUser user) {
+//                try {
+//                    String response = keycloakService.getKeycloakAuthProxy().createUser(keycloakService.getRealmName(), bearerToken, json);
+//                    LOGGER.info(response);
+//                    return true;
+//                } catch (WebApplicationException webApplicationException) {
+//                    LOGGER.error(webApplicationException.getMessage());
+//                    webApplicationException.printStackTrace();
+//                    if (webApplicationException.getResponse().getStatus() == 409) {
+//                        return false;
+//                    } else {
+//                        throw webApplicationException;
+//                    }
+//                } catch (Exception e) {
+//                    LOGGER.error(e.getMessage());
+//                    e.printStackTrace();
+//                    return false;
+//                }
+//            }
+//        }));
+//
+//        if (result) {
+//            return getRegisteredUserFromKeycloak(user.getEmail());
+//        } else return null;
+        return null;
     }
 
     public void deleteUserKeycloak(String userId) {

@@ -9,9 +9,9 @@ import javax.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class KeycloakService {
 
-    @ConfigProperty(name = "quarkus.oidc.client-id")
+    @ConfigProperty(name = "keycloak.client-id")
     String clientId;
-    @ConfigProperty(name = "quarkus.oidc.credentials.secret")
+    @ConfigProperty(name = "keycloak.credentials.secret")
     String credentialSecret;
     @ConfigProperty(name = "keycloak.realm-name")
     String realmName;

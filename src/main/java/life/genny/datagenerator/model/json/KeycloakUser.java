@@ -107,4 +107,19 @@ public class KeycloakUser implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    @Override
+    public String toString() {
+        return "KeycloakUser{" +
+                "id='" + id + '\'' +
+                ", createdTimestamp=" + createdTimestamp +
+                ", username='" + username + '\'' +
+                ", enabled=" + enabled +
+                ", totp=" + totp +
+                ", emailVerified=" + emailVerified +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }

@@ -11,13 +11,13 @@ public class KeycloakService {
 
     @ConfigProperty(name = "keycloak.client-id")
     String clientId;
-    @ConfigProperty(name = "keycloak.credentials.secret")
+    @ConfigProperty(name = "keycloak.credentials-secret")
     String credentialSecret;
     @ConfigProperty(name = "keycloak.realm-name")
     String realmName;
-    @ConfigProperty(name = "keycloak.user.username")
+    @ConfigProperty(name = "keycloak.username")
     String keycloakAdminUsername;
-    @ConfigProperty(name = "keycloak.user.password")
+    @ConfigProperty(name = "keycloak.password")
     String keycloakAdminPassword;
 
     @RestClient

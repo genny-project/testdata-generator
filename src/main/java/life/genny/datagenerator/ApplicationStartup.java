@@ -77,38 +77,38 @@ public class ApplicationStartup implements Generator.OnFinishListener {
         }
     }
 
-    @PostConstruct
-    void setUp() {
-        timeStart = new Date();
-        baseEntityService.onStart();
-        startId = baseEntityService.count();
-        generator.setObjectMapper(objectMapper);
-        LOGGER.info("DATA TO GENERATE SIZE:" + totalRow +
-                ", MAX_THREAD:" + maxThread +
-                ", PER_THREAD:" + perTask);
-    }
+    // @PostConstruct
+    // void setUp() {
+    //     timeStart = new Date();
+    //     baseEntityService.onStart();
+    //     startId = baseEntityService.count();
+    //     generator.setObjectMapper(objectMapper);
+    //     LOGGER.info("DATA TO GENERATE SIZE:" + totalRow +
+    //             ", MAX_THREAD:" + maxThread +
+    //             ", PER_THREAD:" + perTask);
+    // }
 
-    void onStart(@Observes StartupEvent event) {
-        executor = Executors.newFixedThreadPool(maxThread);
-        int taskPerEntity = Math.min(totalRow, totalRow / perTask);
-        uThread = taskPerEntity;
-        pThread = taskPerEntity;
-        aThread = taskPerEntity;
-        cThread = taskPerEntity;
+    // void onStart(@Observes StartupEvent event) {
+    //     executor = Executors.newFixedThreadPool(maxThread);
+    //     int taskPerEntity = Math.min(totalRow, totalRow / perTask);
+    //     uThread = taskPerEntity;
+    //     pThread = taskPerEntity;
+    //     aThread = taskPerEntity;
+    //     cThread = taskPerEntity;
 
-        totalThread = startId + uThread + pThread + aThread + cThread;
-        LOGGER.info("creating " + totalThread + " generator tasks");
-        generateRunnable();
+    //     totalThread = startId + uThread + pThread + aThread + cThread;
+    //     LOGGER.info("creating " + totalThread + " generator tasks");
+    //     generateRunnable();
 
-        // This operation is for adding a task for each entity if totalRow % perTask != 0
-        if ((perTask * taskPerEntity) < totalRow) {
-            uThread += 1;
-            aThread += 1;
-            pThread += 1;
-            int count = totalRow - (perTask * taskPerEntity);
-            execute(startId, count, runnableFinished);
-        }
-    }
+    //     // This operation is for adding a task for each entity if totalRow % perTask != 0
+    //     if ((perTask * taskPerEntity) < totalRow) {
+    //         uThread += 1;
+    //         aThread += 1;
+    //         pThread += 1;
+    //         int count = totalRow - (perTask * taskPerEntity);
+    //         execute(startId, count, runnableFinished);
+    //     }
+    // }
 
     private void generateRunnable() {
         int i = runnableFinished;

@@ -61,7 +61,6 @@ public class DataFakerService {
             dtt.setValidationList(validations);
             attribute.setDataType(dtt);
             ea.setAttribute(attribute);
-
         }
 
         return entityDefinition;

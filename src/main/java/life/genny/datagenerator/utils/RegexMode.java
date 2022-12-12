@@ -1,6 +1,6 @@
 package life.genny.datagenerator.utils;
 
-public class Regex {
+public class RegexMode {
 
     public static final String ALL = ".";
     public static final String DIGIT_ONLY = "[0-9]";

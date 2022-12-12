@@ -1,24 +1,25 @@
 package life.genny.datagenerator.utils;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import com.mifmif.common.regex.Generex;
 
-public class DataFakerUtils {
+public class DataFakerGeneralUtils {
 
     private static Random random() {
         return new Random();
     }
 
     private static String regexPreprocessing(String regex, String newRegex) {
-        String regexTemp = regex.replace(".*", newRegex + Regex.ASTERISK);
-        regexTemp = regexTemp.replace(".+", newRegex + Regex.PLUS);
+        String regexTemp = regex.replace(".*", newRegex + RegexMode.ASTERISK);
+        regexTemp = regexTemp.replace(".+", newRegex + RegexMode.PLUS);
         return regexTemp;
     }
 
@@ -27,22 +28,22 @@ public class DataFakerUtils {
     }
 
     public static String randStringFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.WORD_CHARS);
+        String newRegex = DataFakerGeneralUtils.regexPreprocessing(regex, RegexMode.WORD_CHARS);
         Generex generator = new Generex(newRegex);
         String randString = generator.random();
-        randString = DataFakerUtils.regexPostProcessing(randString);
+        randString = DataFakerGeneralUtils.regexPostProcessing(randString);
         return randString;
     }
 
     public static int randIntFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
+        String newRegex = DataFakerGeneralUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         int generatedNum = Integer.MIN_VALUE;
 
         while (counter <= 5 || !matched) {
             String generatedString = new Generex(newRegex).random();
-            generatedString = DataFakerUtils.regexPostProcessing(generatedString);
+            generatedString = DataFakerGeneralUtils.regexPostProcessing(generatedString);
             try {
                 generatedNum = Integer.parseInt(generatedString);
                 matched = true;
@@ -59,14 +60,14 @@ public class DataFakerUtils {
     }
 
     public static double randDoubleFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
+        String newRegex = DataFakerGeneralUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         double generatedNum = Double.MIN_VALUE;
 
         while (counter <= 5 || !matched) {
             String generatedString = new Generex(newRegex).random();
-            generatedString = DataFakerUtils.regexPostProcessing(generatedString);
+            generatedString = DataFakerGeneralUtils.regexPostProcessing(generatedString);
             try {
                 generatedNum = Double.parseDouble(generatedString);
                 if (generatedNum == Double.POSITIVE_INFINITY || generatedNum == Double.NEGATIVE_INFINITY)
@@ -85,14 +86,14 @@ public class DataFakerUtils {
     }
 
     public static long randLongFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
+        String newRegex = DataFakerGeneralUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         long generatedNum = Long.MIN_VALUE;
 
         while (counter <= 5 || !matched) {
             String generatedString = new Generex(newRegex).random();
-            generatedString = DataFakerUtils.regexPostProcessing(generatedString);
+            generatedString = DataFakerGeneralUtils.regexPostProcessing(generatedString);
             try {
                 generatedNum = Long.parseLong(generatedString);
                 matched = true;
@@ -123,7 +124,7 @@ public class DataFakerUtils {
         if (maxLength < 1)
             throw new IllegalArgumentException("Invalid string length.");
 
-        return new Generex(Regex.WORD_CHARS + "{" + minLength + "," + maxLength + "}").random();
+        return new Generex(RegexMode.WORD_CHARS + "{" + minLength + "," + maxLength + "}").random();
     }
 
     public static int randInt() {
@@ -168,17 +169,26 @@ public class DataFakerUtils {
 
     public static LocalDateTime randDateTime() {
         LocalDateTime startDate = LocalDateTime.of(1900, 1, 1, 0, 0, 0);
-        return DataFakerUtils.randDateTime(startDate.toLocalDate(), LocalDateTime.now().toLocalDate());
+        return DataFakerGeneralUtils.randDateTime(startDate.toLocalDate(), LocalDateTime.now().toLocalDate());
     }
 
     public static LocalDateTime randDateTime(LocalDate startDate) {
-        return DataFakerUtils.randDateTime(startDate, LocalDateTime.now().toLocalDate());
+        return DataFakerGeneralUtils.randDateTime(startDate, LocalDateTime.now().toLocalDate());
     }
 
     public static LocalDateTime randDateTime(LocalDate startDate, LocalDate endDate) {
         long start = startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         long end = endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         return new Timestamp(random().nextLong(start, end)).toLocalDateTime();
+    }
+
+    public static <T> T randItemFromList(List<T> list) {
+        return list.get(random().nextInt(list.size()));
+    }
+
+    public static <T> T randItemFromList(Set<T> set) {
+        List<T> list = new ArrayList<>(set);
+        return randItemFromList(list);
     }
 
 }

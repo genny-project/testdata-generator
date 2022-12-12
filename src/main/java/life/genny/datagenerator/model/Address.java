@@ -1,6 +1,6 @@
 package life.genny.datagenerator.model;
 
-public class Address implements Entity {
+public class Address {
     private Long id;
     private String jsonData;
 

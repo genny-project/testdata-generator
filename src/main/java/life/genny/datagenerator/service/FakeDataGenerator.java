@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.SpecialAttributes;
-import life.genny.datagenerator.utils.DataFakerGeneralUtils;
+import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -33,7 +33,7 @@ public class FakeDataGenerator {
     DataFakerService fakerServce;
 
     @Inject
-    DynamicFakeDataGenerator dynamicGenerator;
+    CustomFakeDataGenerator customGenerator;
 
     public BaseEntity generateEntity(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
@@ -53,19 +53,19 @@ public class FakeDataGenerator {
 
                 if (ea.getValue() == null) {
                     if (String.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randStringFromRegex(regex));
+                        ea.setValue(DataFakerUtils.randStringFromRegex(regex));
                     else if (Integer.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randIntFromRegex(regex));
+                        ea.setValue(DataFakerUtils.randIntFromRegex(regex));
                     else if (Double.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randDoubleFromRegex(regex));
+                        ea.setValue(DataFakerUtils.randDoubleFromRegex(regex));
                     else if (Boolean.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randBoolean());
+                        ea.setValue(DataFakerUtils.randBoolean());
                     else if (LocalDateTime.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randDateTime());
+                        ea.setValue(DataFakerUtils.randDateTime());
                     else if (LocalDate.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randDateTime().toLocalDate());
+                        ea.setValue(DataFakerUtils.randDateTime().toLocalDate());
                     else if (LocalTime.class.getName().equals(className))
-                        ea.setValue(DataFakerGeneralUtils.randDateTime().toLocalTime());
+                        ea.setValue(DataFakerUtils.randDateTime().toLocalTime());
                 }
             }
         }
@@ -82,8 +82,8 @@ public class FakeDataGenerator {
 
     private BaseEntity generateSpecialCaseAttributes(BaseEntity entity) {
         return switch (entity.getCode()) {
-            case SpecialAttributes.DEF_BALI_PERSON -> dynamicGenerator.generatePerson(entity);
-            default -> dynamicGenerator.generate(entity);
+            case SpecialAttributes.DEF_BALI_PERSON -> customGenerator.generatePerson(entity);
+            default -> customGenerator.generate(entity);
         };
     }
 

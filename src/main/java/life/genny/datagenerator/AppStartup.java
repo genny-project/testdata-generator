@@ -28,8 +28,13 @@ public class AppStartup {
 
         LOGGER.info("Starting up new application...");
 
-        BaseEntity entity = generator.generateEntity(SpecialAttributes.DEF_BALI_PERSON);
+        BaseEntity entity = generator.generateEntity("DEF_COMPANY");
         boolean valid = generator.entityAttributesAreValid(entity, true);
         LOGGER.info("Validations are valid: " + valid);
+
+        String phone = "^(\\d{2}){0,1}((0{0,1}[2|3|7|8]{1}[ \\-]*(\\d{4}\\d{4}))|(\\d{2}){0,1}(1[ \\-]{0,1}(300|800|900|902)[ \\-]{0,1}((\\d{6})|(\\d{3}\\d{3})))|(13[ \\-]{0,1}([\\d \\-]{4})|((\\d{0,2})0{0,1}4{1}[\\d \\-]{8,10})))$";
+        String landline = "^(\\d{2}){0,1}((0{0,1}[2|3|7|8]{1}[ \\-]*(\\d{4}\\d{4}))|(\\d{2}){0,1}(1[ \\-]{0,1}(300|800|900|902)[ \\-]{0,1}((\\d{6})|(\\d{3}\\d{3})))|(13[ \\-]{0,1}([\\d \\-]{4})|((\\d{0,2})0{0,1}4{1}[\\d \\-]{8,10})))$";
+
+        LOGGER.info("match: " + phone.equals(landline));
     }
 }

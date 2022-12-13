@@ -5,16 +5,17 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import life.genny.datagenerator.SpecialAttributes;
-import life.genny.datagenerator.utils.DataFakerGeneralUtils;
-import life.genny.datagenerator.utils.DataFakerSpecialUtils;
+import life.genny.datagenerator.utils.DataFakerUtils;
+import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
 
 @ApplicationScoped
-public class DynamicFakeDataGenerator {
+public class CustomFakeDataGenerator {
 
     private static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
+    private static final String PHONE_REGEX = "^(\\+\\d{2}){0,1}((0{0,1}[2378]{1}[ -]{1}(\\d{4}\\d{4}))|(\\d{2}){0,1}(1[ -]{1}(300|800|900|902)[ -]{1}(\\d{6}|(\\d{3}\\d{3})))|(13[ -]{1}[0-9 -]{4}|(\\d{0,2}0{0,1}4{1}[0-9 -]{8,10})))$";
 
     public BaseEntity generate(BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
@@ -32,9 +33,9 @@ public class DynamicFakeDataGenerator {
     }
 
     public BaseEntity generatePerson(BaseEntity entity) {
-        String firstName = DataFakerSpecialUtils.generateName();
-        String lastName = DataFakerSpecialUtils.generateName();
-        String gender = DataFakerGeneralUtils.randStringFromRegex(GENDER_REGEX);
+        String firstName = DataFakerCustomUtils.generateName();
+        String lastName = DataFakerCustomUtils.generateName();
+        String gender = DataFakerUtils.randStringFromRegex(GENDER_REGEX);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
@@ -55,12 +56,12 @@ public class DynamicFakeDataGenerator {
             case SpecialAttributes.PRI_EMAIL:
                 regexNullPointer(attributeCode, regex);
                 if (args.length > 0)
-                    yield DataFakerSpecialUtils.generateEmail(args[0], args[1], DataFakerSpecialUtils.DEFAULT_DOMAIN);
+                    yield DataFakerCustomUtils.generateEmail(args[0], args[1], DataFakerCustomUtils.DEFAULT_DOMAIN);
                 else
-                    yield DataFakerSpecialUtils.generateEmailFromRegex(regex, DataFakerSpecialUtils.DEFAULT_DOMAIN);
+                    yield DataFakerCustomUtils.generateEmailFromRegex(regex, DataFakerCustomUtils.DEFAULT_DOMAIN);
 
             case SpecialAttributes.PRI_INITIALS:
-                yield DataFakerSpecialUtils.generateInitials(args);
+                yield DataFakerCustomUtils.generateInitials(args);
 
             case SpecialAttributes.PRI_FIRSTNAME:
                 yield args[0];
@@ -74,13 +75,17 @@ public class DynamicFakeDataGenerator {
             case SpecialAttributes.LNK_GENDER_SELECT:
                 yield "[\"" + args[2] + "\"]";
 
+            case SpecialAttributes.PRI_PHONE:
+            regexNullPointer(attributeCode, regex);
+                yield DataFakerUtils.randStringFromRegex(PHONE_REGEX);
+
             case SpecialAttributes.PRI_MOBILE:
             case SpecialAttributes.PRI_WHATSAPP:
             case SpecialAttributes.PRI_LANDLINE:
                 regexNullPointer(attributeCode, regex);
                 String value = "";
                 while (value.length() < 5)
-                    value = DataFakerGeneralUtils.randStringFromRegex(regex);
+                    value = DataFakerUtils.randStringFromRegex(regex);
                 yield value;
 
             default:

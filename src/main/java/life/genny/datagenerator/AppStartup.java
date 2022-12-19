@@ -28,7 +28,7 @@ public class AppStartup {
 
         LOGGER.info("Starting up new application...");
 
-        BaseEntity entity = generator.generateEntity("DEF_COMPANY");
+        BaseEntity entity = generator.generateEntity("DEF_INTERNSHIP");
         boolean valid = generator.entityAttributesAreValid(entity, true);
         LOGGER.info("Validations are valid: " + valid);
 

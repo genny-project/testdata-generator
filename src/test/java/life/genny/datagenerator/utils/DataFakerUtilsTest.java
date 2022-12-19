@@ -21,7 +21,7 @@ import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.Expected;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
-public class DataFakerGeneralUtilsTest extends BaseTestCase {
+public class DataFakerUtilsTest extends BaseTestCase {
 
     @Test
     void randStringFromRegex() {

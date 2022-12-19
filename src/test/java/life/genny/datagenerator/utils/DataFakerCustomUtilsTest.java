@@ -11,7 +11,7 @@ import life.genny.datagenerator.Constants;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
-public class DataFakerSpecialUtilsTest extends BaseTestCase {
+public class DataFakerCustomUtilsTest extends BaseTestCase {
     
     @Test
     void generateName() {

@@ -15,7 +15,7 @@ import life.genny.qwandaq.validation.Validation;
 public class CustomFakeDataGenerator {
 
     private static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
-    private static final String PHONE_REGEX = "^(\\+\\d{2}){0,1}((0{0,1}[2378]{1}[ -]{1}(\\d{4}\\d{4}))|(\\d{2}){0,1}(1[ -]{1}(300|800|900|902)[ -]{1}(\\d{6}|(\\d{3}\\d{3})))|(13[ -]{1}[0-9 -]{4}|(\\d{0,2}0{0,1}4{1}[0-9 -]{8,10})))$";
+    private static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
 
     public BaseEntity generate(BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
@@ -76,13 +76,11 @@ public class CustomFakeDataGenerator {
                 yield "[\"" + args[2] + "\"]";
 
             case SpecialAttributes.PRI_PHONE:
-            regexNullPointer(attributeCode, regex);
                 yield DataFakerUtils.randStringFromRegex(PHONE_REGEX);
 
             case SpecialAttributes.PRI_MOBILE:
             case SpecialAttributes.PRI_WHATSAPP:
             case SpecialAttributes.PRI_LANDLINE:
-                regexNullPointer(attributeCode, regex);
                 String value = "";
                 while (value.length() < 5)
                     value = DataFakerUtils.randStringFromRegex(regex);

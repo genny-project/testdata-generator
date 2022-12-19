@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import io.quarkus.runtime.StartupEvent;
-import life.genny.datagenerator.service.FakeDataGenerator;
+import life.genny.datagenerator.services.FakeDataGenerator;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.serviceq.Service;
 
@@ -28,7 +28,7 @@ public class AppStartup {
 
         LOGGER.info("Starting up new application...");
 
-        BaseEntity entity = generator.generateEntity("DEF_INTERNSHIP");
+        BaseEntity entity = generator.generateEntity("HOST_CPY");
         boolean valid = generator.entityAttributesAreValid(entity, true);
         LOGGER.info("Validations are valid: " + valid);
 

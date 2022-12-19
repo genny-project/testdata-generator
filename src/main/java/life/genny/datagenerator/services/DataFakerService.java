@@ -1,4 +1,4 @@
-package life.genny.datagenerator.service;
+package life.genny.datagenerator.services;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package life.genny.datagenerator.service;
+package life.genny.datagenerator.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.SpecialAttributes;
+import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
@@ -33,7 +34,7 @@ public class FakeDataGenerator {
     DataFakerService fakerServce;
 
     @Inject
-    CustomFakeDataGenerator customGenerator;
+    PersonGenerator personGenerator;
 
     public BaseEntity generateEntity(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
@@ -82,8 +83,11 @@ public class FakeDataGenerator {
 
     private BaseEntity generateSpecialCaseAttributes(BaseEntity entity) {
         return switch (entity.getCode()) {
-            case SpecialAttributes.DEF_BALI_PERSON -> customGenerator.generatePerson(entity);
-            default -> customGenerator.generate(entity);
+            case SpecialAttributes.DEF_PERSON:
+            case SpecialAttributes.DEF_BALI_PERSON:
+                yield personGenerator.generate(entity);
+            default: 
+                yield personGenerator.generate(entity);
         };
     }
 

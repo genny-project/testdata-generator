@@ -28,7 +28,7 @@ public class AppStartup {
 
         LOGGER.info("Starting up new application...");
 
-        BaseEntity entity = generator.generateEntity("HOST_CPY");
+        BaseEntity entity = generator.generateEntity(SpecialAttributes.DEF_HOST_COMPANY);
         boolean valid = generator.entityAttributesAreValid(entity, true);
         LOGGER.info("Validations are valid: " + valid);
 

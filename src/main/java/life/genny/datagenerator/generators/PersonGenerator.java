@@ -2,6 +2,8 @@ package life.genny.datagenerator.generators;
 
 import java.util.List;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
@@ -9,6 +11,7 @@ import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
 
+@ApplicationScoped
 public class PersonGenerator extends CustomFakeDataGenerator {
     private static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
     private static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
@@ -34,7 +37,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
     }
 
     @Override
-    protected Object runGenerator(String attributeCode, String regex, String... args) {
+    Object runGenerator(String attributeCode, String regex, String... args) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_EMAIL:
                 regexNullPointer(attributeCode, regex);

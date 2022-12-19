@@ -7,6 +7,7 @@ public class SpecialAttributes {
     public static final String DEF_USER = "DEF_USER";
     public static final String DEF_PERSON = "DEF_PERSON";
     public static final String DEF_BALI_PERSON = "DEF_BALI_PERSON";
+    public static final String DEF_HOST_COMPANY = "DEF_HOST_CPY";
 
     /**
      * Special case for {@link EntityAttribute} generation

@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.SpecialAttributes;
+import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
@@ -35,6 +36,9 @@ public class FakeDataGenerator {
 
     @Inject
     PersonGenerator personGenerator;
+
+    @Inject 
+    CompanyGenerator companyGenerator;
 
     public BaseEntity generateEntity(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
@@ -86,6 +90,8 @@ public class FakeDataGenerator {
             case SpecialAttributes.DEF_PERSON:
             case SpecialAttributes.DEF_BALI_PERSON:
                 yield personGenerator.generate(entity);
+            case SpecialAttributes.DEF_HOST_COMPANY:
+                yield companyGenerator.generate(entity);
             default: 
                 yield personGenerator.generate(entity);
         };

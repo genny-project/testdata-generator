@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,11 +17,12 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import life.genny.datagenerator.SpecialAttributes;
+import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
@@ -47,6 +50,11 @@ public class FakeDataGenerator {
             definition = DEF + definition;
 
         BaseEntity entity = fakerServce.getBaseEntityDef(definition);
+
+        // TODO: remove this and make a function to handles all the attributes
+        Set<EntityAttribute> entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.PRI));
+        entity.setBaseEntityAttributes(entityAttributes);
+        
         entity = generateSpecialCaseAttributes(entity);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             DataType dtt = ea.getAttribute().getDataType();
@@ -87,10 +95,11 @@ public class FakeDataGenerator {
 
     private BaseEntity generateSpecialCaseAttributes(BaseEntity entity) {
         return switch (entity.getCode()) {
-            case SpecialAttributes.DEF_PERSON:
-            case SpecialAttributes.DEF_BALI_PERSON:
+            case Entities.DEF_PERSON:
+            case Entities.DEF_BALI_PERSON:
                 yield personGenerator.generate(entity);
-            case SpecialAttributes.DEF_HOST_COMPANY:
+            case Entities.DEF_HOST_COMPANY:
+            case Entities.DEF_HOST_COMPANY_REP:
                 yield companyGenerator.generate(entity);
             default: 
                 yield personGenerator.generate(entity);

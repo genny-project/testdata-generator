@@ -9,9 +9,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import org.jboss.logging.Logger;
+
 import com.mifmif.common.regex.Generex;
 
 public class DataFakerUtils {
+
+    private static final Logger LOG = Logger.getLogger(DataFakerUtils.class);
 
     private static Random random() {
         return new Random();
@@ -41,16 +45,18 @@ public class DataFakerUtils {
         boolean matched = false;
         int generatedNum = Integer.MIN_VALUE;
 
-        while (counter <= 5 || !matched) {
+        while (counter <= 10 || !matched) {
             String generatedString = new Generex(newRegex).random();
             generatedString = DataFakerUtils.regexPostProcessing(generatedString);
             try {
                 generatedNum = Integer.parseInt(generatedString);
                 matched = true;
             } catch (NumberFormatException e) {
-                if (generatedNum == Integer.MIN_VALUE && counter == 5)
+                if (generatedNum == Integer.MIN_VALUE && counter == 10) {
+                    LOG.error("Failed to generate Integer object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
+                }
             } finally {
                 counter++;
             }
@@ -74,9 +80,11 @@ public class DataFakerUtils {
                     generatedNum = randDouble();
                 matched = true;
             } catch (NumberFormatException e) {
-                if (generatedNum == Double.MIN_VALUE && counter == 5)
+                if (generatedNum == Double.MIN_VALUE && counter == 5) {
+                    LOG.error("Failed to generate Double object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
+                }
             } finally {
                 counter++;
             }
@@ -98,9 +106,11 @@ public class DataFakerUtils {
                 generatedNum = Long.parseLong(generatedString);
                 matched = true;
             } catch (NumberFormatException e) {
-                if (generatedNum == Long.MIN_VALUE && counter == 5)
+                if (generatedNum == Long.MIN_VALUE && counter == 5) {
+                    LOG.error("Failed to generate Long object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
+                }
             } finally {
                 counter++;
             }

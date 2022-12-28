@@ -24,13 +24,13 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newValue = runGenerator(ea.getAttributeCode(),
+            Object newObj = runGenerator(ea.getAttributeCode(),
                     validations.size() > 0 ? validations.get(0).getRegex() : null,
                     firstName, lastName, gender);
 
-            if (newValue != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newValue, className);
-                ea.setValue(newValue);
+            if (newObj != null) {
+                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
+                ea.setValue(newObj);
             }
         }
         return entity;
@@ -72,6 +72,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
                     value = DataFakerUtils.randStringFromRegex(regex);
                 yield value;
 
+            case SpecialAttributes.PRI_SUBMIT:
             default:
                 yield null;
         };

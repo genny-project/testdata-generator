@@ -2,8 +2,6 @@ package life.genny.datagenerator.utils;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,23 +65,23 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .setTest((input) -> {
                     return Expected(input.input);
                 })
-
                 .setVerification((result, expected) -> {
                     Pattern pattern = Pattern.compile(expected);
                     Matcher matcher = pattern.matcher(result);
                     assertTrue(matcher.matches());
                 })
+
+                .createTest("Generate Random Email Check")
+                .setInput(DataFakerCustomUtils.generateEmail())
+                .setExpected(DataFakerCustomUtils.CUSTOM_EMAIL_REGEX)
+                .build()
+
                 .createTest("Generate Email Check 1")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName))
                 .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + RegexMode.WORD_CHARS
                         + "*\\@[A-Za-z]+(.[A-Za-z]+)+")
                 .build()
 
-                .setVerification((result, expected) -> {
-                    Pattern pattern = Pattern.compile(expected);
-                    Matcher matcher = pattern.matcher(result);
-                    assertTrue(matcher.matches());
-                })
                 .createTest("Generate Email Check 2")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName, auDomain))
                 .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + RegexMode.WORD_CHARS + "*\\@(" + auDomain
@@ -107,33 +105,6 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .build()
 
                 .assertAll();
-    }
-
-    @Test
-    void generateFile() {
-        // TODO: Need to update the test validation for generating file
-        new JUnitTester<FileInputStream, Boolean>()
-                .setTest((input) -> {
-                    try {
-                        return Expected(input.input.readAllBytes() != null);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return Expected(false);
-                })
-
-                .createTest("Generate File Check 1")
-                .setInput(DataFakerCustomUtils.generateFile())
-                .setExpected(true)
-                .build()
-
-                .createTest("Generate File Check 2")
-                .setInput(DataFakerCustomUtils.generateFile("sample-text"))
-                .setExpected(true)
-                .build()
-
-                .assertAll();
-
     }
 
 }

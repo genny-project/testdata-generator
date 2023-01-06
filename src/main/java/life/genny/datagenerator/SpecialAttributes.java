@@ -21,6 +21,12 @@ public class SpecialAttributes {
     public static final String PRI_LANDLINE = "PRI_LANDLINE";
 
     /**
+     * Special case for {@link EntityAttribute} generation for global usage
+     */
+    public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
+    public static final String PRI_VIDEO_URL = "PRI_VIDEO_URL";
+
+    /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY
      */
     public static final String PRI_OHS_DOC = "PRI_OHS_DOC";
@@ -34,9 +40,32 @@ public class SpecialAttributes {
     public static final String PRI_DJP_AGREE = "PRI_DJP_AGREE";
     public static final String PRI_PROFILE = "PRI_PROFILE";
     public static final String PRI_DOC_VALIDATION_STATUS = "PRI_DOC_VALIDATION_STATUS";
-    public static final String PRI_VIDEO_URL = "PRI_VIDEO_URL";
     public static final String PRI_HC_VALIDATION_DOC_URL = "PRI_HC_VALIDATION_DOC_URL";
     public static final String PRI_VIDEO_INTRO = "PRI_VIDEO_INTRO";
-    public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
     public static final String PRI_ASSOC_INDUSTRY = "PRI_ASSOC_INDUSTRY";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_INTERN
+     */
+    public static final String PRI_CV = "PRI_CV";
+    public static final String PRI_PREV_EMPLOYER = "PRI_PREV_EMPLOYER";
+    public static final String PRI_AGENT_NAME = "PRI_AGENT_NAME";
+    public static final String PRI_ADDED_BY = "PRI_ADDED_BY";
+    public static final String PRI_EMAIL_ADDITIONAL = "PRI_EMAIL_ADDITIONAL";
+    // public static final String PRI_DAYS_PER_WEEK = "PRI_DAYS_PER_WEEK";
+    // public static final String PRI_WHICH_DAYS_STRIPPED = "PRI_WHICH_DAYS_STRIPPED";
+    // public static final String PRI_ASSOC_COMP_INTERNSHIP = "PRI_ASSOC_COMP_INTERNSHIP";
+    // public static final String PRI_SEARCH_HISTORY = "PRI_SEARCH_HISTORY";
+    // public static final String PRI_STATUS_COLOR = "PRI_STATUS_COLOR";
+    // public static final String PRI_ANZCO = "PRI_ANZCO";
+    // public static final String PRI_ASSOC_OCCUPATION = "PRI_ASSOC_OCCUPATION";
+    // public static final String PRI_ASSOC_DURATION = "PRI_ASSOC_DURATION";
+    // public static final String PRI_ASSOC_CURRENT_SOFTWARE = "PRI_ASSOC_CURRENT_SOFTWARE";
+    // public static final String PRI_STAGE = "PRI_STAGE";
+    public static final String PRI_STUDENT_ID = "PRI_STUDENT_ID";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_INTERNSHIP
+     */
+    public static final String PRI_SOMETHING = "PRI_SOMETHING";
 }

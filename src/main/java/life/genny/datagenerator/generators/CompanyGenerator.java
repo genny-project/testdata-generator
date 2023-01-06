@@ -48,7 +48,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
     Object generateHostCompanyAttr(String attributeCode, Long companyId) {
         return switch (attributeCode) {
-            /* DEF_HOST_CPY */
             case SpecialAttributes.PRI_OHS_DOC:
             case SpecialAttributes.PRI_TC_DOC:
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";

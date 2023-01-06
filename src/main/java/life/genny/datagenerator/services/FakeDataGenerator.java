@@ -19,6 +19,7 @@ import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.CompanyGenerator;
+import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
@@ -42,6 +43,9 @@ public class FakeDataGenerator {
 
     @Inject 
     CompanyGenerator companyGenerator;
+
+    @Inject
+    InternGenerator internGenerator;
 
     public BaseEntity generateEntity(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
@@ -69,6 +73,8 @@ public class FakeDataGenerator {
                         ea.setValue(DataFakerUtils.randStringFromRegex(regex));
                     else if (Integer.class.getName().equals(className))
                         ea.setValue(DataFakerUtils.randIntFromRegex(regex));
+                    else if (Long.class.getName().equals(className))
+                        ea.setValue(DataFakerUtils.randLongFromRegex(regex));
                     else if (Double.class.getName().equals(className))
                         ea.setValue(DataFakerUtils.randDoubleFromRegex(regex));
                     else if (Boolean.class.getName().equals(className))
@@ -101,6 +107,9 @@ public class FakeDataGenerator {
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
                 yield companyGenerator.generate(entity);
+            case Entities.DEF_INTERN:
+            case Entities.DEF_INTERNSHIP:
+                yield internGenerator.generate(entity);
             default: 
                 yield personGenerator.generate(entity);
         };

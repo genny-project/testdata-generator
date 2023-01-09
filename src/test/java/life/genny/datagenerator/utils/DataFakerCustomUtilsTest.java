@@ -107,4 +107,29 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .assertAll();
     }
 
+    @Test
+    void generatePhoneNumber() {
+        String areaCode = "61";
+        new JUnitTester<String, String>()
+                .setTest((input) -> {
+                    return Expected(input.input);
+                })
+                .setVerification((result, expected) -> {
+                    Pattern pattern = Pattern.compile(expected);
+                    assertTrue(pattern.matcher(result).matches());
+                })
+
+                .createTest("Generate Random Phone Number Check 1")
+                .setInput(DataFakerCustomUtils.generatePhoneNumber())
+                .setExpected(DataFakerCustomUtils.PHONE_REGEX)
+                .build()
+
+                .createTest("Generate Random Phone Number Check 2")
+                .setInput(DataFakerCustomUtils.generatePhoneNumber(areaCode))
+                .setExpected(DataFakerCustomUtils.PHONE_REGEX)
+                .build()
+
+                .assertAll();
+    }
+
 }

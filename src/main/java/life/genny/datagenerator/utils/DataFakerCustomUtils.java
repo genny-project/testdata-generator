@@ -5,6 +5,7 @@ public class DataFakerCustomUtils {
     public static final String DEFAULT_DOMAIN = "gada.io";
     public static final String TEXT_PARAGRAPH_REGEX = "(\\w{5,20}[ ]{1}){80,120}";
     public static final String CUSTOM_EMAIL_REGEX = "[a-zA-Z0-9]+(\\.[a-zA-Z0-9]*)?(\\@gmail\\.(com|au|io))";
+    public static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
 
     public static String generateName() {
         return DataFakerUtils.randStringFromRegex(RegexMode.ALPHABET + "{4,10}");
@@ -37,5 +38,16 @@ public class DataFakerCustomUtils {
         for (String arg : args)
             initials += arg.split("")[0];
         return initials;
+    }
+
+    public static String generatePhoneNumber() {
+        return DataFakerUtils.randStringFromRegex(PHONE_REGEX);
+    }
+
+    public static String generatePhoneNumber(String areaCode) {
+        if (!areaCode.contains("+"))
+            areaCode = "+" + areaCode;
+        String phoneRegex = "([0-9]{9,11})";
+        return areaCode + DataFakerUtils.randStringFromRegex(phoneRegex);
     }
 }

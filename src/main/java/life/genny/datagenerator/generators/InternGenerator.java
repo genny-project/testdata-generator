@@ -19,11 +19,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
 
     @Override
     public BaseEntity generate(BaseEntity entity) {
+        String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
             Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
-                    entity.getCode(), className);
+                    entity.getCode(), className, superName);
 
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
@@ -37,9 +38,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
     Object runGenerator(String attributeCode, String regex, String... args) {
         String entityCode = args[0];
         String className = args[1];
+        String superName = args[2];
         return switch (entityCode) {
             case Entities.DEF_INTERN -> generateIntern(attributeCode, className);
-            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode);
+            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName);
             default -> null;
         };
     }
@@ -67,8 +69,18 @@ public class InternGenerator extends CustomFakeDataGenerator {
         };
     }
 
-    Object generateInternship(String attributeCode) {
+    Object generateInternship(String attributeCode, String name) {
         return switch (attributeCode) {
+            case SpecialAttributes.PRI_SUPER_MOBILE:
+                yield DataFakerCustomUtils.generatePhoneNumber();
+
+            case SpecialAttributes.PRI_SUPER_NAME:
+                yield name;
+
+            case SpecialAttributes.PRI_SUPER_EMAIL:
+                String[] names = name.split(" ");
+                yield DataFakerCustomUtils.generateEmail(names[0], names[1]);
+
             default:
                 yield null;
         };

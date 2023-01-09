@@ -67,5 +67,8 @@ public class SpecialAttributes {
     /**
      * Special case for {@link EntityAttribute} generation for DEF_INTERNSHIP
      */
-    public static final String PRI_SOMETHING = "PRI_SOMETHING";
+    public static final String PRI_SUPER_MOBILE = "PRI_SUPER_MOBILE";
+    public static final String PRI_SUPER_NAME = "PRI_SUPER_NAME";
+    public static final String PRI_SUPER_EMAIL = "PRI_SUPER_EMAIL";
+
 }

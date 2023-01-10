@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
@@ -18,7 +19,6 @@ import life.genny.qwandaq.validation.Validation;
  */
 @ApplicationScoped
 public class PersonGenerator extends CustomFakeDataGenerator {
-    private static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
 
     /** 
      * Initialize needed parameter to generate each {@link EntityAttribute}
@@ -30,7 +30,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
     public BaseEntity generate(BaseEntity entity) {
         String firstName = DataFakerCustomUtils.generateName();
         String lastName = DataFakerCustomUtils.generateName();
-        String gender = DataFakerUtils.randStringFromRegex(GENDER_REGEX);
+        String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();

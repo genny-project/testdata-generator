@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 import life.genny.datagenerator.Constants;
-import life.genny.datagenerator.RegexMode;
+import life.genny.datagenerator.Regex;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
@@ -74,18 +74,18 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .createTest("Generate Random Email Check")
                 .setInput(DataFakerCustomUtils.generateEmail())
-                .setExpected(DataFakerCustomUtils.CUSTOM_EMAIL_REGEX)
+                .setExpected(Regex.CUSTOM_EMAIL_REGEX)
                 .build()
 
                 .createTest("Generate Email Check 1")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName))
-                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + RegexMode.WORD_CHARS
+                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS
                         + "*\\@[A-Za-z]+(.[A-Za-z]+)+")
                 .build()
 
                 .createTest("Generate Email Check 2")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName, auDomain))
-                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + RegexMode.WORD_CHARS + "*\\@(" + auDomain
+                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS + "*\\@(" + auDomain
                         + ")+")
                 .build()
 
@@ -122,12 +122,12 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .createTest("Generate Random Phone Number Check 1")
                 .setInput(DataFakerCustomUtils.generatePhoneNumber())
-                .setExpected(DataFakerCustomUtils.PHONE_REGEX)
+                .setExpected(Regex.PHONE_REGEX)
                 .build()
 
                 .createTest("Generate Random Phone Number Check 2")
                 .setInput(DataFakerCustomUtils.generatePhoneNumber(areaCode))
-                .setExpected(DataFakerCustomUtils.PHONE_REGEX)
+                .setExpected(Regex.PHONE_REGEX)
                 .build()
 
                 .assertAll();

@@ -28,12 +28,12 @@ public class AppStartup {
 
         LOGGER.info("Starting up new application...");
 
-        LOGGER.debug("Generating " + Entities.DEF_INTERN);
-        BaseEntity intern = generator.generateEntity(Entities.DEF_INTERN);
-        generator.entityAttributesAreValid(intern, true);
+        String[] entities = {Entities.DEF_INTERN, Entities.DEF_INTERNSHIP};
 
-        LOGGER.debug("Generating " + Entities.DEF_INTERNSHIP);
-        BaseEntity internship = generator.generateEntity(Entities.DEF_INTERNSHIP);
-        generator.entityAttributesAreValid(internship, true);
+        for (String entity: entities) {
+            LOGGER.debug("Generating " + entity);
+            BaseEntity intern = generator.generateEntity(entity);
+            generator.entityAttributesAreValid(intern, true);
+        }
     }
 }

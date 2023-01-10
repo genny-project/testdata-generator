@@ -5,6 +5,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import life.genny.datagenerator.Entities;
+import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
@@ -19,8 +20,6 @@ import life.genny.qwandaq.validation.Validation;
  */
 @ApplicationScoped
 public class InternGenerator extends CustomFakeDataGenerator {
-
-    private static final String STUDENT_ID_REGEX = "\\d{6,10}";
 
     /** 
      * Initialize needed parameter to generate each {@link EntityAttribute}
@@ -87,7 +86,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 yield DataFakerCustomUtils.generateEmail();
 
             case SpecialAttributes.PRI_STUDENT_ID:
-                yield DataFakerUtils.randStringFromRegex(STUDENT_ID_REGEX);
+                yield DataFakerUtils.randStringFromRegex(Regex.STUDENT_ID_REGEX);
 
             default:
                 yield null;

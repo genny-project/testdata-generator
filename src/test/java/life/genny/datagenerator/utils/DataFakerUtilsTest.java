@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 import life.genny.datagenerator.Constants;
-import life.genny.datagenerator.RegexMode;
+import life.genny.datagenerator.Regex;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.Expected;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
@@ -158,7 +158,7 @@ public class DataFakerUtilsTest extends BaseTestCase {
                     return new Expected<>(input.input);
                 })
                 .setVerification((result, expexted) -> {
-                    Pattern pattern = Pattern.compile(RegexMode.WORD_CHARS + RegexMode.PLUS);
+                    Pattern pattern = Pattern.compile(Regex.WORD_CHARS + Regex.PLUS);
                     Matcher matcher = pattern.matcher(result);
                     assertTrue(matcher.matches());
                     assertTrue(result instanceof String);
@@ -175,7 +175,7 @@ public class DataFakerUtilsTest extends BaseTestCase {
                 .build()
 
                 .setVerification((result, expected) -> {
-                    Pattern pattern = Pattern.compile(RegexMode.WORD_CHARS + RegexMode.ASTERISK);
+                    Pattern pattern = Pattern.compile(Regex.WORD_CHARS + Regex.ASTERISK);
                     Matcher matcher = pattern.matcher(result);
                     assertTrue(matcher.matches());
                     assertTrue(result.length() < maxLength);

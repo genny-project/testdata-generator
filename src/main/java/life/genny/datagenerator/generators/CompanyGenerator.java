@@ -5,6 +5,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 
 import life.genny.datagenerator.Entities;
+import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
@@ -18,11 +19,6 @@ import life.genny.qwandaq.validation.Validation;
  */
 @ApplicationScoped
 public class CompanyGenerator extends CustomFakeDataGenerator {
-
-    private static final String DOC_STATUS = "Completed";
-    private static final String COMPLETE_STATUS = "Completed|Incomplete";
-    private static final String AGREE = "SEL_YES|SEL_NO";
-    private static final String VLD_YOUTUBE_URL = "(http://|https://)?(www\\.)?(youtube.com|youtu\\.be)\\/(watch)?(\\?v=)?(\\S+)?";
 
     /** 
      * Initialize needed parameter to generate each {@link EntityAttribute}
@@ -82,17 +78,17 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_DOC_HCS_STATUS:
             case SpecialAttributes.PRI_DOC_DJP_STATUS:
             case SpecialAttributes.PRI_DOC_HCRI_STATUS:
-                yield DataFakerUtils.randStringFromRegex(DOC_STATUS);
+                yield DataFakerUtils.randStringFromRegex(Regex.COMPLETE_STATUS_REGEX);
 
             case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
             case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
 
             case SpecialAttributes.PRI_PROFILE:
-                yield DataFakerUtils.randStringFromRegex(COMPLETE_STATUS);
+                yield DataFakerUtils.randStringFromRegex(Regex.COMPLETE_STATUS_REGEX);
 
             case SpecialAttributes.PRI_DJP_AGREE:
-                yield DataFakerUtils.randStringFromRegex(AGREE);
+                yield DataFakerUtils.randStringFromRegex(Regex.AGREE_REGEX);
 
             case SpecialAttributes.PRI_DOC_VALIDATION_STATUS:
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
@@ -102,7 +98,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
 
             case SpecialAttributes.PRI_VIDEO_INTRO:
-                yield DataFakerUtils.randStringFromRegex(VLD_YOUTUBE_URL);
+                yield DataFakerUtils.randStringFromRegex(Regex.YOUTUBE_URL_REGEX);
 
             case SpecialAttributes.PRI_ASSOC_HC:
             case SpecialAttributes.PRI_ASSOC_INDUSTRY:

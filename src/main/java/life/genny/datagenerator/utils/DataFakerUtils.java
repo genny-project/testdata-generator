@@ -13,7 +13,7 @@ import org.jboss.logging.Logger;
 
 import com.mifmif.common.regex.Generex;
 
-import life.genny.datagenerator.RegexMode;
+import life.genny.datagenerator.Regex;
 
 /**
  * A static utility class used for standard operations 
@@ -42,8 +42,8 @@ public class DataFakerUtils {
      * @return Modified regex pattern
      */
     private static String regexPreprocessing(String regex, String newRegex) {
-        String regexTemp = regex.replace(".*", newRegex + RegexMode.ASTERISK);
-        regexTemp = regexTemp.replace(".+", newRegex + RegexMode.PLUS);
+        String regexTemp = regex.replace(".*", newRegex + Regex.ASTERISK);
+        regexTemp = regexTemp.replace(".+", newRegex + Regex.PLUS);
         return regexTemp;
     }
 
@@ -64,7 +64,7 @@ public class DataFakerUtils {
      * @return The generated value
      */
     public static String randStringFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.WORD_CHARS);
+        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.WORD_CHARS);
         Generex generator = new Generex(newRegex);
         String randString = generator.random();
         randString = DataFakerUtils.regexPostProcessing(randString);
@@ -78,7 +78,7 @@ public class DataFakerUtils {
      * @return The generated value
      */
     public static int randIntFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
+        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         int generatedNum = Integer.MIN_VALUE;
@@ -110,7 +110,7 @@ public class DataFakerUtils {
      * @return The generated value
      */
     public static double randDoubleFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
+        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         double generatedNum = Double.MIN_VALUE;
@@ -144,7 +144,7 @@ public class DataFakerUtils {
      * @return The generated value
      */
     public static long randLongFromRegex(String regex) {
-        String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
+        String newRegex = DataFakerUtils.regexPreprocessing(regex, Regex.DIGIT_ONLY);
         int counter = 0;
         boolean matched = false;
         long generatedNum = Long.MIN_VALUE;
@@ -202,7 +202,7 @@ public class DataFakerUtils {
         if (maxLength < 1)
             throw new IllegalArgumentException("Invalid string length.");
 
-        return new Generex(RegexMode.WORD_CHARS + "{" + minLength + "," + maxLength + "}").random();
+        return new Generex(Regex.WORD_CHARS + "{" + minLength + "," + maxLength + "}").random();
     }
 
     /**

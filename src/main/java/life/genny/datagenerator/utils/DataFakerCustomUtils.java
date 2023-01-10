@@ -1,6 +1,6 @@
 package life.genny.datagenerator.utils;
 
-import life.genny.datagenerator.RegexMode;
+import life.genny.datagenerator.Regex;
 
 /**
  * A static utility class used for standard operations 
@@ -11,9 +11,6 @@ import life.genny.datagenerator.RegexMode;
 public class DataFakerCustomUtils {
 
     public static final String DEFAULT_DOMAIN = "gada.io";
-    public static final String TEXT_PARAGRAPH_REGEX = "(\\w{5,20}[ ]{1}){80,120}";
-    public static final String CUSTOM_EMAIL_REGEX = "[a-zA-Z0-9]+(\\.[a-zA-Z0-9]*)?(\\@gmail\\.(com|au|io))";
-    public static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
 
     /**
      * Generate random characters as a name
@@ -21,7 +18,7 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateName() {
-        return DataFakerUtils.randStringFromRegex(RegexMode.ALPHABET + "{4,10}");
+        return DataFakerUtils.randStringFromRegex(Regex.ALPHABET + "{4,10}");
     }
 
     /**
@@ -53,7 +50,7 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateEmail() {
-        return DataFakerUtils.randStringFromRegex(CUSTOM_EMAIL_REGEX);
+        return DataFakerUtils.randStringFromRegex(Regex.CUSTOM_EMAIL_REGEX);
     }
 
     /**
@@ -98,7 +95,7 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generatePhoneNumber() {
-        return DataFakerUtils.randStringFromRegex(PHONE_REGEX);
+        return DataFakerUtils.randStringFromRegex(Regex.PHONE_REGEX);
     }
 
     /**

@@ -11,10 +11,21 @@ import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
 
+/**
+ * Generate all important attributes for DEF_PERSON
+ * 
+ * @author Amrizal Fajar
+ */
 @ApplicationScoped
 public class PersonGenerator extends CustomFakeDataGenerator {
     private static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
 
+    /** 
+     * Initialize needed parameter to generate each {@link EntityAttribute}
+     * 
+     * @param entity Initialized {@link BaseEntity}
+     * @return {@link BaseEntity} with all important attributes filled in
+     */
     @Override
     public BaseEntity generate(BaseEntity entity) {
         String firstName = DataFakerCustomUtils.generateName();
@@ -35,6 +46,14 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         return entity;
     }
 
+    /**
+     * Start Generating {@link EntityAttribute}
+     * 
+     * @param attributeCode The attribute code
+     * @param regex The regex pattern
+     * @param args The additional parameters needed
+     * @return Generated {@link EntityAttribute} value
+     */
     @Override
     Object runGenerator(String attributeCode, String regex, String... args) {
         return switch (attributeCode) {

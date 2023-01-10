@@ -12,11 +12,22 @@ import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
 
+/**
+ * Generate all important attributes for DEF_INTERN and DEF_INTERNSHIP
+ * 
+ * @author Amrizal Fajar
+ */
 @ApplicationScoped
 public class InternGenerator extends CustomFakeDataGenerator {
 
     private static final String STUDENT_ID_REGEX = "\\d{6,10}";
 
+    /** 
+     * Initialize needed parameter to generate each {@link EntityAttribute}
+     * 
+     * @param entity Initialized {@link BaseEntity}
+     * @return {@link BaseEntity} with all important attributes filled in
+     */
     @Override
     public BaseEntity generate(BaseEntity entity) {
         String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
@@ -24,7 +35,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
             Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
-                    entity.getCode(), className, superName);
+                    entity.getCode(), superName);
 
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
@@ -34,19 +45,33 @@ public class InternGenerator extends CustomFakeDataGenerator {
         return entity;
     }
 
+    /**
+     * Start Generating {@link EntityAttribute} based on entity code
+     * 
+     * @param attributeCode The attribute code
+     * @param regex The regex pattern
+     * @param args The additional parameters needed
+     * @return Generated {@link EntityAttribute} value
+     */
     @Override
     Object runGenerator(String attributeCode, String regex, String... args) {
         String entityCode = args[0];
-        String className = args[1];
-        String superName = args[2];
+        String superName = args[1];
         return switch (entityCode) {
-            case Entities.DEF_INTERN -> generateIntern(attributeCode, className);
+            case Entities.DEF_INTERN -> generateIntern(attributeCode);
             case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName);
             default -> null;
         };
     }
 
-    Object generateIntern(String attributeCode, String className) {
+    /**
+     * Generate {@link EntityAttribute} of DEF_INTERN
+     * 
+     * @param attributeCode The attribute code
+     * @param className The name of the class
+     * @return Generated {@link EntityAttribute} value
+     */
+    Object generateIntern(String attributeCode) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_PREV_EMPLOYER:
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
@@ -69,6 +94,13 @@ public class InternGenerator extends CustomFakeDataGenerator {
         };
     }
 
+    /**
+     * Generate {@link EntityAttribute} of DEF_INTERNSHIP
+     * 
+     * @param attributeCode The code of the attribute
+     * @param name The supervisor name
+     * @return Generated {@link EntityAttribute} value
+     */
     Object generateInternship(String attributeCode, String name) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_SUPER_MOBILE:

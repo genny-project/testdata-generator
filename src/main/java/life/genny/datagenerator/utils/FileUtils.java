@@ -16,6 +16,12 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
+/**
+ * A static utility class used for standard operations 
+ * involving a file.
+ * 
+ * @author Amrizal Fajar
+ */
 public class FileUtils {
 
     private static final Logger LOG = Logger.getLogger(FileUtils.class);
@@ -26,10 +32,23 @@ public class FileUtils {
     public static final String SAMPLE_PATH = "sample-data/";
     public static final String TEXT_PARAGRAPH_REGEX = "(\\w{5,20}[ ]{1}){80,120}";
 
+    /**
+     * Generate random file with random characters
+     * as it's content.
+     * 
+     * @return The generated file
+     */
     public static FileInputStream generateFile() {
         return FileUtils.generateFile(UUID.randomUUID().toString());
     }
 
+    /**
+     * Generate random file with random characters
+     * as it's content.
+     * 
+     * @param filename The file name
+     * @return The generated file
+     */
     public static FileInputStream generateFile(String filename) {
         try {
             File file = getRandomSampleFile();
@@ -67,6 +86,11 @@ public class FileUtils {
         return null;
     }
     
+    /**
+     * Private methods to import random file from specific path
+     * 
+     * @return The random file
+     */
     private static File getRandomSampleFile() {
         String path = ABSOLUTE_PATH + SAMPLE_PATH;
         createDirectory(path);
@@ -77,6 +101,11 @@ public class FileUtils {
                 : null;
     }
 
+    /**
+     * Create directory if not exists
+     * 
+     * @param path The directory path
+     */
     private static void createDirectory(String path) {
         File dir = new File(path);
         if (!dir.exists())

@@ -13,24 +13,56 @@ import org.jboss.logging.Logger;
 
 import com.mifmif.common.regex.Generex;
 
+import life.genny.datagenerator.RegexMode;
+
+/**
+ * A static utility class used for standard operations 
+ * involving generate simple data especially using Regex.
+ * 
+ * @author Amrizal Fajar
+ */
 public class DataFakerUtils {
 
     private static final Logger LOG = Logger.getLogger(DataFakerUtils.class);
 
+    /**
+     * Initialize random class
+     * 
+     * @return {@link Random}
+     */
     private static Random random() {
         return new Random();
     }
 
+    /**
+     * Preprocessing the Regex pattern before going to use to generate data
+     * 
+     * @param regex The regex pattern
+     * @param newRegex The new regex pattern that's going to implement
+     * @return Modified regex pattern
+     */
     private static String regexPreprocessing(String regex, String newRegex) {
         String regexTemp = regex.replace(".*", newRegex + RegexMode.ASTERISK);
         regexTemp = regexTemp.replace(".+", newRegex + RegexMode.PLUS);
         return regexTemp;
     }
 
+    /**
+     * Cleaning the value which generated from the regex
+     * 
+     * @param result The generated value
+     * @return Modified value
+     */
     private static String regexPostProcessing(String result) {
         return result.replaceAll("[$^]*", "");
     }
 
+    /**
+     * Generate random {@link String} from regex pattern
+     * 
+     * @param regex The regex pattern
+     * @return The generated value
+     */
     public static String randStringFromRegex(String regex) {
         String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.WORD_CHARS);
         Generex generator = new Generex(newRegex);
@@ -39,6 +71,12 @@ public class DataFakerUtils {
         return randString;
     }
 
+    /**
+     * Generate random {@link Integer} from regex pattern
+     * 
+     * @param regex The regex pattern
+     * @return The generated value
+     */
     public static int randIntFromRegex(String regex) {
         String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
@@ -65,6 +103,12 @@ public class DataFakerUtils {
         return generatedNum;
     }
 
+    /**
+     * Generate random {@link Double} from regex pattern
+     * 
+     * @param regex The regex pattern
+     * @return The generated value
+     */
     public static double randDoubleFromRegex(String regex) {
         String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
@@ -93,6 +137,12 @@ public class DataFakerUtils {
         return generatedNum;
     }
 
+    /**
+     * Generate random {@link Long} from regex pattern
+     * 
+     * @param regex The regex pattern
+     * @return The generated value
+     */
     public static long randLongFromRegex(String regex) {
         String newRegex = DataFakerUtils.regexPreprocessing(regex, RegexMode.DIGIT_ONLY);
         int counter = 0;
@@ -119,10 +169,21 @@ public class DataFakerUtils {
         return generatedNum;
     }
 
+    /**
+     * Generate random {@link String}
+     * 
+     * @return The generated value
+     */
     public static String randString() {
         return randString(0, 10);
     }
 
+    /**
+     * Generate random {@link String}
+     * 
+     * @param maxLength The max length of the value
+     * @return The generated value
+     */
     public static String randString(int maxLength) {
         if (maxLength < 1)
             throw new IllegalArgumentException("Length supposed to be higher than 0.");
@@ -130,6 +191,13 @@ public class DataFakerUtils {
         return randString(0, maxLength);
     }
 
+    /**
+     * Generate random {@link String}
+     * 
+     * @param minLength The min length of the value
+     * @param maxLength The max length of the value
+     * @return The generated value
+     */
     public static String randString(int minLength, int maxLength) {
         if (maxLength < 1)
             throw new IllegalArgumentException("Invalid string length.");
@@ -137,65 +205,156 @@ public class DataFakerUtils {
         return new Generex(RegexMode.WORD_CHARS + "{" + minLength + "," + maxLength + "}").random();
     }
 
+    /**
+     * Generate random {@link Integer}
+     * 
+     * @return The generated value
+     */
     public static int randInt() {
         return random().nextInt();
     }
 
+    /**
+     * Generate random {@link Integer}
+     * 
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static int randInt(int maxValue) {
         return random().nextInt(maxValue);
     }
 
+    /**
+     * Generate random {@link Integer}
+     * 
+     * @param minValue The min value
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static int randInt(int minValue, int maxValue) {
         return random().nextInt(minValue, maxValue);
     }
 
+    /**
+     * Generate random {@link Double}
+     * 
+     * @return The generated value
+     */
     public static double randDouble() {
         return random().nextDouble();
     }
 
+    /**
+     * Generate random {@link Double}
+     * 
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static double randDouble(double maxValue) {
         return random().nextDouble(maxValue);
     }
 
+    /**
+     * Generate random {@link Double}
+     * 
+     * @param minValue The min value
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static double randDouble(double minValue, double maxValue) {
         return random().nextDouble(minValue, maxValue);
     }
 
+    /**
+     * Generate random {@link Boolean}
+     * 
+     * @return The generated value
+     */
     public static boolean randBoolean() {
         return random().nextBoolean();
     }
 
+    /**
+     * Generate random {@link Long}
+     * 
+     * @return The generated value
+     */
     public static long randLong() {
         return random().nextLong();
     }
 
+    /**
+     * Generate random {@link Long}
+     * 
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static long randLong(long maxValue) {
         return random().nextLong(maxValue);
     }
 
+    /**
+     * Generate random {@link Long}
+     * 
+     * @param minValue The min value
+     * @param maxValue The max value
+     * @return The generated value
+     */
     public static long randLong(long minValue, long maxValue) {
         return random().nextLong(minValue, maxValue);
     }
 
+    /**
+     * Generate random {@link LocalDateTime}
+     * 
+     * @return The generated value
+     */
     public static LocalDateTime randDateTime() {
         LocalDateTime startDate = LocalDateTime.of(1900, 1, 1, 0, 0, 0);
         return DataFakerUtils.randDateTime(startDate.toLocalDate(), LocalDateTime.now().toLocalDate());
     }
 
+    /**
+     * Generate random {@link LocalDateTime}
+     * 
+     * @param startDate The starting date
+     * @return The generated value
+     */
     public static LocalDateTime randDateTime(LocalDate startDate) {
         return DataFakerUtils.randDateTime(startDate, LocalDateTime.now().toLocalDate());
     }
 
+    /**
+     * Generate random {@link LocalDateTime}
+     * 
+     * @param startDate The min value of date
+     * @param endDate The max value of date
+     * @return The generated value
+     */
     public static LocalDateTime randDateTime(LocalDate startDate, LocalDate endDate) {
         long start = startDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         long end = endDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli();
         return new Timestamp(random().nextLong(start, end)).toLocalDateTime();
     }
 
+    /**
+     * Pick random item from a list
+     * 
+     * @param <T> The list data type
+     * @param list The list
+     * @return The random item from list
+     */
     public static <T> T randItemFromList(List<T> list) {
         return list.get(random().nextInt(list.size()));
     }
 
+    /**
+     * Pick random item from a set
+     * 
+     * @param <T> The set data type
+     * @param set The set
+     * @return The random item from set
+     */
     public static <T> T randItemFromList(Set<T> set) {
         List<T> list = new ArrayList<>(set);
         return randItemFromList(list);

@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 
 import life.genny.datagenerator.Constants;
+import life.genny.datagenerator.RegexMode;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 

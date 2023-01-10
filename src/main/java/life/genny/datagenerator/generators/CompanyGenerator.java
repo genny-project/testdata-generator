@@ -11,6 +11,11 @@ import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
 
+/**
+ * Generate all important attributes for DEF_HOST_CPY and DEF_HOST_CPY_REP
+ * 
+ * @author Amrizal Fajar
+ */
 @ApplicationScoped
 public class CompanyGenerator extends CustomFakeDataGenerator {
 
@@ -19,6 +24,12 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     private static final String AGREE = "SEL_YES|SEL_NO";
     private static final String VLD_YOUTUBE_URL = "(http://|https://)?(www\\.)?(youtube.com|youtu\\.be)\\/(watch)?(\\?v=)?(\\S+)?";
 
+    /** 
+     * Initialize needed parameter to generate each {@link EntityAttribute}
+     * 
+     * @param entity Initialized {@link BaseEntity}
+     * @return {@link BaseEntity} with all important attributes filled in
+     */
     @Override
     public BaseEntity generate(BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
@@ -35,6 +46,14 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
         return entity;
     }
 
+    /**
+     * Start Generating {@link EntityAttribute} based on entity code
+     * 
+     * @param attributeCode The attribute code
+     * @param regex The regex pattern
+     * @param args The additional parameters needed
+     * @return Generated {@link EntityAttribute} value
+     */
     @Override
     Object runGenerator(String attributeCode, String regex, String... args) {
         Long companyId = Long.parseLong(args[0]);
@@ -46,6 +65,13 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
         };
     }
 
+    /**
+     * Generate {@link EntityAttribute} of DEF_HOST_CPY
+     * 
+     * @param attributeCode The attribute code
+     * @param companyId The company ID
+     * @return Generated {@link EntityAttribute} value
+     */
     Object generateHostCompanyAttr(String attributeCode, Long companyId) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_OHS_DOC:
@@ -82,12 +108,18 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_ASSOC_INDUSTRY:
                 yield String.valueOf(DataFakerUtils.randLong(companyId));
 
-            case SpecialAttributes.PRI_SUBMIT:
             default:
                 yield null;
         };
     }
 
+    /**
+     * Generate {@link EntityAttribute} of DEF_HOST_CPY_REP
+     * 
+     * @param attributeCode The attribute code
+     * @param companyId The company ID
+     * @return Generated {@link EntityAttribute} value
+     */
     Object generateHostCompanyRepAttr(String attributeCode, Long companyId) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_ASSOC_HC:

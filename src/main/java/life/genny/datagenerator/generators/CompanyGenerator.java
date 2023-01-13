@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
+import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -20,7 +21,7 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class CompanyGenerator extends CustomFakeDataGenerator {
 
-    /** 
+    /**
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
      * @param entity Initialized {@link BaseEntity}
@@ -28,6 +29,11 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generate(BaseEntity entity) {
+        if (entity.getCode().equals(Entities.DEF_HOST_COMPANY)) {
+            BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_HOST_COMPANY_REP);
+            generator.entityAttributesAreValid(hostCompanyRep, true);
+        }
+
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
@@ -46,8 +52,8 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * Start Generating {@link EntityAttribute} based on entity code
      * 
      * @param attributeCode The attribute code
-     * @param regex The regex pattern
-     * @param args The additional parameters needed
+     * @param regex         The regex pattern
+     * @param args          The additional parameters needed
      * @return Generated {@link EntityAttribute} value
      */
     @Override
@@ -65,44 +71,57 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_HOST_CPY
      * 
      * @param attributeCode The attribute code
-     * @param companyId The company ID
+     * @param companyId     The company ID
      * @return Generated {@link EntityAttribute} value
      */
     Object generateHostCompanyAttr(String attributeCode, Long companyId) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_OHS_DOC:
             case SpecialAttributes.PRI_TC_DOC:
-                yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
+                yield "()";
 
+            case SpecialAttributes.PRI_DOC_DJP:
+            case SpecialAttributes.PRI_DOC_HCRI:
+            case SpecialAttributes.PRI_DOC_HCS:
+            case SpecialAttributes.PRI_DOC_OHS:
+                yield true;
+
+            case SpecialAttributes.LNK_VIC_GOV_DIGITAL_JOBS:
+                yield String.valueOf(true);
+
+            case SpecialAttributes.PRI_PROFILE:
             case SpecialAttributes.PRI_DOC_OHS_STATUS:
             case SpecialAttributes.PRI_DOC_HCS_STATUS:
             case SpecialAttributes.PRI_DOC_DJP_STATUS:
             case SpecialAttributes.PRI_DOC_HCRI_STATUS:
-                yield DataFakerUtils.randStringFromRegex(Regex.COMPLETE_STATUS_REGEX);
-
-            case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
-            case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
-                yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
-
-            case SpecialAttributes.PRI_PROFILE:
-                yield DataFakerUtils.randStringFromRegex(Regex.COMPLETE_STATUS_REGEX);
+                yield "(Complete)";
 
             case SpecialAttributes.PRI_DJP_AGREE:
                 yield DataFakerUtils.randStringFromRegex(Regex.AGREE_REGEX);
 
-            case SpecialAttributes.PRI_DOC_VALIDATION_STATUS:
-                yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
-
-            case SpecialAttributes.PRI_VIDEO_URL:
-            case SpecialAttributes.PRI_HC_VALIDATION_DOC_URL:
-                yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
-
             case SpecialAttributes.PRI_VIDEO_INTRO:
                 yield DataFakerUtils.randStringFromRegex(Regex.YOUTUBE_URL_REGEX);
 
+            case SpecialAttributes.LNK_DJP_JOB_AGREE:
             case SpecialAttributes.PRI_ASSOC_HC:
             case SpecialAttributes.PRI_ASSOC_INDUSTRY:
-                yield String.valueOf(DataFakerUtils.randLong(companyId));
+                yield DataFakerCustomUtils.generateSelection();
+
+            case SpecialAttributes.PRI_HC_SERVICES_AGREEMENT_HTML:
+                yield DataFakerCustomUtils.generateHTMLString();
+
+            case SpecialAttributes.PRI_ADDRESS_FULL_ONE:
+                yield DataFakerCustomUtils.generateFullAddress();
+
+            case SpecialAttributes.LNK_ASSOC_INDUSTRY:
+                yield DataFakerCustomUtils.generateName();
+
+            case SpecialAttributes.LNK_COMPANY_INC:
+                yield DataFakerUtils.randDateTime().toString();
+
+            case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
+            case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
+                yield IGNORE;
 
             default:
                 yield null;
@@ -113,7 +132,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_HOST_CPY_REP
      * 
      * @param attributeCode The attribute code
-     * @param companyId The company ID
+     * @param companyId     The company ID
      * @return Generated {@link EntityAttribute} value
      */
     Object generateHostCompanyRepAttr(String attributeCode, Long companyId) {

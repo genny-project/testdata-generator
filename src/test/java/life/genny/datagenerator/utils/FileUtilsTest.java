@@ -1,5 +1,6 @@
 package life.genny.datagenerator.utils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -9,9 +10,9 @@ import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
 public class FileUtilsTest extends BaseTestCase {
-    
+
     @Test
-    void generateFile() {
+    void generateFileInputStream() {
         // TODO: Need to update the test validation for generating file
         new JUnitTester<FileInputStream, Boolean>()
                 .setTest((input) -> {
@@ -23,13 +24,13 @@ public class FileUtilsTest extends BaseTestCase {
                     return Expected(false);
                 })
 
-                .createTest("Generate File Check 1")
-                .setInput(FileUtils.generateFile())
+                .createTest("Generate FileInputStream Check 1")
+                .setInput(FileUtils.generateFileInputStream())
                 .setExpected(true)
                 .build()
 
-                .createTest("Generate File Check 2")
-                .setInput(FileUtils.generateFile("sample-text"))
+                .createTest("Generate FileInputStream Check 2")
+                .setInput(FileUtils.generateFileInputStream("sample-text-1"))
                 .setExpected(true)
                 .build()
 
@@ -37,4 +38,23 @@ public class FileUtilsTest extends BaseTestCase {
 
     }
 
+    @Test
+    void generateFile() {
+        new JUnitTester<File, Boolean>()
+                .setTest((input) -> {
+                    return Expected(input.input != null);
+                })
+
+                .createTest("Generate File Check 1")
+                .setInput(FileUtils.generateFile())
+                .setExpected(true)
+                .build()
+
+                .createTest("Generate File Check 2")
+                .setInput(FileUtils.generateFile("sample-text-2"))
+                .setExpected(true)
+                .build()
+
+                .assertAll();
+    }
 }

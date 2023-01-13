@@ -133,4 +133,90 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .assertAll();
     }
 
+    @Test
+    void generateFullAddress() {
+        new JUnitTester<String, Boolean>()
+                .setTest((input) -> {
+                    return Expected(input.input != null);
+                })
+                .createTest("Generate Random Full Address Check")
+                .setInput(DataFakerCustomUtils.generateFullAddress())
+                .setExpected(true)
+                .build()
+                .assertAll();
+    }
+
+    @Test
+    void generateSelection() {
+        new JUnitTester<String, String>()
+                .setTest((input) -> {
+                    return Expected(input.input);
+                })
+                .setVerification((result, expected) -> {
+                    Pattern pattern = Pattern.compile(expected);
+                    assertTrue(pattern.matcher(result).matches());
+                })
+                .createTest("Generate Random Selection Check")
+                .setInput(DataFakerCustomUtils.generateSelection())
+                .setExpected(Regex.SELECTION_REGEX)
+                .build()
+                .assertAll();
+    }
+
+    @Test
+    void generateHTMLString() {
+        new JUnitTester<String, Boolean>()
+                .setTest((input) -> {
+                    Pattern htmlPattern = Pattern.compile("(<!DOCTYPE html>)?(<html>).*(<\\/html>)");
+                    Matcher htmlMatcher = htmlPattern.matcher(
+                            input.input.replaceAll("[\t\n]+", ""));
+                    return Expected(htmlMatcher.matches());
+                })
+
+                .createTest("Generate Random HTML Code Check 1")
+                .setInput(DataFakerCustomUtils.generateHTMLString())
+                .setExpected(true)
+                .build()
+
+                .createTest("Generate Random HTML Code Check 2")
+                .setInput(DataFakerCustomUtils.generateHTMLString("<h1>This is an H1 tag.</h1>"))
+                .setExpected(true)
+                .build()
+
+                .assertAll();
+    }
+
+    @Test
+    void generateHTMLTag() {
+        String tagContent = "This is a tag content";
+
+        new JUnitTester<String, Boolean>()
+                .setTest((input) -> {
+                    Pattern tagPattern = Pattern.compile("(<[A-Za-z0-9]+>)+(" +
+                            tagContent + ")(</[A-Za-z0-9]+>)+");
+                    return Expected(tagPattern.matcher(input.input).matches());
+                })
+
+                .createTest("Generate Random HTML Tag Check 1")
+                .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent))
+                .setExpected(true)
+                .build()
+
+                .createTest("Generate Random HTML Tag Check 2")
+                .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "h1"))
+                .setExpected(true)
+                .build()
+                
+                .createTest("Generate Random HTML Tag Check 3")
+                .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "ul", "li"))
+                .setExpected(true)
+                .build()
+
+                .createTest("Generate Random HTML Tag Check 4")
+                .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "ul", "li", "strong"))
+                .setExpected(true)
+                .build()
+
+                .assertAll();
+    }
 }

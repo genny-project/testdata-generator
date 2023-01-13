@@ -17,7 +17,7 @@ import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 
 /**
- * A static utility class used for standard operations 
+ * A static utility class used for standard operations
  * involving a file.
  * 
  * @author Amrizal Fajar
@@ -25,7 +25,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 public class FileUtils {
 
     private static final Logger LOG = Logger.getLogger(FileUtils.class);
-    
+
     private static final String ABSOLUTE_PATH = Thread.currentThread().getContextClassLoader()
             .getResource("application.properties").getPath()
             .replace("target/classes/application.properties", "");
@@ -38,7 +38,36 @@ public class FileUtils {
      * 
      * @return The generated file
      */
-    public static FileInputStream generateFile() {
+    public static FileInputStream generateFileInputStream() {
+        return FileUtils.generateFileInputStream(UUID.randomUUID().toString());
+    }
+
+    /**
+     * Generate random file with random characters
+     * as it's content.
+     * 
+     * @param filename The file name
+     * @return The generated file
+     */
+    public static FileInputStream generateFileInputStream(String filename) {
+        File fileObj = generateFile(filename);
+        try {
+            if (fileObj != null)
+                return new FileInputStream(fileObj);
+        } catch (FileNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * Generate random file with random characters
+     * as it's content.
+     * 
+     * @return The generated file
+     */
+    public static File generateFile() {
         return FileUtils.generateFile(UUID.randomUUID().toString());
     }
 
@@ -49,15 +78,10 @@ public class FileUtils {
      * @param filename The file name
      * @return The generated file
      */
-    public static FileInputStream generateFile(String filename) {
-        try {
-            File file = getRandomSampleFile();
-            if (file != null)
-                return new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            LOG.error("Error Getting random file: " + e.getMessage());
-            e.printStackTrace();
-        }
+    public static File generateFile(String filename) {
+        File file = getRandomSampleFile();
+        if (file != null)
+            return file;
 
         String path = ABSOLUTE_PATH + SAMPLE_PATH;
         createDirectory(path);
@@ -77,7 +101,7 @@ public class FileUtils {
             document.close();
             pdfWriter.close();
 
-            return new FileInputStream(fileObj);
+            return fileObj;
         } catch (DocumentException | FileNotFoundException e) {
             LOG.error("Error generating file: " + e.getMessage());
             e.printStackTrace();
@@ -85,7 +109,7 @@ public class FileUtils {
 
         return null;
     }
-    
+
     /**
      * Private methods to import random file from specific path
      * 

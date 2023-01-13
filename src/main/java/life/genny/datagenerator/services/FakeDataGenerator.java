@@ -4,11 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,7 +19,6 @@ import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
-import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
@@ -41,7 +36,7 @@ public class FakeDataGenerator {
     @Inject
     PersonGenerator personGenerator;
 
-    @Inject 
+    @Inject
     CompanyGenerator companyGenerator;
 
     @Inject
@@ -56,9 +51,10 @@ public class FakeDataGenerator {
         BaseEntity entity = fakerServce.getBaseEntityDef(definition);
 
         // TODO: remove this and make a function to handles all the attributes
-        Set<EntityAttribute> entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.PRI));
-        entity.setBaseEntityAttributes(entityAttributes);
-        
+        // Set<EntityAttribute> entityAttributes = new
+        // HashSet<>(entity.findPrefixEntityAttributes(Prefix.LNK));
+        // entity.setBaseEntityAttributes(entityAttributes);
+
         entity = generateSpecialCaseAttributes(entity);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             DataType dtt = ea.getAttribute().getDataType();
@@ -110,15 +106,15 @@ public class FakeDataGenerator {
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
                 yield internGenerator.generate(entity);
-            default: 
+            default:
                 yield personGenerator.generate(entity);
         };
     }
 
     public boolean entityAttributesAreValid(BaseEntity entity, boolean showValidAttributes) {
-        Map<String, Object> invalidAttributes = new HashMap<>(100);
-        Map<String, Object> validAttributes = new HashMap<>(100);
-        Map<String, List<String>> passAttributes = new HashMap<>(100);
+        List<EntityAttribute> invalidAttributes = new ArrayList<>(100);
+        List<EntityAttribute> validAttributes = new ArrayList<>(100);
+        List<EntityAttribute> passAttributes = new ArrayList<>(100);
         boolean valid = true;
 
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
@@ -130,34 +126,36 @@ public class FakeDataGenerator {
                 Matcher matcher = pattern.matcher(ea.getValue().toString());
                 if (matcher.matches()) {
                     if (showValidAttributes)
-                        validAttributes.put(ea.getAttributeCode(), ea.getValue());
+                        validAttributes.add(ea);
                 } else {
-                    invalidAttributes.put(ea.getAttributeCode(), ea.getValue());
+                    invalidAttributes.add(ea);
                     valid = false;
                 }
             } else {
                 if (showValidAttributes) {
                     List<String> passTemp = new ArrayList<>(2);
                     passTemp.add(dtt.getClassName());
-                    if (validations.size() > 0)
-                        passTemp.add(validations.get(0).getRegex());
-                    else
-                        passTemp.add(null);
-                    passAttributes.put(ea.getAttributeCode(), passTemp);
+                    passAttributes.add(ea);
                 }
             }
         }
 
         if (showValidAttributes) {
-            for (Map.Entry<String, Object> attribute : validAttributes.entrySet())
-                LOGGER.debug("Valid value for " + attribute.getKey() + ": " + attribute.getValue());
-            for (Map.Entry<String, List<String>> attribute : passAttributes.entrySet())
-                LOGGER.warn("Attribute fail to validate for " + attribute.getKey() + ": " +
-                        attribute.getValue().get(0) + ", " + attribute.getValue().get(1));
+            LOGGER.debug("VALIDATING " + entity.getCode() + " ATTRIBUTES.");
+            for (EntityAttribute attribute : validAttributes)
+                LOGGER.debug("Valid value for " + attribute.getAttributeCode() + " ("
+                        + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
+                        + attribute.getValue());
+            for (EntityAttribute attribute : passAttributes)
+                LOGGER.warn("Attribute fail to validate for " + attribute.getAttributeCode()
+                        + " (" + attribute.getAttribute().getDataType().getClassName() + ")"
+                        + ": " + attribute.getValue());
         }
 
-        for (Map.Entry<String, Object> attribute : invalidAttributes.entrySet())
-            LOGGER.error("Invalid value for " + attribute.getKey() + ": " + attribute.getValue());
+        for (EntityAttribute attribute : invalidAttributes)
+            LOGGER.error("Invalid value for " + attribute.getAttributeCode() + " ("
+                    + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
+                    + attribute.getValue());
 
         return valid;
     }

@@ -24,8 +24,10 @@ public class Regex {
     public static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
     public static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";
     public static final String STUDENT_ID_REGEX = "\\d{6,10}";
-    public static final String COMPLETE_STATUS_REGEX = "Completed|Incomplete";
+    public static final String COMPLETE_STATUS_REGEX = "\\(Complete\\)|\\(Incomplete\\)";
     public static final String AGREE_REGEX = "(SEL_YES|SEL_NO)";
-    public static final String YOUTUBE_URL_REGEX = "(http://|https://)?(www\\.)?(youtube.com|youtu\\.be)\\/(watch)?(\\?v=)?(\\S+)?";
-
+    public static final String YOUTUBE_URL_REGEX = "(http://|https://)?(www\\.)?(youtube\\.com|youtu\\.be)\\/(watch)?(\\?v=)?"
+            + ALPHABET + "{6}";
+    public static final String SELECTION_REGEX = "^(SEL)(\\_[A-Z]{4,8}){1,4}";
+    public static final String HTML_TAG_REGEX = "label|h1|p|strong|em";
 }

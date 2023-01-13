@@ -16,7 +16,7 @@ import com.mifmif.common.regex.Generex;
 import life.genny.datagenerator.Regex;
 
 /**
- * A static utility class used for standard operations 
+ * A static utility class used for standard operations
  * involving generate simple data especially using Regex.
  * 
  * @author Amrizal Fajar
@@ -26,7 +26,7 @@ public class DataFakerUtils {
     private static final Logger LOG = Logger.getLogger(DataFakerUtils.class);
 
     /**
-     * Initialize random class
+     * Initialize {@link Random} class
      * 
      * @return {@link Random}
      */
@@ -37,7 +37,7 @@ public class DataFakerUtils {
     /**
      * Preprocessing the Regex pattern before going to use to generate data
      * 
-     * @param regex The regex pattern
+     * @param regex    The regex pattern
      * @param newRegex The new regex pattern that's going to implement
      * @return Modified regex pattern
      */
@@ -328,7 +328,7 @@ public class DataFakerUtils {
      * Generate random {@link LocalDateTime}
      * 
      * @param startDate The min value of date
-     * @param endDate The max value of date
+     * @param endDate   The max value of date
      * @return The generated value
      */
     public static LocalDateTime randDateTime(LocalDate startDate, LocalDate endDate) {
@@ -340,7 +340,7 @@ public class DataFakerUtils {
     /**
      * Pick random item from a list
      * 
-     * @param <T> The list data type
+     * @param <T>  The list data type
      * @param list The list
      * @return The random item from list
      */

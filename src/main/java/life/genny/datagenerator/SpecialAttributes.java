@@ -1,6 +1,7 @@
 package life.genny.datagenerator;
 
 public class SpecialAttributes {
+
     /**
      * Special case for {@link EntityAttribute} generation
      */
@@ -24,13 +25,16 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation for global usage
      */
     public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
-    public static final String PRI_VIDEO_URL = "PRI_VIDEO_URL";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY
      */
     public static final String PRI_OHS_DOC = "PRI_OHS_DOC";
     public static final String PRI_TC_DOC = "PRI_TC_DOC";
+    public static final String PRI_DOC_HCS = "PRI_DOC_HCS";
+    public static final String PRI_DOC_OHS = "PRI_DOC_OHS";
+    public static final String PRI_DOC_HCRI = "PRI_DOC_HCRI";
+    public static final String PRI_DOC_DJP = "PRI_DOC_DJP";
     public static final String PRI_DOC_OHS_STATUS = "PRI_DOC_OHS_STATUS";
     public static final String PRI_DOC_HCS_STATUS = "PRI_DOC_HCS_STATUS";
     public static final String PRI_DOC_DJP_STATUS = "PRI_DOC_DJP_STATUS";
@@ -39,10 +43,16 @@ public class SpecialAttributes {
     public static final String PRI_HCS_AGR_SIGNATURE = "PRI_HCS_AGR_SIGNATURE";
     public static final String PRI_DJP_AGREE = "PRI_DJP_AGREE";
     public static final String PRI_PROFILE = "PRI_PROFILE";
-    public static final String PRI_DOC_VALIDATION_STATUS = "PRI_DOC_VALIDATION_STATUS";
-    public static final String PRI_HC_VALIDATION_DOC_URL = "PRI_HC_VALIDATION_DOC_URL";
     public static final String PRI_VIDEO_INTRO = "PRI_VIDEO_INTRO";
     public static final String PRI_ASSOC_INDUSTRY = "PRI_ASSOC_INDUSTRY";
+    public static final String PRI_HC_SERVICES_AGREEMENT_HTML = "PRI_HC_SERVICES_AGREEMENT_HTML";
+    public static final String PRI_DJP_DOCUMENT_ACCEPTED = "PRI_DJP_DOCUMENT_ACCEPTED";
+    public static final String PRI_ADDRESS_FULL_ONE = "PRI_ADDRESS_FULL_ONE";
+    public static final String LNK_COMPANY_INC = "LNK_COMPANY_INC";
+    public static final String LNK_VIC_GOV_DIGITAL_JOBS = "LNK_VIC_GOV_DIGITAL_JOBS";
+    public static final String LNK_HOST_COMPANY_REP = "LNK_HOST_COMPANY_REP";
+    public static final String LNK_ASSOC_INDUSTRY = "LNK_ASSOC_INDUSTRY";
+    public static final String LNK_DJP_JOB_AGREE = "LNK_DJP_JOB_AGREE";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_INTERN

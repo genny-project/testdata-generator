@@ -51,8 +51,9 @@ public class FakeDataGenerator {
         BaseEntity entity = fakerServce.getBaseEntityDef(definition);
 
         // TODO: remove this and make a function to handles all the attributes
-        // Set<EntityAttribute> entityAttributes = new
-        // HashSet<>(entity.findPrefixEntityAttributes(Prefix.LNK));
+        // Set<EntityAttribute> entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.SER));
+        // entity.setBaseEntityAttributes(entityAttributes);
+        // entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.DFT));
         // entity.setBaseEntityAttributes(entityAttributes);
 
         entity = generateSpecialCaseAttributes(entity);

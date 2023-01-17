@@ -2,7 +2,9 @@ package life.genny.datagenerator.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
+import com.github.javafaker.Address;
 import com.github.javafaker.Faker;
 
 import life.genny.datagenerator.Regex;
@@ -20,10 +22,11 @@ public class DataFakerCustomUtils {
     /**
      * Initialize {@link Faker} class
      * 
-     * @return
+     * @param locale The locale language
+     * @return {@link Faker}
      */
-    private static Faker faker() {
-        return new Faker();
+    private static Faker faker(String locale) {
+        return new Faker(new Locale(locale));
     }
 
     /**
@@ -131,7 +134,38 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateFullAddress() {
-        return faker().address().fullAddress();
+        return faker(DataFakerUtils.randStringFromRegex(Regex.LOCALE_REGEX))
+                .address().fullAddress();
+    }
+
+    /**
+     * Generate random real address
+     * 
+     * @param locale The locale language
+     * @return The generated value
+     */
+    public static String generateFullAddress(String locale) {
+        return faker(locale).address().fullAddress();
+    }
+
+    /**
+     * Generate random {@link Address}
+     * 
+     * @return The generated value
+     */
+    public static Address generateAddress() {
+        return faker(DataFakerUtils.randStringFromRegex(Regex.LOCALE_REGEX))
+                .address();
+    }
+
+    /**
+     * Generate random {@link Address}
+     * 
+     * @param locale The locale language
+     * @return The generated value
+     */
+    public static Address generateAddress(String locale) {
+        return faker(locale).address();
     }
 
     /**

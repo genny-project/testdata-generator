@@ -7,7 +7,8 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import life.genny.datagenerator.Constants;
+import com.github.javafaker.Address;
+
 import life.genny.datagenerator.Regex;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
@@ -41,15 +42,15 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                     assertTrue(matcher.matches());
                 })
                 .createTest("Generate Email From Regex Check 1")
-                .setInput(DataFakerCustomUtils.generateEmailFromRegex(Constants.EMAIL_REGEX))
-                .setExpected(Constants.EMAIL_REGEX)
+                .setInput(DataFakerCustomUtils.generateEmailFromRegex(Regex.CUSTOM_EMAIL_REGEX))
+                .setExpected(Regex.CUSTOM_EMAIL_REGEX)
                 .build()
 
                 .setTest((input) -> {
                     return Expected(input.input.split("@")[1]);
                 })
                 .createTest("Generate Email From Regex Check 2")
-                .setInput(DataFakerCustomUtils.generateEmailFromRegex(Constants.EMAIL_REGEX, "gada.io"))
+                .setInput(DataFakerCustomUtils.generateEmailFromRegex(Regex.CUSTOM_EMAIL_REGEX, "gada.io"))
                 .setExpected("gada.io")
                 .build()
 
@@ -139,11 +140,37 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .setTest((input) -> {
                     return Expected(input.input != null);
                 })
-                .createTest("Generate Random Full Address Check")
+                .createTest("Generate Random Full Address Check 1")
                 .setInput(DataFakerCustomUtils.generateFullAddress())
                 .setExpected(true)
                 .build()
+
+                .createTest("Generate Random Full Address Check 2")
+                .setInput(DataFakerCustomUtils.generateFullAddress("en-UG"))
+                .setExpected(true)
+                .build()
+                
                 .assertAll();
+    }
+
+    @Test
+    void generateAddress() {
+        new JUnitTester<Address, Boolean>()
+            .setTest(input -> {
+                return Expected(input.input.fullAddress() != null);
+            })
+            
+            .createTest("Generate Random Address Check 1")
+            .setInput(DataFakerCustomUtils.generateAddress())
+            .setExpected(true)
+            .build()
+            
+            .createTest("Generate Random Address Check 2")
+            .setInput(DataFakerCustomUtils.generateAddress("en-UG"))
+            .setExpected(true)
+            .build()
+
+            .assertAll();
     }
 
     @Test

@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
 import io.quarkus.runtime.StartupEvent;
@@ -22,8 +23,8 @@ public class AppStartup {
 
     private static final Logger LOGGER = Logger.getLogger(AppStartup.class);
 
-    private int fileNum = 1;
-    private ArrayList<String> uploadedFile = new ArrayList<>(fileNum);
+    @ConfigProperty(name = "data.total_person_tobe_generated", defaultValue = "50")
+    int totalRow;
 
     @Inject
     Service service;
@@ -33,6 +34,9 @@ public class AppStartup {
 
     @Inject
     MinIOUtils minIOUtils;
+
+    private int fileNum = 1;
+    private ArrayList<String> uploadedFile = new ArrayList<>(fileNum);
 
     @PostConstruct
     void setUp() {

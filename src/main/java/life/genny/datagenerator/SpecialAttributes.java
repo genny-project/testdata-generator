@@ -55,6 +55,16 @@ public class SpecialAttributes {
     public static final String LNK_DJP_JOB_AGREE = "LNK_DJP_JOB_AGREE";
 
     /**
+     * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY_REP
+     */
+    public static final String PRI_TERMS_ACCEPTED = "PRI_TERMS_ACCEPTED";
+    public static final String PRI_EMAIL_FLAG = "PRI_EMAIL_FLAG";
+    public static final String PRI_JOB_TITLE = "PRI_JOB_TITLE";
+    public static final String PRI_SUPER_QUALIFICATION = "PRI_SUPER_QUALIFICATION";
+    public static final String PRI_SELECT_COUNTRY = "PRI_SELECT_COUNTRY";
+    public static final String LNK_SPECIFY_HOST_CPY = "LNK_SPECIFY_HOST_CPY";
+
+    /**
      * Special case for {@link EntityAttribute} generation for DEF_INTERN
      */
     public static final String PRI_CV = "PRI_CV";

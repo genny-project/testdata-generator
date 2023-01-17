@@ -1,5 +1,6 @@
 package life.genny.datagenerator.generators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -29,16 +30,32 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generate(BaseEntity entity) {
-        if (entity.getCode().equals(Entities.DEF_HOST_COMPANY)) {
-            BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_HOST_COMPANY_REP);
-            generator.entityAttributesAreValid(hostCompanyRep, true);
+        String defCode = entity.getCode();
+        entity.setCode(generateCode(entity.getCode()));
+
+        List<String> repCodes = null;
+        int max = DataFakerUtils.randInt(1, 4);
+        if (defCode.equals(Entities.DEF_HOST_COMPANY)) {
+            code = entity.getCode();
+            repCodes = new ArrayList<>(max);
+            for (int i = 0; i < max; i++) {
+                BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_HOST_COMPANY_REP);
+                generator.entityAttributesAreValid(hostCompanyRep, true);
+                repCodes.add(hostCompanyRep.getCode());
+            }
         }
 
+        // Address address = DataFakerCustomUtils.generateAddress();
+        String reps = null;
+        if (repCodes != null)
+            reps = "[\"" +
+                    String.join("\", \"", repCodes.toArray(new String[0])) +
+                    "\"]";
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
             Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
-                    entity.getId().toString(), entity.getCode());
+                    defCode, reps);
 
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
@@ -58,11 +75,11 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     Object runGenerator(String attributeCode, String regex, String... args) {
-        Long companyId = Long.parseLong(args[0]);
-        String entityCode = args[1];
+        String entityCode = args[0];
+        String companyReps = args[1];
         return switch (entityCode) {
-            case Entities.DEF_HOST_COMPANY -> generateHostCompanyAttr(attributeCode, companyId);
-            case Entities.DEF_HOST_COMPANY_REP -> generateHostCompanyRepAttr(attributeCode, companyId);
+            case Entities.DEF_HOST_COMPANY -> generateHostCompanyAttr(attributeCode, companyReps);
+            case Entities.DEF_HOST_COMPANY_REP -> generateHostCompanyRepAttr(attributeCode);
             default -> null;
         };
     }
@@ -71,14 +88,13 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_HOST_CPY
      * 
      * @param attributeCode The attribute code
-     * @param companyId     The company ID
      * @return Generated {@link EntityAttribute} value
      */
-    Object generateHostCompanyAttr(String attributeCode, Long companyId) {
+    Object generateHostCompanyAttr(String attributeCode, String companyReps) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_OHS_DOC:
             case SpecialAttributes.PRI_TC_DOC:
-                yield "()";
+                yield "";
 
             case SpecialAttributes.PRI_DOC_DJP:
             case SpecialAttributes.PRI_DOC_HCRI:
@@ -94,7 +110,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_DOC_HCS_STATUS:
             case SpecialAttributes.PRI_DOC_DJP_STATUS:
             case SpecialAttributes.PRI_DOC_HCRI_STATUS:
-                yield "(Complete)";
+                yield "Complete";
 
             case SpecialAttributes.PRI_DJP_AGREE:
                 yield DataFakerUtils.randStringFromRegex(Regex.AGREE_REGEX);
@@ -112,6 +128,9 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.PRI_ADDRESS_FULL_ONE:
                 yield DataFakerCustomUtils.generateFullAddress();
+
+            case SpecialAttributes.LNK_HOST_COMPANY_REP:
+                yield companyReps;
 
             case SpecialAttributes.LNK_ASSOC_INDUSTRY:
                 yield DataFakerCustomUtils.generateName();
@@ -132,13 +151,28 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_HOST_CPY_REP
      * 
      * @param attributeCode The attribute code
-     * @param companyId     The company ID
      * @return Generated {@link EntityAttribute} value
      */
-    Object generateHostCompanyRepAttr(String attributeCode, Long companyId) {
+    Object generateHostCompanyRepAttr(String attributeCode) {
         return switch (attributeCode) {
             case SpecialAttributes.PRI_ASSOC_HC:
-                yield companyId.toString();
+                yield code;
+
+            case SpecialAttributes.PRI_EMAIL_FLAG:
+            case SpecialAttributes.PRI_TERMS_ACCEPTED:
+                yield true;
+
+            case SpecialAttributes.PRI_JOB_TITLE:
+                yield DataFakerCustomUtils.generateName().toUpperCase();
+
+            case SpecialAttributes.PRI_SUPER_QUALIFICATION:
+                yield "";
+
+            case SpecialAttributes.PRI_SELECT_COUNTRY:
+                yield "";
+
+            case SpecialAttributes.LNK_SPECIFY_HOST_CPY:
+                yield "[\"SEL_YES\"]";
 
             default:
                 yield null;

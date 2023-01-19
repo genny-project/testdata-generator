@@ -29,9 +29,8 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generate(BaseEntity entity) {
-        String defCode = entity.getCode();
-        entity.setCode(generateCode(entity.getCode()));
+    public BaseEntity generate(String defCode) {
+        BaseEntity entity = getBaseEntity(defCode);
 
         List<String> repCodes = null;
         int max = DataFakerUtils.randInt(1, 4);
@@ -39,18 +38,16 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             code = entity.getCode();
             repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
-                BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_HOST_COMPANY_REP);
-                generator.entityAttributesAreValid(hostCompanyRep, true);
+                BaseEntity hostCompanyRep = getBaseEntity(Entities.DEF_HOST_COMPANY_REP);
                 repCodes.add(hostCompanyRep.getCode());
             }
         }
-
-        // Address address = DataFakerCustomUtils.generateAddress();
         String reps = null;
         if (repCodes != null)
             reps = "[\"" +
                     String.join("\", \"", repCodes.toArray(new String[0])) +
                     "\"]";
+
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
@@ -62,6 +59,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                 ea.setValue(newObj);
             }
         }
+        
         return entity;
     }
 

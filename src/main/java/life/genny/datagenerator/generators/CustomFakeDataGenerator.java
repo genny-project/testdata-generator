@@ -23,7 +23,7 @@ public abstract class CustomFakeDataGenerator {
 
     protected final String IGNORE = "IGNORE THIS";
 
-    public abstract BaseEntity generate(BaseEntity entity);
+    public abstract BaseEntity generate(String defCode);
 
     abstract Object runGenerator(String attributeCode, String regex, String... args);
 
@@ -40,14 +40,27 @@ public abstract class CustomFakeDataGenerator {
             throw new NullPointerException("Regex is not allowed to be null for " + attributeCode);
     }
 
-    protected String generateCode(String entityCodeDef) {
+    protected String generateCode(String codeDef) {
         String uuid = UUID.randomUUID().toString();
-        return switch (entityCodeDef) {
-            case Entities.DEF_HOST_COMPANY -> Prefix.CPY + uuid;
-            case Entities.DEF_HOST_COMPANY_REP -> Prefix.PER + uuid;
+        return switch (codeDef) {
+            case Entities.DEF_HOST_COMPANY:
+                yield Prefix.CPY + uuid;
 
-            default -> throw new TypeMismatchException("Entity code for " + entityCodeDef +
-                    " not found. Please check if you already have a handler for this code");
+            case Entities.DEF_HOST_COMPANY_REP:
+            case Entities.DEF_INTERN:
+                yield Prefix.PER + uuid;
+
+            case Entities.DEF_INTERNSHIP:
+                yield "BEG_" + uuid;
+
+            default:
+                throw new TypeMismatchException("Entity code for " + codeDef +
+                        " not found. Please check if you already have a handler for this code");
         };
+    }
+
+    protected BaseEntity getBaseEntity(String entityDef) {
+        BaseEntity entity = generator.generateEntityDef(entityDef, generateCode(entityDef));
+        return entity;
     }
 }

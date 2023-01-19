@@ -27,7 +27,9 @@ public class PersonGenerator extends CustomFakeDataGenerator {
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generate(BaseEntity entity) {
+    public BaseEntity generate(String defCode) {
+        BaseEntity entity = getBaseEntity(defCode);
+
         String firstName = DataFakerCustomUtils.generateName();
         String lastName = DataFakerCustomUtils.generateName();
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);

@@ -28,7 +28,9 @@ public class InternGenerator extends CustomFakeDataGenerator {
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generate(BaseEntity entity) {
+    public BaseEntity generate(String defCode) {
+        BaseEntity entity = getBaseEntity(defCode);
+        
         String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();

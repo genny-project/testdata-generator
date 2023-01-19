@@ -3,10 +3,10 @@ package life.genny.datagenerator.configs;
 import io.smallrye.config.ConfigMapping;
 
 @ConfigMapping(prefix = "data.generator")
-public interface GeneratorConfigs {
+public interface GeneratorConfig {
     String totalGeneration();
 
-    String maxThread();
+    int maxThread();
 
-    String recordsPerThread();
+    int recordsPerThread();
 }

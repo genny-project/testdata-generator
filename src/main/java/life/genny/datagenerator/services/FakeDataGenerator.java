@@ -42,21 +42,43 @@ public class FakeDataGenerator {
     @Inject
     InternGenerator internGenerator;
 
-    public BaseEntity generateEntity(String definition) {
+    public BaseEntity generateEntityDef(String definition) {
+        return generateEntityDef(definition, null);
+    }
+
+    public BaseEntity generateEntityDef(String definition, String code) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
         Matcher matcher = pattern.matcher(definition);
         if (!matcher.matches())
             definition = DEF + definition;
 
-        BaseEntity entity = fakerServce.getBaseEntityDef(definition);
+        BaseEntity entity = fakerServce.getBaseEntityDef(definition, code);
+        return entity;
+    }
 
-        // TODO: remove this and make a function to handles all the attributes
-        // Set<EntityAttribute> entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.SER));
-        // entity.setBaseEntityAttributes(entityAttributes);
-        // entityAttributes = new HashSet<>(entity.findPrefixEntityAttributes(Prefix.DFT));
-        // entity.setBaseEntityAttributes(entityAttributes);
+    public BaseEntity generateEntity(String defCode) {
+        BaseEntity entity = switch (defCode) {
+            case Entities.DEF_PERSON:
+            case Entities.DEF_BALI_PERSON:
+                yield personGenerator.generate(defCode);
 
-        entity = generateSpecialCaseAttributes(entity);
+            case Entities.DEF_HOST_COMPANY:
+            case Entities.DEF_HOST_COMPANY_REP:
+                yield companyGenerator.generate(defCode);
+
+            case Entities.DEF_INTERN:
+            case Entities.DEF_INTERNSHIP:
+                yield internGenerator.generate(defCode);
+
+            default:
+                yield personGenerator.generate(defCode);
+        };
+
+        entity = generateDataTypeAttributes(entity);
+        return entity;
+    }
+
+    private BaseEntity generateDataTypeAttributes(BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             DataType dtt = ea.getAttribute().getDataType();
 
@@ -89,30 +111,16 @@ public class FakeDataGenerator {
         return entity;
     }
 
-    public List<BaseEntity> generateEntities(String definition, int count) {
-        List<BaseEntity> entities = new ArrayList<>(count);
-        for (int i = 0; i < count; i++)
-            entities.add(generateEntity(definition));
-        return entities;
-    }
-
-    private BaseEntity generateSpecialCaseAttributes(BaseEntity entity) {
-        return switch (entity.getCode()) {
-            case Entities.DEF_PERSON:
-            case Entities.DEF_BALI_PERSON:
-                yield personGenerator.generate(entity);
-            case Entities.DEF_HOST_COMPANY:
-            case Entities.DEF_HOST_COMPANY_REP:
-                yield companyGenerator.generate(entity);
-            case Entities.DEF_INTERN:
-            case Entities.DEF_INTERNSHIP:
-                yield internGenerator.generate(entity);
-            default:
-                yield personGenerator.generate(entity);
-        };
+    public boolean entityAttributesAreValid(BaseEntity entity) {
+        return entityAttributesAreValid(entity, false, false);
     }
 
     public boolean entityAttributesAreValid(BaseEntity entity, boolean showValidAttributes) {
+        return entityAttributesAreValid(entity, showValidAttributes, false);
+    }
+
+    public boolean entityAttributesAreValid(BaseEntity entity, boolean showValidAttributes,
+            boolean hideInvalidAttributes) {
         List<EntityAttribute> invalidAttributes = new ArrayList<>(100);
         List<EntityAttribute> validAttributes = new ArrayList<>(100);
         List<EntityAttribute> passAttributes = new ArrayList<>(100);
@@ -153,30 +161,29 @@ public class FakeDataGenerator {
                         + ": " + attribute.getValue());
         }
 
-        for (EntityAttribute attribute : invalidAttributes)
-            LOGGER.error("Invalid value for " + attribute.getAttributeCode() + " ("
-                    + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
-                    + attribute.getValue());
+        if (!hideInvalidAttributes) {
+            for (EntityAttribute attribute : invalidAttributes)
+                LOGGER.error("Invalid value for " + attribute.getAttributeCode() + " ("
+                        + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
+                        + attribute.getValue());
+        }
 
         return valid;
-    }
-
-    public boolean entityAttributesAreValid(BaseEntity entity) {
-        return entityAttributesAreValid(entity, false);
     }
 
     public boolean entityAttributesAreValid(List<BaseEntity> entities) {
-        boolean valid = true;
-        for (BaseEntity entity : entities)
-            valid = valid && entityAttributesAreValid(entity);
-        return valid;
+        return entityAttributesAreValid(entities, false, false);
     }
 
     public boolean entityAttributesAreValid(List<BaseEntity> entities, boolean showValidAttributes) {
-        boolean valid = true;
-        for (BaseEntity entity : entities)
-            valid = valid && entityAttributesAreValid(entity, showValidAttributes);
-        return valid;
+        return entityAttributesAreValid(entities, showValidAttributes, false);
     }
 
+    public boolean entityAttributesAreValid(List<BaseEntity> entities, boolean showValidAttributes,
+            boolean hideInvalidAttributes) {
+        boolean valid = true;
+        for (BaseEntity entity : entities)
+            valid = valid && entityAttributesAreValid(entity, showValidAttributes, hideInvalidAttributes);
+        return valid;
+    }
 }

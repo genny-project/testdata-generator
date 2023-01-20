@@ -5,7 +5,9 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.jboss.logging.Logger;
 
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
@@ -17,6 +19,7 @@ import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Column;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
+import life.genny.qwandaq.exception.runtime.NullParameterException;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.CommonUtils;
 import life.genny.qwandaq.utils.DatabaseUtils;
@@ -26,6 +29,9 @@ import life.genny.qwandaq.validation.Validation;
 
 @ApplicationScoped
 public class DataFakerService {
+
+    @Inject
+    Logger log;
 
     @Inject
     QwandaUtils qwandaUtils;
@@ -44,23 +50,38 @@ public class DataFakerService {
 
     public BaseEntity getBaseEntityDef(String definition, String code) {
         if (definition == null)
-            throw new NullPointerException("Definition is null!!");
+            throw new NullParameterException("Definition is null!!");
 
         // get person def
+        log.info("Getting entity definition in product: " + productCode + " for def " + definition);
         BaseEntity entityDefinition = beUtils.getBaseEntity(productCode, definition);
+        if (entityDefinition == null)
+            throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
+        log.info("Retrieved entityDef: " + entityDefinition.getCode() + " in realm " + entityDefinition.getRealm());
         // entityDefinition = beUtils.create(Definition.from(entityDefinition));
 
-        if (entityDefinition == null)
-            throw new NullPointerException("BaseEntity with " + definition + " cannot be found!!");
 
         // iterate valid attributes
-        for (EntityAttribute ea : entityDefinition.findPrefixEntityAttributes(Prefix.ATT)) {
+        log.info("Going through def ATT entity attributes");
+        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
+        log.info("  - ATT EntityAttributes: " + attEAs.size());
+        for (EntityAttribute ea : attEAs) {
 
             // remove ATT_ prefix
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
+            log.info("Attribute: " + attributeCode);
 
             // fetch attribute
-            Attribute attribute = qwandaUtils.getAttribute(attributeCode);
+            Attribute attribute;
+            try {
+                attribute = qwandaUtils.getAttribute(productCode, attributeCode);
+            } catch(Exception e) {
+                log.error("Ran into a problem: " + e.getMessage());
+                e.printStackTrace();
+                continue;
+            }
+            
+            log.info("Fetched from qwanda utils successful!: " + attribute.getCode());
 
             // grab datatype
             DataType dtt = attribute.getDataType();
@@ -73,12 +94,23 @@ public class DataFakerService {
             ea.setAttribute(attribute);
         }
 
-        if (code != null && !code.isEmpty()) {
+        if (!StringUtils.isBlank(code)) {
+            log.info("Setting definition code: " + code);
             entityDefinition.setCode(code);
-            BaseEntity entity = beUtils.create(Definition.from(entityDefinition),
+            log.info("Creating entity from defnition");
+            
+            BaseEntity entity;
+            try {
+                    entity = beUtils.create(Definition.from(entityDefinition),
                     entityDefinition.getName(), code);
+            } catch(Exception e) {
+                log.info("Something went bad: " + e.getMessage());
+                e.printStackTrace();
+                return entityDefinition;
+            }
+            log.info("Created entity: " + entity.getCode() + " in product: " + entity.getRealm());
             return entity;
-        }
+        } else log.error("[DataFakerService] CODE IS BLANK");
 
         return entityDefinition;
     }

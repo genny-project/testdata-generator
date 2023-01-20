@@ -23,7 +23,14 @@ public abstract class CustomFakeDataGenerator {
 
     protected final String IGNORE = "IGNORE THIS";
 
-    public abstract BaseEntity generate(String defCode);
+    public BaseEntity generate(String defCode) {
+        LOG.info("Generating " + defCode);
+        BaseEntity be =  generateImpl(defCode);
+        LOG.info("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
+        return be;
+    }
+
+    protected abstract BaseEntity generateImpl(String defCode);
 
     abstract Object runGenerator(String attributeCode, String regex, String... args);
 
@@ -60,7 +67,7 @@ public abstract class CustomFakeDataGenerator {
     }
 
     protected BaseEntity getBaseEntity(String entityDef) {
-        BaseEntity entity = generator.generateEntityDef(entityDef, generateCode(entityDef));
+        BaseEntity entity = generator.generateEntityDef(entityDef, generateCode(entityDef).toUpperCase());
         return entity;
     }
 }

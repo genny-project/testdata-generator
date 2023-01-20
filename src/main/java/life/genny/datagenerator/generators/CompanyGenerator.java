@@ -29,7 +29,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generate(String defCode) {
+    public BaseEntity generateImpl(String defCode) {
         BaseEntity entity = getBaseEntity(defCode);
 
         List<String> repCodes = null;
@@ -59,7 +59,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                 ea.setValue(newObj);
             }
         }
-        
+
         return entity;
     }
 

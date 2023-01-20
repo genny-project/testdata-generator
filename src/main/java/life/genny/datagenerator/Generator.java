@@ -37,8 +37,9 @@ public class Generator {
         @Override
         public void run() {
             listener.onStart();
-            LOG.info("Test");
+            LOG.info("Test data gen " + entityDef + ". Count: " + totalDataGenerated);
             for (int i = 0; i < totalDataGenerated; i++) {
+                LOG.info("Generating entity index " + i);
                 BaseEntity generatedEntity = generator.generateEntity(entityDef);
                 LOG.info("Valid: " + generator.entityAttributesAreValid(generatedEntity, false, true));
             }

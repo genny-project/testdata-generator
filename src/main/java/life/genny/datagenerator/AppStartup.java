@@ -50,11 +50,12 @@ public class AppStartup {
     void start(@Observes StartupEvent event) {
         LOGGER.info("Starting up new application...");
 
-        executor = Executors.newFixedThreadPool(5);
-        for (Entry<String, Integer> data : dataGeneration) {
+        executor = Executors.newFixedThreadPool(1);
+        Entry<String, Integer> data = dataGeneration.get(0);
+        //for (Entry<String, Integer> data : dataGeneration) {
             // BaseEntity entityDef = generator.generateEntityDef(data.getKey());
             generateTasks(data.getKey(), data.getValue());
-        }
+        // }
         executor.shutdown();
     }
 

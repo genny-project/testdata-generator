@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.UUID;
 
+import javax.inject.Inject;
+
 import org.jboss.logging.Logger;
 
 import com.itextpdf.text.BaseColor;
@@ -24,7 +26,8 @@ import com.itextpdf.text.pdf.PdfWriter;
  */
 public class FileUtils {
 
-    private static final Logger LOG = Logger.getLogger(FileUtils.class);
+    @Inject
+    static Logger log;
 
     private static final String ABSOLUTE_PATH = Thread.currentThread().getContextClassLoader()
             .getResource("application.properties").getPath()
@@ -55,7 +58,7 @@ public class FileUtils {
             if (fileObj != null)
                 return new FileInputStream(fileObj);
         } catch (FileNotFoundException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             e.printStackTrace();
         }
         return null;
@@ -103,7 +106,7 @@ public class FileUtils {
 
             return fileObj;
         } catch (DocumentException | FileNotFoundException e) {
-            LOG.error("Error generating file: " + e.getMessage());
+            log.error("Error generating file: " + e.getMessage());
             e.printStackTrace();
         }
 

@@ -267,4 +267,21 @@ public class DataFakerCustomUtils {
         }
         return result;
     }
+
+    public static String generateWebsiteURL() {
+        return DataFakerCustomUtils.generateWebsiteURL(
+                DataFakerCustomUtils.generateName());
+    }
+
+    public static String generateWebsiteURL(String domain) {
+        return DataFakerCustomUtils.generateWebsiteURL(domain,
+                DataFakerUtils.randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX));
+    }
+
+    public static String generateWebsiteURL(String domain, String tld) {
+        if (!tld.startsWith("."))
+            tld = "." + tld;
+        return DataFakerUtils.randStringFromRegex("((http(s)?\\:\\/\\/)?www\\.)?") +
+                domain + tld;
+    }
 }

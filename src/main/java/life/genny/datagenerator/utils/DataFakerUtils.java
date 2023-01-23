@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.jboss.logging.Logger;
 
 import com.mifmif.common.regex.Generex;
@@ -22,8 +24,9 @@ import life.genny.datagenerator.Regex;
  * @author Amrizal Fajar
  */
 public class DataFakerUtils {
-
-    private static final Logger LOG = Logger.getLogger(DataFakerUtils.class);
+    
+    @Inject
+    static Logger log;
 
     /**
      * Initialize {@link Random} class
@@ -91,7 +94,7 @@ public class DataFakerUtils {
                 matched = true;
             } catch (NumberFormatException e) {
                 if (generatedNum == Integer.MIN_VALUE && counter == 10) {
-                    LOG.error("Failed to generate Integer object from regex: " + regex);
+                    log.error("Failed to generate Integer object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
                 }
@@ -125,7 +128,7 @@ public class DataFakerUtils {
                 matched = true;
             } catch (NumberFormatException e) {
                 if (generatedNum == Double.MIN_VALUE && counter == 5) {
-                    LOG.error("Failed to generate Double object from regex: " + regex);
+                    log.error("Failed to generate Double object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
                 }
@@ -157,7 +160,7 @@ public class DataFakerUtils {
                 matched = true;
             } catch (NumberFormatException e) {
                 if (generatedNum == Long.MIN_VALUE && counter == 5) {
-                    LOG.error("Failed to generate Long object from regex: " + regex);
+                    log.error("Failed to generate Long object from regex: " + regex);
                     throw new IllegalArgumentException(
                             "Failed generated number 5 times. Please check your regex again.");
                 }

@@ -6,6 +6,7 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation
      */
     public static final String PRI_SUBMIT = "PRI_SUBMIT";
+    public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_PERSON
@@ -20,11 +21,6 @@ public class SpecialAttributes {
     public static final String PRI_MOBILE = "PRI_MOBILE";
     public static final String PRI_WHATSAPP = "PRI_WHATSAPP";
     public static final String PRI_LANDLINE = "PRI_LANDLINE";
-
-    /**
-     * Special case for {@link EntityAttribute} generation for global usage
-     */
-    public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY
@@ -48,11 +44,14 @@ public class SpecialAttributes {
     public static final String PRI_HC_SERVICES_AGREEMENT_HTML = "PRI_HC_SERVICES_AGREEMENT_HTML";
     public static final String PRI_DJP_DOCUMENT_ACCEPTED = "PRI_DJP_DOCUMENT_ACCEPTED";
     public static final String PRI_ADDRESS_FULL_ONE = "PRI_ADDRESS_FULL_ONE";
+    public static final String PRI_NAME = "PRI_NAME";
+    public static final String PRI_LEGAL_NAME = "PRI_LEGAL_NAME";
     public static final String LNK_COMPANY_INC = "LNK_COMPANY_INC";
     public static final String LNK_VIC_GOV_DIGITAL_JOBS = "LNK_VIC_GOV_DIGITAL_JOBS";
     public static final String LNK_HOST_COMPANY_REP = "LNK_HOST_COMPANY_REP";
     public static final String LNK_ASSOC_INDUSTRY = "LNK_ASSOC_INDUSTRY";
     public static final String LNK_DJP_JOB_AGREE = "LNK_DJP_JOB_AGREE";
+    public static final String LNK_SPECIFY_ABN = "LNK_SPECIFY_ABN";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY_REP

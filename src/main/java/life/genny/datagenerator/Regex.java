@@ -20,6 +20,8 @@ public class Regex {
      * Custom Regular-Expression Pattern
      */
     public static final String TEXT_PARAGRAPH_REGEX = "(\\w{5,20}[ ]{1}){80,120}";
+    public static final String TOP_LEVEL_DOMAIN_REGEX = "(com|au|io)";
+    public static final String WEBSITE_URL_REGEX = "((http(s)?://)?www\\.)?([a-zA-Z0-9]+)(\\.[a-z]+)+";
     public static final String CUSTOM_EMAIL_REGEX = "[a-zA-Z0-9]+(\\.[a-zA-Z0-9]*)?(\\@gmail\\.(com|au|io))";
     public static final String PHONE_REGEX = "(^\\+[1-9]{1,3})([0-9]{9,11})$";
     public static final String GENDER_REGEX = "(MALE|FEMALE|OTHER|PREFER NOT TO SAY)";

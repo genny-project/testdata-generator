@@ -90,10 +90,15 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     Object generateHostCompanyAttr(String attributeCode, String companyReps) {
         return switch (attributeCode) {
+            case SpecialAttributes.PRI_NAME:
+            case SpecialAttributes.PRI_LEGAL_NAME:
+                yield DataFakerCustomUtils.generateName();
+            
             case SpecialAttributes.PRI_OHS_DOC:
             case SpecialAttributes.PRI_TC_DOC:
                 yield "";
 
+            case SpecialAttributes.PRI_DJP_DOCUMENT_ACCEPTED:
             case SpecialAttributes.PRI_DOC_DJP:
             case SpecialAttributes.PRI_DOC_HCRI:
             case SpecialAttributes.PRI_DOC_HCS:
@@ -135,6 +140,9 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_COMPANY_INC:
                 yield DataFakerUtils.randDateTime().toString();
+
+            case SpecialAttributes.LNK_SPECIFY_ABN:
+                yield "[\"SEL_YES\"]";
 
             case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
             case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:

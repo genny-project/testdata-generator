@@ -13,7 +13,6 @@ import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
 
-import io.quarkus.logging.Log;
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.InternGenerator;
@@ -27,12 +26,13 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class FakeDataGenerator {
 
-    private static final Logger LOGGER = Logger.getLogger(FakeDataGenerator.class);
-
     private static final String DEF = "DEF_";
 
     @Inject
-    DataFakerService fakerServce;
+    Logger log;
+
+    @Inject
+    DataFakerService fakerService;
 
     @Inject
     PersonGenerator personGenerator;
@@ -44,21 +44,24 @@ public class FakeDataGenerator {
     InternGenerator internGenerator;
 
     public BaseEntity generateEntityDef(String definition) {
-        return generateEntityDef(definition, null);
-    }
-
-    public BaseEntity generateEntityDef(String definition, String code) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
         Matcher matcher = pattern.matcher(definition);
         if (!matcher.matches())
             definition = DEF + definition;
 
-        BaseEntity entity = fakerServce.getBaseEntityDef(definition, code);
+        BaseEntity entity = fakerService.getBaseEntityDef(definition);
         return entity;
     }
 
+    public BaseEntity saveEntity(BaseEntity entity) {
+        return fakerService.save(entity);
+    }
+
     public BaseEntity generateEntity(String defCode) {
-        Log.info("Generating " + defCode);
+        log.debug("Generating " + defCode);
+
+
+
         BaseEntity entity = switch (defCode) {
             case Entities.DEF_PERSON:
             case Entities.DEF_BALI_PERSON:
@@ -66,7 +69,7 @@ public class FakeDataGenerator {
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-                yield companyGenerator.generate(defCode);
+            yield companyGenerator.generate(defCode);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
@@ -77,18 +80,14 @@ public class FakeDataGenerator {
         };
 
 
-        Log.info("Generating data type attributes for: " + entity.getCode());
         entity = generateDataTypeAttributes(entity);
-        Log.info("Done EA Gen");
         return entity;
     }
 
     private BaseEntity generateDataTypeAttributes(BaseEntity entity) {
-        Log.info("Entity Attribute count: " + entity.getBaseEntityAttributes().size());
+        log.debug("Entity Attribute count: " + entity.getBaseEntityAttributes().size());
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             DataType dtt = ea.getAttribute().getDataType();
-            Log.info(" - Attribute: " + ea.getAttribute().getCode());
-            Log.info("     - DataType: " + dtt.getDttCode() + ":" + dtt.getClassName());
             List<Validation> validations = dtt.getValidationList();
             if (validations.size() > 0) {
                 String regex = dtt.getValidationList().get(0).getRegex();
@@ -157,20 +156,20 @@ public class FakeDataGenerator {
         }
 
         if (showValidAttributes) {
-            LOGGER.debug("VALIDATING " + entity.getCode() + " ATTRIBUTES.");
+            log.debug("VALIDATING " + entity.getCode() + " ATTRIBUTES.");
             for (EntityAttribute attribute : validAttributes)
-                LOGGER.debug("Valid value for " + attribute.getAttributeCode() + " ("
+                log.debug("Valid value for " + attribute.getAttributeCode() + " ("
                         + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
                         + attribute.getValue());
             for (EntityAttribute attribute : passAttributes)
-                LOGGER.warn("Attribute fail to validate for " + attribute.getAttributeCode()
+                log.warn("Attribute fail to validate for " + attribute.getAttributeCode()
                         + " (" + attribute.getAttribute().getDataType().getClassName() + ")"
                         + ": " + attribute.getValue());
         }
 
         if (!hideInvalidAttributes) {
             for (EntityAttribute attribute : invalidAttributes)
-                LOGGER.error("Invalid value for " + attribute.getAttributeCode() + " ("
+                log.error("Invalid value for " + attribute.getAttributeCode() + " ("
                         + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
                         + attribute.getValue());
         }

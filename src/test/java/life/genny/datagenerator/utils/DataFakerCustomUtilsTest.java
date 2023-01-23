@@ -149,28 +149,28 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .setInput(DataFakerCustomUtils.generateFullAddress("en-UG"))
                 .setExpected(true)
                 .build()
-                
+
                 .assertAll();
     }
 
     @Test
     void generateAddress() {
         new JUnitTester<Address, Boolean>()
-            .setTest(input -> {
-                return Expected(input.input.fullAddress() != null);
-            })
-            
-            .createTest("Generate Random Address Check 1")
-            .setInput(DataFakerCustomUtils.generateAddress())
-            .setExpected(true)
-            .build()
-            
-            .createTest("Generate Random Address Check 2")
-            .setInput(DataFakerCustomUtils.generateAddress("en-UG"))
-            .setExpected(true)
-            .build()
+                .setTest(input -> {
+                    return Expected(input.input.fullAddress() != null);
+                })
 
-            .assertAll();
+                .createTest("Generate Random Address Check 1")
+                .setInput(DataFakerCustomUtils.generateAddress())
+                .setExpected(true)
+                .build()
+
+                .createTest("Generate Random Address Check 2")
+                .setInput(DataFakerCustomUtils.generateAddress("en-UG"))
+                .setExpected(true)
+                .build()
+
+                .assertAll();
     }
 
     @Test
@@ -233,7 +233,7 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "h1"))
                 .setExpected(true)
                 .build()
-                
+
                 .createTest("Generate Random HTML Tag Check 3")
                 .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "ul", "li"))
                 .setExpected(true)
@@ -242,6 +242,44 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .createTest("Generate Random HTML Tag Check 4")
                 .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "ul", "li", "strong"))
                 .setExpected(true)
+                .build()
+
+                .assertAll();
+    }
+
+    @Test
+    void generateWebsiteURL() {
+        new JUnitTester<String, String>()
+                .setTest((input) -> {
+                    System.out.println(input.input);
+                    return Expected(input.input);
+                })
+                .setVerification((result, expected) -> {
+                    Pattern urlPattern = Pattern.compile(expected);
+                    assertTrue(urlPattern.matcher(result).matches());
+                })
+
+                .createTest("Generate Random Website URL Check 1")
+                .setInput(DataFakerCustomUtils.generateWebsiteURL())
+                .setExpected(Regex.WEBSITE_URL_REGEX)
+                .build()
+
+                .createTest("Generate Random Website URL Check 2")
+                .setInput(DataFakerCustomUtils.generateWebsiteURL(
+                        DataFakerCustomUtils.generateName()))
+                .setExpected(Regex.WEBSITE_URL_REGEX)
+                .build()
+
+                .createTest("Generate Random Website URL Check 3")
+                .setInput(DataFakerCustomUtils.generateWebsiteURL(
+                        DataFakerCustomUtils.generateName(), "co.id"))
+                .setExpected(Regex.WEBSITE_URL_REGEX)
+                .build()
+
+                .createTest("Generate Random Website URL Check 4")
+                .setInput(DataFakerCustomUtils.generateWebsiteURL(
+                        DataFakerCustomUtils.generateName(), ".io"))
+                .setExpected(Regex.WEBSITE_URL_REGEX)
                 .build()
 
                 .assertAll();

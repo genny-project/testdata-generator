@@ -1,14 +1,23 @@
 package life.genny.datagenerator.services;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import life.genny.datagenerator.configs.MySQLConfig;
+import life.genny.datagenerator.model.Address;
+import life.genny.datagenerator.model.PlaceDetail;
+import life.genny.datagenerator.utils.DatabaseUtils;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
@@ -16,13 +25,11 @@ import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.entity.search.SearchEntity;
-import life.genny.qwandaq.entity.search.trait.Column;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.exception.runtime.NullParameterException;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.CommonUtils;
-import life.genny.qwandaq.utils.DatabaseUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 import life.genny.qwandaq.validation.Validation;
@@ -30,8 +37,16 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class DataFakerService {
 
+    private static final String ADDRESS_TABLE_NAME = "address";
+
     @Inject
     Logger log;
+
+    @Inject
+    MySQLConfig mysqlConfig;
+
+    @Inject
+    ObjectMapper objectMapper;
 
     @Inject
     QwandaUtils qwandaUtils;
@@ -40,77 +55,49 @@ public class DataFakerService {
     BaseEntityUtils beUtils;
 
     @Inject
-    DatabaseUtils dbUtils;
-
-    @Inject
     SearchUtils searchUtils;
 
     @ConfigProperty(name = "data.product-code")
     String productCode;
 
-    public BaseEntity getBaseEntityDef(String definition, String code) {
+    public BaseEntity getBaseEntityDef(String definition) {
         if (definition == null)
             throw new NullParameterException("Definition is null!!");
 
-        // get person def
-        log.info("Getting entity definition in product: " + productCode + " for def " + definition);
         BaseEntity entityDefinition = beUtils.getBaseEntity(productCode, definition);
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
-        log.info("Retrieved entityDef: " + entityDefinition.getCode() + " in realm " + entityDefinition.getRealm());
-        // entityDefinition = beUtils.create(Definition.from(entityDefinition));
 
+        // try {
+        //     entityDefinition = beUtils.create(Definition.from(entityDefinition),
+        //             entityDefinition.getName());
+        //     log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
+        //             entityDefinition.getRealm());
+        // } catch (Exception e) {
+        //     log.info("Something went bad: " + e.getMessage());
+        //     e.printStackTrace();
+        //     return entityDefinition;
+        // }
 
-        // iterate valid attributes
-        log.info("Going through def ATT entity attributes");
         List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
-        log.info("  - ATT EntityAttributes: " + attEAs.size());
         for (EntityAttribute ea : attEAs) {
-
-            // remove ATT_ prefix
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-            log.info("Attribute: " + attributeCode);
-
-            // fetch attribute
             Attribute attribute;
             try {
                 attribute = qwandaUtils.getAttribute(productCode, attributeCode);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.error("Ran into a problem: " + e.getMessage());
                 e.printStackTrace();
                 continue;
             }
-            
-            log.info("Fetched from qwanda utils successful!: " + attribute.getCode());
 
-            // grab datatype
             DataType dtt = attribute.getDataType();
-
-            // grab validations
             List<Validation> validations = dtt.getValidationList();
 
             dtt.setValidationList(validations);
             attribute.setDataType(dtt);
             ea.setAttribute(attribute);
         }
-
-        if (!StringUtils.isBlank(code)) {
-            log.info("Setting definition code: " + code);
-            entityDefinition.setCode(code);
-            log.info("Creating entity from defnition");
-            
-            BaseEntity entity;
-            try {
-                    entity = beUtils.create(Definition.from(entityDefinition),
-                    entityDefinition.getName(), code);
-            } catch(Exception e) {
-                log.info("Something went bad: " + e.getMessage());
-                e.printStackTrace();
-                return entityDefinition;
-            }
-            log.info("Created entity: " + entity.getCode() + " in product: " + entity.getRealm());
-            return entity;
-        } else log.error("[DataFakerService] CODE IS BLANK");
 
         return entityDefinition;
     }
@@ -121,14 +108,50 @@ public class DataFakerService {
                 // .add(new Column("PRI_ADDRESS", "Address"))
                 .setAllColumns(true)
                 .setRealm(productCode);
-                
-        List<String> codes = searchUtils.searchBaseEntityCodes(sbe);
+
+        // List<String> codes = searchUtils.searchBaseEntityCodes(sbe);
         List<BaseEntity> entities = searchUtils.searchBaseEntitys(sbe);
         return entities;
     }
 
+    public List<PlaceDetail> getAddresses() {
+        System.out.println(mysqlConfig.host());
+        System.out.println(mysqlConfig.port());
+        System.out.println(mysqlConfig.database());
+        System.out.println(mysqlConfig.user());
+        System.out.println(mysqlConfig.password());
+
+        List<Address> addresses = new ArrayList<>();
+        try {
+            ResultSet result = DatabaseUtils.initConnection(mysqlConfig)
+                    .selectAllFromMysql(ADDRESS_TABLE_NAME);
+            while (result.next()) {
+                Address address = new Address(result.getLong("id"),
+                        result.getString("json_data"));
+                addresses.add(address);
+            }
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
+        List<PlaceDetail> details = new ArrayList<>();
+        for (Address address : addresses) {
+            try {
+                PlaceDetail placeDetail = objectMapper.readValue(address.getJsonData(),
+                        PlaceDetail.class);
+                details.add(placeDetail);
+            } catch (JsonProcessingException e) {
+                log.error(e.getMessage());
+            }
+        }
+        return details;
+    }
+
     public BaseEntity save(BaseEntity entity) {
-        entity = beUtils.updateBaseEntity(entity);
+        log.debug("Updating entity.");
+        entity = beUtils.updateBaseEntity(productCode, entity);
+        log.debug("Entity " + entity.getCode() + " updated");
         return entity;
     }
 }

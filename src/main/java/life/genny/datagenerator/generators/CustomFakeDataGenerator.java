@@ -1,32 +1,32 @@
 package life.genny.datagenerator.generators;
 
-import java.util.UUID;
-
 import javax.inject.Inject;
 
 import org.hibernate.TypeMismatchException;
 import org.jboss.logging.Logger;
 
-import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.services.FakeDataGenerator;
-import life.genny.qwandaq.constants.Prefix;
+import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.qwandaq.entity.BaseEntity;
 
 public abstract class CustomFakeDataGenerator {
 
-    protected final static Logger LOG = Logger.getLogger(CustomFakeDataGenerator.class);
+    @Inject
+    protected Logger log;
 
     @Inject
     FakeDataGenerator generator;
 
     protected String code = "123";
 
-    protected final String IGNORE = "IGNORE THIS";
+    protected final String IGNORE = "NEED TO BE CHANGED";
 
     public BaseEntity generate(String defCode) {
-        LOG.info("Generating " + defCode);
+        log.debug("Generating " + defCode);
         BaseEntity be =  generateImpl(defCode);
-        LOG.info("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
+        generator.entityAttributesAreValid(be, true);
+        be = generator.saveEntity(be);
+        log.debug("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
         return be;
     }
 
@@ -47,27 +47,9 @@ public abstract class CustomFakeDataGenerator {
             throw new NullPointerException("Regex is not allowed to be null for " + attributeCode);
     }
 
-    protected String generateCode(String codeDef) {
-        String uuid = UUID.randomUUID().toString();
-        return switch (codeDef) {
-            case Entities.DEF_HOST_COMPANY:
-                yield Prefix.CPY + uuid;
-
-            case Entities.DEF_HOST_COMPANY_REP:
-            case Entities.DEF_INTERN:
-                yield Prefix.PER + uuid;
-
-            case Entities.DEF_INTERNSHIP:
-                yield "BEG_" + uuid;
-
-            default:
-                throw new TypeMismatchException("Entity code for " + codeDef +
-                        " not found. Please check if you already have a handler for this code");
-        };
-    }
-
     protected BaseEntity getBaseEntity(String entityDef) {
-        BaseEntity entity = generator.generateEntityDef(entityDef, generateCode(entityDef).toUpperCase());
+        BaseEntity entity = generator.generateEntityDef(entityDef);
+        entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
         return entity;
     }
 }

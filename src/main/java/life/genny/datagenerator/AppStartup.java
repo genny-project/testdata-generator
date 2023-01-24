@@ -99,7 +99,7 @@ public class AppStartup {
             int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int generatedFinal = generatedData + generate;
             final int statusFinal = status;
-            executor.submit(new GeneratorTask(generator, defCode, generate, new GeneratorListener() {
+            executor.submit(new GeneratorTask(service, generator, defCode, generate, new GeneratorListener() {
                 @Override
                 public void onStart() {
                     log.info("Start generating %s %s"

@@ -60,8 +60,6 @@ public class FakeDataGenerator {
     public BaseEntity generateEntity(String defCode) {
         log.debug("Generating " + defCode);
 
-
-
         BaseEntity entity = switch (defCode) {
             case Entities.DEF_PERSON:
             case Entities.DEF_BALI_PERSON:

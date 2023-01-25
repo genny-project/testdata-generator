@@ -7,8 +7,6 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.javafaker.Address;
-
 import life.genny.datagenerator.Regex;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
@@ -129,45 +127,6 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .createTest("Generate Random Phone Number Check 2")
                 .setInput(DataFakerCustomUtils.generatePhoneNumber(areaCode))
                 .setExpected(Regex.PHONE_REGEX)
-                .build()
-
-                .assertAll();
-    }
-
-    @Test
-    void generateFullAddress() {
-        new JUnitTester<String, Boolean>()
-                .setTest((input) -> {
-                    return Expected(input.input != null);
-                })
-                .createTest("Generate Random Full Address Check 1")
-                .setInput(DataFakerCustomUtils.generateFullAddress())
-                .setExpected(true)
-                .build()
-
-                .createTest("Generate Random Full Address Check 2")
-                .setInput(DataFakerCustomUtils.generateFullAddress("en-UG"))
-                .setExpected(true)
-                .build()
-
-                .assertAll();
-    }
-
-    @Test
-    void generateAddress() {
-        new JUnitTester<Address, Boolean>()
-                .setTest(input -> {
-                    return Expected(input.input.fullAddress() != null);
-                })
-
-                .createTest("Generate Random Address Check 1")
-                .setInput(DataFakerCustomUtils.generateAddress())
-                .setExpected(true)
-                .build()
-
-                .createTest("Generate Random Address Check 2")
-                .setInput(DataFakerCustomUtils.generateAddress("en-UG"))
-                .setExpected(true)
                 .build()
 
                 .assertAll();

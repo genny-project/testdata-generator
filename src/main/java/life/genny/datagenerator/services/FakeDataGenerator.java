@@ -16,11 +16,13 @@ import org.jboss.logging.Logger;
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.AddressGenerator;
 import life.genny.datagenerator.generators.CompanyGenerator;
+import life.genny.datagenerator.generators.ContactGenerator;
 import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
+import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -44,6 +46,9 @@ public class FakeDataGenerator {
     AddressGenerator addressGenerator;
 
     @Inject
+    ContactGenerator contactGenerator;
+
+    @Inject
     CompanyGenerator companyGenerator;
 
     @Inject
@@ -64,6 +69,10 @@ public class FakeDataGenerator {
         BaseEntity entity = generateEntityDef(defCode);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
+        if ("PER".equals(entity.getValue(Attribute.PRI_PREFIX).get()))
+            entity = personGenerator.generate(Entities.DEF_PERSON, entity);
+        
+        // entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(defCode, entity);
         return entity;

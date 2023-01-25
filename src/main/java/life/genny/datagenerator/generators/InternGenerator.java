@@ -1,7 +1,5 @@
 package life.genny.datagenerator.generators;
 
-import java.util.List;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -14,7 +12,6 @@ import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
-import life.genny.qwandaq.validation.Validation;
 
 /**
  * Generate all important attributes for DEF_INTERN and DEF_INTERNSHIP
@@ -27,21 +24,23 @@ public class InternGenerator extends CustomFakeDataGenerator {
     @Inject
     Logger log;
 
-    /** 
+    /**
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
      * @param entity Initialized {@link BaseEntity}
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generateImpl(String defCode, BaseEntity entity) {        
+    public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
+            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
+                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
+                    : null;
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
-                    entity.getCode(), superName);
 
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
+                    entity.getCode(), superName);
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
                 ea.setValue(newObj);
@@ -54,12 +53,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
      * Start Generating {@link EntityAttribute} based on entity code
      * 
      * @param attributeCode The attribute code
-     * @param regex The regex pattern
-     * @param args The additional parameters needed
+     * @param regex         The regex pattern
+     * @param args          The additional parameters needed
      * @return Generated {@link EntityAttribute} value
      */
     @Override
-    Object runGenerator(String attributeCode, String regex, String... args) {
+    Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         String entityCode = args[0];
         String superName = args[1];
         return switch (entityCode) {
@@ -73,7 +72,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_INTERN
      * 
      * @param attributeCode The attribute code
-     * @param className The name of the class
+     * @param className     The name of the class
      * @return Generated {@link EntityAttribute} value
      */
     Object generateIntern(String attributeCode) {
@@ -103,7 +102,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
      * Generate {@link EntityAttribute} of DEF_INTERNSHIP
      * 
      * @param attributeCode The code of the attribute
-     * @param name The supervisor name
+     * @param name          The supervisor name
      * @return Generated {@link EntityAttribute} value
      */
     Object generateInternship(String attributeCode, String name) {

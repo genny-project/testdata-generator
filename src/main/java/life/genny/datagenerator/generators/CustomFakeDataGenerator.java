@@ -22,10 +22,10 @@ public abstract class CustomFakeDataGenerator {
 
     protected final String IGNORE = "NEED TO BE CHANGED";
 
-    protected String code = "123";
+    protected String tempEntitycode = "123";
     private List<PlaceDetail> places = new ArrayList<>();
 
-    public List<PlaceDetail> getPlaces() {
+    protected List<PlaceDetail> getPlaces() {
         if (places.size() < 1) {
             log.debug("Retrieveing random place data from database.");
             setPlaces(generator.getRandomPlaces());
@@ -34,7 +34,7 @@ public abstract class CustomFakeDataGenerator {
         return places;
     }
 
-    public void setPlaces(List<PlaceDetail> places) {
+    protected void setPlaces(List<PlaceDetail> places) {
         this.places = places;
     }
 
@@ -62,5 +62,5 @@ public abstract class CustomFakeDataGenerator {
 
     abstract BaseEntity generateImpl(String defCode, BaseEntity entity);
 
-    abstract Object runGenerator(String attributeCode, String regex, String... args);
+    abstract Object runGeneratorImpl(String attributeCode, String regex, String... args);
 }

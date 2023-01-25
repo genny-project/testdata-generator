@@ -23,6 +23,25 @@ public class SpecialAttributes {
     public static final String PRI_LANDLINE = "PRI_LANDLINE";
 
     /**
+     * 
+     */
+    public static final String LNK_SELECT_COUNTRY = "LNK_SELECT_COUNTRY";
+    public static final String PRI_ADDRESS_ADDRESS1 = "PRI_ADDRESS_ADDRESS1";
+    public static final String PRI_ADDRESS_ADDRESS2 = "PRI_ADDRESS_ADDRESS2";
+    public static final String PRI_ADDRESS_CITY = "PRI_ADDRESS_CITY";
+    public static final String PRI_ADDRESS_COUNTRY = "PRI_ADDRESS_COUNTRY";
+    public static final String PRI_ADDRESS_EXTRA = "PRI_ADDRESS_EXTRA";
+    public static final String PRI_ADDRESS_FULL = "PRI_ADDRESS_FULL";
+    public static final String PRI_ADDRESS_JSON = "PRI_ADDRESS_JSON";
+    public static final String PRI_ADDRESS_LATITUDE = "PRI_ADDRESS_LATITUDE";
+    public static final String PRI_ADDRESS_LONGITUDE = "PRI_ADDRESS_LONGITUDE";
+    public static final String PRI_ADDRESS_POSTCODE = "PRI_ADDRESS_POSTCODE";
+    public static final String PRI_ADDRESS_STATE = "PRI_ADDRESS_STATE";
+    public static final String PRI_ADDRESS_SUBURB = "PRI_ADDRESS_SUBURB";
+    public static final String PRI_TIME_ZONE = "PRI_TIME_ZONE";
+    public static final String PRI_TIMEZONE_ID = "PRI_TIMEZONE_ID";
+
+    /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY
      */
     public static final String PRI_OHS_DOC = "PRI_OHS_DOC";
@@ -72,14 +91,17 @@ public class SpecialAttributes {
     public static final String PRI_ADDED_BY = "PRI_ADDED_BY";
     public static final String PRI_EMAIL_ADDITIONAL = "PRI_EMAIL_ADDITIONAL";
     // public static final String PRI_DAYS_PER_WEEK = "PRI_DAYS_PER_WEEK";
-    // public static final String PRI_WHICH_DAYS_STRIPPED = "PRI_WHICH_DAYS_STRIPPED";
-    // public static final String PRI_ASSOC_COMP_INTERNSHIP = "PRI_ASSOC_COMP_INTERNSHIP";
+    // public static final String PRI_WHICH_DAYS_STRIPPED =
+    // "PRI_WHICH_DAYS_STRIPPED";
+    // public static final String PRI_ASSOC_COMP_INTERNSHIP =
+    // "PRI_ASSOC_COMP_INTERNSHIP";
     // public static final String PRI_SEARCH_HISTORY = "PRI_SEARCH_HISTORY";
     // public static final String PRI_STATUS_COLOR = "PRI_STATUS_COLOR";
     // public static final String PRI_ANZCO = "PRI_ANZCO";
     // public static final String PRI_ASSOC_OCCUPATION = "PRI_ASSOC_OCCUPATION";
     // public static final String PRI_ASSOC_DURATION = "PRI_ASSOC_DURATION";
-    // public static final String PRI_ASSOC_CURRENT_SOFTWARE = "PRI_ASSOC_CURRENT_SOFTWARE";
+    // public static final String PRI_ASSOC_CURRENT_SOFTWARE =
+    // "PRI_ASSOC_CURRENT_SOFTWARE";
     // public static final String PRI_STAGE = "PRI_STAGE";
     public static final String PRI_STUDENT_ID = "PRI_STUDENT_ID";
 

@@ -46,7 +46,7 @@ public class Generator {
             listener.onStart();
             for (int i = 0; i < totalDataGenerated; i++) {
                 BaseEntity generatedEntity = generator.generateEntity(entityDef);
-                generator.entityAttributesAreValid(generatedEntity, false, true);
+                // generator.entityAttributesAreValid(generatedEntity, true);
             }
             listener.onFinish();
         }

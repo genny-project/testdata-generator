@@ -3,6 +3,9 @@ package life.genny.datagenerator.generators;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
@@ -20,6 +23,9 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class PersonGenerator extends CustomFakeDataGenerator {
 
+    @Inject
+    Logger log;
+
     /** 
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
@@ -27,9 +33,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generateImpl(String defCode) {
-        BaseEntity entity = getBaseEntity(defCode);
-
+    public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String firstName = DataFakerCustomUtils.generateName();
         String lastName = DataFakerCustomUtils.generateName();
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);

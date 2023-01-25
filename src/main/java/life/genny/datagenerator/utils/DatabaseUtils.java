@@ -15,8 +15,8 @@ public class DatabaseUtils {
     }
 
     public DatabaseUtils(Connection conn, Statement statement) {
-        this.conn = conn;
-        this.statement = statement;
+        DatabaseUtils.conn = conn;
+        DatabaseUtils.statement = statement;
     }
 
     public static DatabaseUtils initConnection(MySQLConfig mysqlConfig) throws SQLException {
@@ -27,6 +27,8 @@ public class DatabaseUtils {
     }
 
     public static ResultSet selectAllFromMysql(String table) throws SQLException {
+        if (conn == null)
+            throw new NullPointerException("You have to initialize database connection first.");
         String query = "SELECT * FROM %s".formatted(table);
         ResultSet result = null;
         result = statement.executeQuery(query);

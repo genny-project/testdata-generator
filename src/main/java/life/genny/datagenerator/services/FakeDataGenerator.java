@@ -14,9 +14,12 @@ import javax.inject.Inject;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
+import life.genny.datagenerator.generators.AddressGenerator;
 import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
+import life.genny.datagenerator.model.PlaceDetail;
+import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
@@ -38,12 +41,15 @@ public class FakeDataGenerator {
     PersonGenerator personGenerator;
 
     @Inject
+    AddressGenerator addressGenerator;
+
+    @Inject
     CompanyGenerator companyGenerator;
 
     @Inject
     InternGenerator internGenerator;
 
-    public BaseEntity generateEntityDef(String definition) {
+    private BaseEntity generateEntityDef(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
         Matcher matcher = pattern.matcher(definition);
         if (!matcher.matches())
@@ -53,30 +59,35 @@ public class FakeDataGenerator {
         return entity;
     }
 
-    public BaseEntity saveEntity(BaseEntity entity) {
-        return fakerService.save(entity);
-    }
-
     public BaseEntity generateEntity(String defCode) {
         log.debug("Generating " + defCode);
+        BaseEntity entity = generateEntityDef(defCode);
+        entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
-        BaseEntity entity = switch (defCode) {
+        entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
+        entity = generateEntityAttribtues(defCode, entity);
+        return entity;
+    }
+    
+    private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
+        log.debug("Generating attributes of " + defCode);
+
+        entity = switch (defCode) {
             case Entities.DEF_PERSON:
             case Entities.DEF_BALI_PERSON:
-                yield personGenerator.generate(defCode);
+                yield personGenerator.generate(defCode, entity);
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-            yield companyGenerator.generate(defCode);
+            yield companyGenerator.generate(defCode, entity);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
-                yield internGenerator.generate(defCode);
+                yield internGenerator.generate(defCode, entity);
 
             default:
-                yield personGenerator.generate(defCode);
+                yield personGenerator.generate(defCode, entity);
         };
-
 
         entity = generateDataTypeAttributes(entity);
         return entity;
@@ -189,5 +200,13 @@ public class FakeDataGenerator {
         for (BaseEntity entity : entities)
             valid = valid && entityAttributesAreValid(entity, showValidAttributes, hideInvalidAttributes);
         return valid;
+    }
+
+    public BaseEntity saveEntity(BaseEntity entity) {
+        return fakerService.save(entity);
+    }
+
+    public List<PlaceDetail> getRandomPlaces() {
+        return fakerService.getAddresses();
     }
 }

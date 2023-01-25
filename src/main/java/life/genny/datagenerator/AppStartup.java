@@ -81,7 +81,7 @@ public class AppStartup {
     void start(@Observes StartupEvent event) {
         log.info("Starting up new application...");
 
-        executor = Executors.newFixedThreadPool(1);
+        executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
         // Entry<String, Integer> data = dataGeneration.get(0);
         for (Entry<String, Integer> data : dataGeneration) {
             // BaseEntity entityDef = generator.generateEntity(data.getKey());

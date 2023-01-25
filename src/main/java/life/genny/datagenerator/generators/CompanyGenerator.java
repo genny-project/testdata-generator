@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.Regex;
@@ -22,23 +25,28 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class CompanyGenerator extends CustomFakeDataGenerator {
 
+    @Inject
+    Logger log;
+
     /**
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
-     * @param entity Initialized {@link BaseEntity}
+     * @param defCode The code definition
+     * @param entity  Initialized {@link BaseEntity}
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generateImpl(String defCode) {
-        BaseEntity entity = getBaseEntity(defCode);
-
+    public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         List<String> repCodes = null;
         int max = DataFakerUtils.randInt(1, 4);
+
+        // Generate DEF_HOST_CPY_REP
         if (defCode.equals(Entities.DEF_HOST_COMPANY)) {
             code = entity.getCode();
             repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
-                BaseEntity hostCompanyRep = getBaseEntity(Entities.DEF_HOST_COMPANY_REP);
+                BaseEntity hostCompanyRep = generator
+                        .generateEntity(Entities.DEF_HOST_COMPANY_REP);
                 repCodes.add(hostCompanyRep.getCode());
             }
         }
@@ -47,19 +55,26 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             reps = "[\"" +
                     String.join("\", \"", repCodes.toArray(new String[0])) +
                     "\"]";
-
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
-                    defCode, reps);
+
+            Object newObj = null;
+            try {
+                newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
+                        defCode, reps);
+            } catch (Exception e) {
+                log.error("Something went wrong when generating " + ea.getAttributeCode() +
+                        ": " + e.getMessage());
+                e.printStackTrace();
+            }
 
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
                 ea.setValue(newObj);
             }
-        }
 
+        }
         return entity;
     }
 
@@ -73,6 +88,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     Object runGenerator(String attributeCode, String regex, String... args) {
+        log.debug("Generating attribute " + attributeCode);
         String entityCode = args[0];
         String companyReps = args[1];
         return switch (entityCode) {
@@ -93,7 +109,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_NAME:
             case SpecialAttributes.PRI_LEGAL_NAME:
                 yield DataFakerCustomUtils.generateName();
-            
+
             case SpecialAttributes.PRI_OHS_DOC:
             case SpecialAttributes.PRI_TC_DOC:
                 yield "";

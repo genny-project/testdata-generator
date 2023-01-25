@@ -68,18 +68,18 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        try {
-            entityDefinition = beUtils.create(Definition.from(entityDefinition),
-                    entityDefinition.getName());
-            log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
-                    entityDefinition.getRealm());
-        } catch (Exception e) {
-            log.info("Something went bad: " + e.getMessage());
-            e.printStackTrace();
-            return entityDefinition;
-        }
+        // try {
+        //     entityDefinition = beUtils.create(Definition.from(entityDefinition),
+        //             entityDefinition.getName());
+        //     log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
+        //             entityDefinition.getRealm());
+        // } catch (Exception e) {
+        //     log.info("Something went bad: " + e.getMessage());
+        //     e.printStackTrace();
+        //     return entityDefinition;
+        // }
 
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
+        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
         for (EntityAttribute ea : attEAs) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;
@@ -115,12 +115,6 @@ public class DataFakerService {
     }
 
     public List<PlaceDetail> getAddresses() {
-        System.out.println(mysqlConfig.host());
-        System.out.println(mysqlConfig.port());
-        System.out.println(mysqlConfig.database());
-        System.out.println(mysqlConfig.user());
-        System.out.println(mysqlConfig.password());
-
         List<Address> addresses = new ArrayList<>();
         try {
             ResultSet result = DatabaseUtils.initConnection(mysqlConfig)

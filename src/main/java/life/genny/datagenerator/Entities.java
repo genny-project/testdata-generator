@@ -11,4 +11,7 @@ public class Entities {
     public static final String DEF_HOST_COMPANY_REP = "DEF_HOST_CPY_REP";
     public static final String DEF_INTERN = "DEF_INTERN";
     public static final String DEF_INTERNSHIP = "DEF_INTERNSHIP";
+    public static final String DEF_EDU_PROVIDER = "DEF_EDU_PROVIDER";
+    public static final String DEF_EDU_PRO_REP = "DEF_EDU_PRO_REP";
+
 }

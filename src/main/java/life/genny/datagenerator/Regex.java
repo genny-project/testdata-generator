@@ -33,4 +33,15 @@ public class Regex {
     public static final String SELECTION_REGEX = "^(SEL)(\\_[A-Z]{4,8}){1,4}";
     public static final String HTML_TAG_REGEX = "label|h1|p|strong|em";
     public static final String LOCALE_REGEX = "en-(US|GB|AU|NZ|SG)";
+
+    public static final String STATUS_REGEX = "(ACTIVE|null)";
+    public static final String SUBMIT_STATUS = "(QUE_SUBMIT|null)";
+
+    
+    /**
+     * Custom longitude Latitude regex
+    */
+    public static final String LATITUDE_PATTERN = "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$";
+    public static final String LONGITUDE_PATTERN = "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$";
+
 }

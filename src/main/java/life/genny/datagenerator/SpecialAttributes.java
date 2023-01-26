@@ -134,11 +134,18 @@ public class SpecialAttributes {
     /**
      * Special case for {@link EntityAttribute} generation for DEF_EDU_PRO_REP
      */
-    public static final String LNK_AUTHOR  = "PRI_TIMEZONE";
-    public static final String LNK_EDU_PROVIDER  = "PRI_TIMEZONE";
-    public static final String LNK_SEND_EMAIL  = "PRI_TIMEZONE";
-    public static final String PRI_ASSOC_EP  = "PRI_TIMEZONE";
-    public static final String PRI_DEPARTMENT  = "PRI_TIMEZONE";
+    public static final String LNK_AUTHOR  = "LNK_AUTHOR";
+    public static final String LNK_EDU_PROVIDER  = "LNK_EDU_PROVIDER";
+    public static final String LNK_SEND_EMAIL  = "LNK_SEND_EMAIL";
+    public static final String PRI_ASSOC_EP  = "PRI_ASSOC_EP";
+    public static final String PRI_DEPARTMENT  = "PRI_DEPARTMENT";
+    public static final String PRI_DOB  = "PRI_DOB";
+    public static final String PRI_IS_EDU_PRO_REP  = "PRI_IS_EDU_PRO_REP";
+    public static final String PRI_KEYCLOAK_UUID  = "PRI_KEYCLOAK_UUID";
+    public static final String PRI_USERNAME  = "PRI_USERNAME";
+    public static final String PRI_UUID  = "PRI_UUID";
+    
+
 
 
 }

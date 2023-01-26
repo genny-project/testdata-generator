@@ -154,7 +154,65 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
     private Object generateEduProviderRepAttr(String attributeCode) {
         return switch (attributeCode) {
+            case SpecialAttributes.LNK_AUTHOR:
+            case SpecialAttributes.LNK_EDU_PROVIDER:
+            case SpecialAttributes.LNK_GENDER_SELECT:
+            case SpecialAttributes.LNK_SELECT_COUNTRY:
+            case SpecialAttributes.LNK_SEND_EMAIL:
+                yield DataFakerUtils.randStringFromRegex(Regex.CUSTOM_EMAIL_REGEX);
+
+            case SpecialAttributes.PRI_ADDRESS_ADDRESS1:
+            case SpecialAttributes.PRI_ADDRESS_CITY:
+            case SpecialAttributes.PRI_SELECT_COUNTRY:
+            case SpecialAttributes.PRI_ADDRESS_FULL:
+            case SpecialAttributes.PRI_ADDRESS_JSON:
+            case SpecialAttributes.PRI_ADDRESS_POSTCODE:
+            case SpecialAttributes.PRI_ADDRESS_STATE:
+            case SpecialAttributes.PRI_ASSOC_EP:
+            case SpecialAttributes.PRI_DEPARTMENT:
+            case SpecialAttributes.PRI_DOB:
+            case SpecialAttributes.PRI_EMAIL:
+                yield DataFakerUtils.randStringFromRegex(Regex.CUSTOM_EMAIL_REGEX);
+
+            case SpecialAttributes.PRI_FIRSTNAME:
+                yield DataFakerCustomUtils.generateName();
+
+            case SpecialAttributes.PRI_GENDER:
+                yield DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
+
+            case SpecialAttributes.PRI_IMAGE_URL:
+                yield DataFakerUtils.randStringFromRegex(Regex.WEBSITE_URL_REGEX);
+
+            case SpecialAttributes.PRI_INITIALS:
+            case SpecialAttributes.PRI_IS_EDU_PRO_REP:
+                yield DataFakerUtils.randBoolean();
+
+            case SpecialAttributes.PRI_JOB_TITLE:
+            case SpecialAttributes.PRI_KEYCLOAK_UUID:
+            case SpecialAttributes.PRI_LANDLINE:
+            case SpecialAttributes.PRI_LASTNAME:
+                yield DataFakerCustomUtils.generateName();
+
+            case SpecialAttributes.PRI_LINKEDIN_URL:
+            case SpecialAttributes.PRI_MOBILE:
+                yield DataFakerUtils.randStringFromRegex(Regex.PHONE_REGEX);
+
+            case SpecialAttributes.PRI_NAME:
+                yield DataFakerCustomUtils.generateName();
+
+            case SpecialAttributes.PRI_PHONE:
+                yield DataFakerUtils.randStringFromRegex(Regex.PHONE_REGEX);
+
+            case SpecialAttributes.PRI_PROFILE:
+            case SpecialAttributes.PRI_STATUS:
+                yield DataFakerUtils.randStringFromRegex(Regex.STATUS_REGEX);
+
+            case SpecialAttributes.PRI_TIMEZONE:
             case SpecialAttributes.PRI_TIMEZONE_ID:
+            case SpecialAttributes.PRI_USERNAME:
+                yield DataFakerCustomUtils.generateName();
+
+            case SpecialAttributes.PRI_UUID:
             default:
                 yield null;
 

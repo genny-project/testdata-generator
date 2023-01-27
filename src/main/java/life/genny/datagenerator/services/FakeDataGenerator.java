@@ -22,7 +22,6 @@ import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
-import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -68,16 +67,17 @@ public class FakeDataGenerator {
         log.debug("Generating " + defCode);
         BaseEntity entity = generateEntityDef(defCode);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
-
-        if ("PER".equals(entity.getValue(Attribute.PRI_PREFIX).get()))
-            entity = personGenerator.generate(Entities.DEF_PERSON, entity);
         
-        // entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
+        String prefix = entity.getCode().split("_")[0];
+        if ("PER".equals(prefix))
+            entity = personGenerator.generate(Entities.DEF_PERSON, entity);
+
+        entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(defCode, entity);
         return entity;
     }
-    
+
     private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
         log.debug("Generating attributes of " + defCode);
 
@@ -88,7 +88,7 @@ public class FakeDataGenerator {
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-            yield companyGenerator.generate(defCode, entity);
+                yield companyGenerator.generate(defCode, entity);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
@@ -108,18 +108,36 @@ public class FakeDataGenerator {
             DataType dtt = ea.getAttribute().getDataType();
             List<Validation> validations = dtt.getValidationList();
             if (validations.size() > 0) {
-                String regex = dtt.getValidationList().get(0).getRegex();
+                String regex = dtt.getValidationList().size() > 0
+                        ? dtt.getValidationList().get(0).getRegex()
+                        : null;
                 String className = dtt.getClassName();
 
                 if (ea.getValue() == null) {
                     if (String.class.getName().equals(className))
-                        ea.setValue(DataFakerUtils.randStringFromRegex(regex));
+                        if (regex != null) {
+                            ea.setValue(DataFakerUtils.randStringFromRegex(regex));
+                        } else {
+                            ea.setValue(DataFakerUtils.randString());
+                        }
                     else if (Integer.class.getName().equals(className))
-                        ea.setValue(DataFakerUtils.randIntFromRegex(regex));
+                        if (regex != null) {
+                            ea.setValue(DataFakerUtils.randIntFromRegex(regex));
+                        } else {
+                            ea.setValue(DataFakerUtils.randInt());
+                        }
                     else if (Long.class.getName().equals(className))
-                        ea.setValue(DataFakerUtils.randLongFromRegex(regex));
+                        if (regex != null) {
+                            ea.setValue(DataFakerUtils.randLongFromRegex(regex));
+                        } else {
+                            ea.setValue(DataFakerUtils.randLong());
+                        }
                     else if (Double.class.getName().equals(className))
-                        ea.setValue(DataFakerUtils.randDoubleFromRegex(regex));
+                        if (regex != null) {
+                            ea.setValue(DataFakerUtils.randDoubleFromRegex(regex));
+                        } else {
+                            ea.setValue(DataFakerUtils.randDouble());
+                        }
                     else if (Boolean.class.getName().equals(className))
                         ea.setValue(DataFakerUtils.randBoolean());
                     else if (LocalDateTime.class.getName().equals(className))
@@ -131,6 +149,7 @@ public class FakeDataGenerator {
                 }
             }
         }
+        log.debug("Success generating attribute for " + entity.getCode());
 
         return entity;
     }

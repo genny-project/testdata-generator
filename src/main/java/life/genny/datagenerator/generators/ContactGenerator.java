@@ -19,7 +19,8 @@ public class ContactGenerator extends CustomFakeDataGenerator {
                     : null;
             String className = ea.getAttribute().getDataType().getClassName();
 
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal);
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
+                    entity.getName());
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
                 ea.setValue(newObj);

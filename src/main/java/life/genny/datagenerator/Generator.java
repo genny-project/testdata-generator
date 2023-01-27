@@ -12,7 +12,11 @@ public class Generator {
     public interface GeneratorListener {
         void onStart();
 
+        void onProgress(int current, int total);
+
         void onFinish();
+
+        void onError(String def, Throwable e);
     }
 
     public static class GeneratorTask implements Runnable {
@@ -40,13 +44,13 @@ public class Generator {
             try {
                 service.initToken();
             } catch (Exception e) {
-                log.error("Something went wrong on initToken: " + e.getMessage());
-                e.printStackTrace();
+                listener.onError(entityDef, e);
             }
             listener.onStart();
             for (int i = 0; i < totalDataGenerated; i++) {
                 BaseEntity generatedEntity = generator.generateEntity(entityDef);
                 // generator.entityAttributesAreValid(generatedEntity, true);
+                listener.onProgress(i, totalDataGenerated);
             }
             listener.onFinish();
         }

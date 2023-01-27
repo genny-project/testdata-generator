@@ -15,6 +15,7 @@ import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.CompanyGenerator;
+import life.genny.datagenerator.generators.EduGenerator;
 import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.utils.DataFakerUtils;
@@ -41,6 +42,9 @@ public class FakeDataGenerator {
     CompanyGenerator companyGenerator;
 
     @Inject
+    EduGenerator eduGenerator;
+
+    @Inject
     InternGenerator internGenerator;
 
     public BaseEntity generateEntityDef(String definition) {
@@ -60,25 +64,26 @@ public class FakeDataGenerator {
     public BaseEntity generateEntity(String defCode) {
         log.debug("Generating " + defCode);
 
-
-
         BaseEntity entity = switch (defCode) {
             case Entities.DEF_PERSON:
             case Entities.DEF_BALI_PERSON:
-                yield personGenerator.generate(defCode);
+                // yield personGenerator.generate(defCode);
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-            yield companyGenerator.generate(defCode);
+                // yield companyGenerator.generate(defCode);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
-                yield internGenerator.generate(defCode);
+                // yield internGenerator.generate(defCode);
+            case Entities.DEF_EDU_PROVIDER:
+            case Entities.DEF_EDU_PRO_REP:
+                log.debug("Here!");
+                yield eduGenerator.generate(defCode);
 
             default:
                 yield personGenerator.generate(defCode);
         };
-
 
         entity = generateDataTypeAttributes(entity);
         return entity;

@@ -115,12 +115,6 @@ public class DataFakerService {
     }
 
     public List<PlaceDetail> getAddresses() {
-        System.out.println(mysqlConfig.host());
-        System.out.println(mysqlConfig.port());
-        System.out.println(mysqlConfig.database());
-        System.out.println(mysqlConfig.user());
-        System.out.println(mysqlConfig.password());
-
         List<Address> addresses = new ArrayList<>();
         try {
             ResultSet result = DatabaseUtils.initConnection(mysqlConfig)

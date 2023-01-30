@@ -1,8 +1,9 @@
 package life.genny.datagenerator.generators;
 
-import java.util.List;
-
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
@@ -10,7 +11,6 @@ import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
-import life.genny.qwandaq.validation.Validation;
 
 /**
  * Generate all important attributes for DEF_PERSON
@@ -20,26 +20,29 @@ import life.genny.qwandaq.validation.Validation;
 @ApplicationScoped
 public class PersonGenerator extends CustomFakeDataGenerator {
 
-    /** 
+    @Inject
+    Logger log;
+
+    /**
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
      * @param entity Initialized {@link BaseEntity}
      * @return {@link BaseEntity} with all important attributes filled in
      */
     @Override
-    public BaseEntity generateImpl(String defCode) {
-        BaseEntity entity = getBaseEntity(defCode);
-
+    public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String firstName = DataFakerCustomUtils.generateName();
         String lastName = DataFakerCustomUtils.generateName();
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
+        entity.setName(firstName + " " + lastName);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
+            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
+                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
+                    : null;
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newObj = runGenerator(ea.getAttributeCode(),
-                    validations.size() > 0 ? validations.get(0).getRegex() : null,
-                    firstName, lastName, gender);
 
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
+                    firstName, lastName, gender);
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
                 ea.setValue(newObj);
@@ -52,20 +55,13 @@ public class PersonGenerator extends CustomFakeDataGenerator {
      * Start Generating {@link EntityAttribute}
      * 
      * @param attributeCode The attribute code
-     * @param regex The regex pattern
-     * @param args The additional parameters needed
+     * @param regex         The regex pattern
+     * @param args          The additional parameters needed
      * @return Generated {@link EntityAttribute} value
      */
     @Override
-    Object runGenerator(String attributeCode, String regex, String... args) {
+    Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         return switch (attributeCode) {
-            case SpecialAttributes.PRI_EMAIL:
-                regexNullPointer(attributeCode, regex);
-                if (args.length > 0)
-                    yield DataFakerCustomUtils.generateEmail(args[0], args[1], DataFakerCustomUtils.DEFAULT_DOMAIN);
-                else
-                    yield DataFakerCustomUtils.generateEmailFromRegex(regex, DataFakerCustomUtils.DEFAULT_DOMAIN);
-
             case SpecialAttributes.PRI_INITIALS:
                 yield DataFakerCustomUtils.generateInitials(args);
 
@@ -80,17 +76,6 @@ public class PersonGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_GENDER_SELECT:
                 yield "[\"" + args[2] + "\"]";
-
-            case SpecialAttributes.PRI_PHONE:
-                yield DataFakerCustomUtils.generatePhoneNumber();
-
-            case SpecialAttributes.PRI_MOBILE:
-            case SpecialAttributes.PRI_WHATSAPP:
-            case SpecialAttributes.PRI_LANDLINE:
-                String value = "";
-                while (value.length() < 5)
-                    value = DataFakerUtils.randStringFromRegex(regex);
-                yield value;
 
             case SpecialAttributes.PRI_SUBMIT:
             default:

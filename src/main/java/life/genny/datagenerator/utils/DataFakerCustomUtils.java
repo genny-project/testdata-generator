@@ -2,10 +2,7 @@ package life.genny.datagenerator.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-
-import com.github.javafaker.Address;
-import com.github.javafaker.Faker;
+import java.util.UUID;
 
 import life.genny.datagenerator.Regex;
 
@@ -18,16 +15,6 @@ import life.genny.datagenerator.Regex;
 public class DataFakerCustomUtils {
 
     public static final String DEFAULT_DOMAIN = "gada.io";
-
-    /**
-     * Initialize {@link Faker} class
-     * 
-     * @param locale The locale language
-     * @return {@link Faker}
-     */
-    private static Faker faker(String locale) {
-        return new Faker(new Locale(locale));
-    }
 
     /**
      * Generate random characters as a name
@@ -70,6 +57,11 @@ public class DataFakerCustomUtils {
         return DataFakerUtils.randStringFromRegex(Regex.CUSTOM_EMAIL_REGEX);
     }
 
+    public static String generateEmail(String name) {
+        return name + "+" + UUID.randomUUID() + "@gmail."
+                + DataFakerUtils.randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX);
+    }
+
     /**
      * Generate random email using first name and last name
      * 
@@ -78,7 +70,8 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateEmail(String firstName, String lastName) {
-        return DataFakerCustomUtils.generateEmail(firstName, lastName, DEFAULT_DOMAIN);
+        return DataFakerCustomUtils.generateEmail(firstName, lastName,
+                "gmail." + DataFakerUtils.randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX));
     }
 
     /**
@@ -90,7 +83,7 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateEmail(String firstName, String lastName, String domain) {
-        return firstName + "." + lastName + "+" + DataFakerUtils.randString(5, 10) + "@" + domain;
+        return firstName + "." + lastName + "+" + UUID.randomUUID() + "@" + domain;
     }
 
     /**
@@ -126,46 +119,6 @@ public class DataFakerCustomUtils {
             areaCode = "+" + areaCode;
         String phoneRegex = "([0-9]{9,11})";
         return areaCode + DataFakerUtils.randStringFromRegex(phoneRegex);
-    }
-
-    /**
-     * Generate random real address
-     * 
-     * @return The generated value
-     */
-    public static String generateFullAddress() {
-        return faker(DataFakerUtils.randStringFromRegex(Regex.LOCALE_REGEX))
-                .address().fullAddress();
-    }
-
-    /**
-     * Generate random real address
-     * 
-     * @param locale The locale language
-     * @return The generated value
-     */
-    public static String generateFullAddress(String locale) {
-        return faker(locale).address().fullAddress();
-    }
-
-    /**
-     * Generate random {@link Address}
-     * 
-     * @return The generated value
-     */
-    public static Address generateAddress() {
-        return faker(DataFakerUtils.randStringFromRegex(Regex.LOCALE_REGEX))
-                .address();
-    }
-
-    /**
-     * Generate random {@link Address}
-     * 
-     * @param locale The locale language
-     * @return The generated value
-     */
-    public static Address generateAddress(String locale) {
-        return faker(locale).address();
     }
 
     /**

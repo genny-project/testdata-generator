@@ -81,7 +81,7 @@ public class AppStartup {
     void start(@Observes StartupEvent event) {
         log.info("Starting up new application...");
 
-        executor = Executors.newFixedThreadPool(1);
+        executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
         // Entry<String, Integer> data = dataGeneration.get(0);
         for (Entry<String, Integer> data : dataGeneration) {
             // BaseEntity entityDef = generator.generateEntity(data.getKey());
@@ -99,7 +99,7 @@ public class AppStartup {
             int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int generatedFinal = generatedData + generate;
             final int statusFinal = status;
-            executor.submit(new GeneratorTask(generator, defCode, generate, new GeneratorListener() {
+            executor.submit(new GeneratorTask(service, generator, defCode, generate, new GeneratorListener() {
                 @Override
                 public void onStart() {
                     log.info("Start generating %s %s"

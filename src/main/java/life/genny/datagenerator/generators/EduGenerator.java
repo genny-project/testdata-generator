@@ -18,15 +18,13 @@ import life.genny.qwandaq.validation.Validation;
 public class EduGenerator extends CustomFakeDataGenerator {
 
     @Override
-    protected BaseEntity generateImpl(String defCode) {
-        BaseEntity baseEntity = getBaseEntity(defCode);
+    BaseEntity generateImpl(String defCode,  BaseEntity entity) {
         List<String> repCodes = null;
         int max = DataFakerUtils.randInt(1, 4);
         if (defCode.equals(Entities.DEF_EDU_PROVIDER)) {
-            code = baseEntity.getCode();
             repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
-                BaseEntity hostCompanyRep = getBaseEntity(Entities.DEF_EDU_PRO_REP);
+                BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_EDU_PRO_REP);
                 repCodes.add(hostCompanyRep.getCode());
             }
         }
@@ -36,10 +34,10 @@ public class EduGenerator extends CustomFakeDataGenerator {
                     String.join("\", \"", repCodes.toArray(new String[0])) +
                     "\"]";
 
-        for (EntityAttribute ea : baseEntity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newObj = runGenerator(ea.getAttributeCode(), validations.get(0).getRegex(),
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), validations.get(0).getRegex(),
                     defCode, reps);
 
             if (newObj != null) {
@@ -48,11 +46,11 @@ public class EduGenerator extends CustomFakeDataGenerator {
             }
         }
 
-        return baseEntity;
+        return entity;
     }
 
     @Override
-    Object runGenerator(String attributeCode, String regex, String... args) {
+    Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         String entityCode = args[0];
         String companyReps = args[1];
         return switch (entityCode) {
@@ -218,5 +216,6 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
         };
     }
+
 
 }

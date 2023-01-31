@@ -78,14 +78,14 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .createTest("Generate Email Check 1")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName))
-                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS
-                        + "*\\@[A-Za-z]+(.[A-Za-z]+)+")
+                .setExpected("(" + firstName + ")\\.(" + lastName +
+                        ")\\+[A-Za-z0-9.\\-_]*\\@[A-Za-z.]+(\\.[A-Za-z]+)+")
                 .build()
 
                 .createTest("Generate Email Check 2")
                 .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName, auDomain))
-                .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS + "*\\@(" + auDomain
-                        + ")+")
+                .setExpected("(" + firstName + ")\\.(" + lastName + ")\\+" +
+                        "[A-Za-z0-9.\\-_]*\\@(" + auDomain + ")+")
                 .build()
 
                 .assertAll();

@@ -75,7 +75,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
                 yield args[2];
 
             case SpecialAttributes.LNK_GENDER_SELECT:
-                yield "[\"" + args[2] + "\"]";
+                yield "[\"SEL_GENDER_" + args[2].replace(" ", "_").toUpperCase() + "\"]";
 
             case SpecialAttributes.PRI_SUBMIT:
             default:

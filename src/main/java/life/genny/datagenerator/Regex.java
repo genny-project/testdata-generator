@@ -33,4 +33,5 @@ public class Regex {
     public static final String SELECTION_REGEX = "^(SEL)(\\_[A-Z]{4,8}){1,4}";
     public static final String HTML_TAG_REGEX = "label|h1|p|strong|em";
     public static final String LOCALE_REGEX = "en-(US|GB|AU|NZ|SG)";
+    public static final String DESCRIPTION_REGEX = "^[a-zA-Z0-9\\- (_),.%&’:';<>\\/\\\"\\n]{50,1000}$";
 }

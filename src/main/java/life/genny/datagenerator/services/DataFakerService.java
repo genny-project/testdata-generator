@@ -68,16 +68,6 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        try {
-            entityDefinition = beUtils.create(Definition.from(entityDefinition),
-                    entityDefinition.getName());
-            log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
-                    entityDefinition.getRealm());
-        } catch (Exception e) {
-            log.info("Something went bad: " + e.getMessage());
-            e.printStackTrace();
-        }
-
         List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
         for (EntityAttribute ea : attEAs) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
@@ -142,9 +132,22 @@ public class DataFakerService {
     }
 
     public BaseEntity save(BaseEntity entity) {
-        log.debug("Updating entity.");
-        entity = beUtils.updateBaseEntity(productCode, entity);
-        log.debug("Entity " + entity.getCode() + " updated");
+        if (entity.getCode().startsWith("DEF_")) {
+            try {
+                log.debug("Creating entity " + entity.getCode());
+                entity = beUtils.create(Definition.from(entity),
+                        entity.getName());
+                log.debug("Created entity: " + entity.getCode() + " in product: " +
+                        entity.getRealm());
+            } catch (Exception e) {
+                log.info("Something went bad: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            log.debug("Updating entity: " + entity.getCode());
+            entity = beUtils.updateBaseEntity(productCode, entity);
+            log.debug("Updated entity: " + entity.getCode());
+        }
         return entity;
     }
 }

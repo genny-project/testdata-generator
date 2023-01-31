@@ -1,9 +1,5 @@
 package life.genny.datagenerator;
 
-import javax.inject.Inject;
-
-import org.jboss.logging.Logger;
-
 import life.genny.datagenerator.services.FakeDataGenerator;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.serviceq.Service;
@@ -20,9 +16,6 @@ public class Generator {
     }
 
     public static class GeneratorTask implements Runnable {
-
-        @Inject
-        Logger log;
 
         private Service service;
         private FakeDataGenerator generator;

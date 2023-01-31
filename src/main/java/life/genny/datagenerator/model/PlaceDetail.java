@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceDetail implements Serializable {
@@ -158,19 +156,5 @@ public class PlaceDetail implements Serializable {
 
     public void setVicinity(String vicinity) {
         this.vicinity = vicinity;
-    }
-
-    public Map<String, String> getAddressComponentMap() {
-        Map<String, String> addressMap = new HashMap<>();
-        for (AddressComponent component : addressComponents) {
-            for (String type : component.getTypes()) {
-                if ("street_number".equals(type)) {
-                    addressMap.put("street_map", component.getLongName());
-                } else {
-                    addressMap.put(type, component.getLongName());
-                }
-            }
-        }
-        return addressMap;
     }
 }

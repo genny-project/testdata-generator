@@ -19,10 +19,13 @@ import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.ContactGenerator;
 import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
+import life.genny.datagenerator.generators.UserGenerator;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
+import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.validation.Validation;
@@ -40,6 +43,9 @@ public class FakeDataGenerator {
 
     @Inject
     PersonGenerator personGenerator;
+
+    @Inject
+    UserGenerator userGenerator;
 
     @Inject
     AddressGenerator addressGenerator;
@@ -67,10 +73,17 @@ public class FakeDataGenerator {
         log.debug("Generating " + defCode);
         BaseEntity entity = generateEntityDef(defCode);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
-        
-        String prefix = entity.getCode().split("_")[0];
-        if ("PER".equals(prefix))
+
+        String prefixCode = entity.getCode().split("_")[0];
+        EntityAttribute prefixAttr = entity.getBaseEntityAttributes().stream()
+                .filter(ea -> Attribute.PRI_PREFIX.equals(ea.getAttributeCode()))
+                .findFirst()
+                .orElse(null);
+        String prefix = prefixAttr != null ? prefixAttr.getValue() : "";
+        if ("PER".equals(prefixCode + "_") || Prefix.PER_.equals(prefix + "_")) {
             entity = personGenerator.generate(Entities.DEF_PERSON, entity);
+            entity = userGenerator.generate(Entities.DEF_USER, entity);
+        }
 
         entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
@@ -113,7 +126,7 @@ public class FakeDataGenerator {
                         : null;
                 String className = dtt.getClassName();
 
-                if (ea.getValue() == null) {
+                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI_)) {
                     if (String.class.getName().equals(className))
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randStringFromRegex(regex));

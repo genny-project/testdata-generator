@@ -98,7 +98,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
         return switch (entityCode) {
             case Entities.DEF_INTERN -> generateIntern(attributeCode, startPrevPeriod,
                     endPrevPeriod, daysPerWeek, daysStripped);
-            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName);
+            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName, daysPerWeek, daysStripped);
             default -> null;
         };
     }
@@ -135,13 +135,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
                         endPrevPeriod.format(dtFormatter);
 
             case SpecialAttributes.PRI_CAREER_OBJ:
-                int length = DataFakerUtils.randInt(1, 3);
-                String objHtml = "";
-                for (int i = 0; i < length; i++)
-                    objHtml += DataFakerCustomUtils.generateHTMLTag(
-                            DataFakerUtils.randStringFromRegex(Regex.DESCRIPTION_REGEX),
-                            "p");
-                yield objHtml;
+                yield generateDescriptionParagraph(
+                        DataFakerUtils.randInt(1, 4));
 
             case SpecialAttributes.PRI_DAYS_PER_WEEK:
                 yield String.valueOf(daysPerWeek);
@@ -177,7 +172,11 @@ public class InternGenerator extends CustomFakeDataGenerator {
      * @param name          The supervisor name
      * @return Generated {@link EntityAttribute} value
      */
-    Object generateInternship(String attributeCode, String name) {
+    Object generateInternship(String attributeCode, String... args) {
+        String name = args[0];
+        int daysPerWeek = Integer.parseInt(args[2]);
+        String daysStripped = StringUtils.substringBetween(args[3], "[", "]");
+
         return switch (attributeCode) {
             case SpecialAttributes.PRI_SUPER_MOBILE:
                 yield DataFakerCustomUtils.generatePhoneNumber();
@@ -188,6 +187,49 @@ public class InternGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_SUPER_EMAIL:
                 String[] names = name.split(" ");
                 yield DataFakerCustomUtils.generateEmail(names[0], names[1]);
+
+            case SpecialAttributes.PRI_ASSOC_NUM_INTERNS:
+            case SpecialAttributes.PRI_NO_OF_INTERNS:
+                yield 1;
+
+            case SpecialAttributes.PRI_INTERNSHIP_DETAILS:
+            case SpecialAttributes.PRI_SPECIFIC_LEARNING_OUTCOMES:
+                yield generateDescriptionParagraph();
+                
+            case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:
+            case SpecialAttributes.PRI_ROLES_AND_RESPONSIBILITIES:
+            case SpecialAttributes.PRI_CAREER_OBJ:
+                yield generateDescriptionParagraph(
+                        DataFakerUtils.randInt(1, 4));
+
+            case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
+                yield daysStripped;
+
+            case SpecialAttributes.PRI_DAYS_PER_WEEK:
+                yield String.valueOf(daysPerWeek);
+
+            case SpecialAttributes.LNK_INTERNSHIP_TYPE:
+            case SpecialAttributes.LNK_WORKSITE_SELECT:
+            case SpecialAttributes.LNK_INTERVIEW_TYPE:
+                yield DataFakerCustomUtils.generateSelection();
+
+            case SpecialAttributes.LNK_NO_OF_INTERNS:
+                yield "[\"SEL_NO_OF_INTERNS_" + convertNumberToWord(1) + "\"]";
+
+            case SpecialAttributes.LNK_DAYS_PER_WEEK:
+                yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
+
+            case SpecialAttributes.LNK_HOST_COMPANY:
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
+
+            case SpecialAttributes.LNK_HOST_COMPANY_REP:
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
+
+            case SpecialAttributes.LNK_WHICH_DAYS:
+                List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
+                        .map(day -> "SEL_WHICH_DAYS_" + day.toUpperCase())
+                        .collect(Collectors.toList());
+                yield "[" + String.join(", ", whichDays) + "]";
 
             default:
                 yield null;
@@ -210,5 +252,18 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 "Zero", "One", "Two", "Three", "Four", "Five",
                 "Six", "Seven", "Eight", "Nine", "Ten"));
         return numbers.get(num);
+    }
+
+    private String generateDescriptionParagraph() {
+        return generateDescriptionParagraph(0);
+    }
+
+    private String generateDescriptionParagraph(int length) {
+        String objHtml = "";
+        for (int i = 0; i < length; i++)
+            objHtml += DataFakerCustomUtils.generateHTMLTag(
+                    DataFakerUtils.randStringFromRegex(Regex.DESCRIPTION_REGEX),
+                    "p");
+        return objHtml;
     }
 }

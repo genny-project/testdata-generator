@@ -1,7 +1,9 @@
 package life.genny.datagenerator.generators;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -22,7 +24,7 @@ public abstract class CustomFakeDataGenerator {
 
     protected final String IGNORE = "NEED TO BE CHANGED";
 
-    protected String tempEntitycode = "123";
+    protected Map<String, String> tempEntityMap = new HashMap<>();
     private List<PlaceDetail> places = new ArrayList<>();
 
     protected List<PlaceDetail> getPlaces() {

@@ -65,7 +65,7 @@ public class DataFakerService {
     public BaseEntity getBaseEntityDef(String definition) {
         if (definition == null)
             throw new NullParameterException("Definition is null!!");
-        log.debug("This is just testing 1");
+
         BaseEntity entityDefinition = null;
         try {
             entityDefinition = beUtils.getBaseEntity(productCode, definition);
@@ -76,7 +76,6 @@ public class DataFakerService {
 
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
-        log.debug("This is just testing 2");
 
         List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
         for (EntityAttribute ea : attEAs) {
@@ -89,7 +88,6 @@ public class DataFakerService {
                 e.printStackTrace();
                 continue;
             }
-            log.debug("This is just testing 3");
 
             DataType dtt = attribute.getDataType();
             List<Validation> validations = dtt.getValidationList();

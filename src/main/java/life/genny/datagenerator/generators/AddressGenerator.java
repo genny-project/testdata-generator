@@ -1,6 +1,11 @@
 package life.genny.datagenerator.generators;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -11,6 +16,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import life.genny.datagenerator.SpecialAttributes;
+import life.genny.datagenerator.model.AddressComponent;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
@@ -27,40 +33,60 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
     @Override
     protected BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        PlaceDetail place = DataFakerUtils.randItemFromList(getPlaces());
+
+        List<String> containCodes = new ArrayList<>(
+                Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
+        List<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes().stream()
+                .filter(ea -> containCodes.stream()
+                        .filter(containCode -> ea.getAttributeCode().contains(containCode))
+                        .findFirst().orElse(null) != null)
+                .collect(Collectors.toList());
+
+        for (EntityAttribute ea : filteredEntityAttribute) {
             String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
                     ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
                     : null;
             String className = ea.getAttribute().getDataType().getClassName();
 
-            if (ea.getAttributeCode().contains("ADDRESS") ||
-                    ea.getAttributeCode().contains("TIME_ZONE")) {
-                Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal);
-                if (newObj != null) {
-                    dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                    ea.setValue(newObj);
-                }
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, toJson(place));
+            if (newObj != null) {
+                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
+                ea.setValue(newObj);
             }
         }
+
+        for (EntityAttribute ea : entity.getBaseEntityAttributes())
+            for (EntityAttribute filteredEA : filteredEntityAttribute)
+                if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
+                    ea.setValue(filteredEA.getValue());
+
         return entity;
     }
 
     @Override
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
-        PlaceDetail place = DataFakerUtils.randItemFromList(getPlaces());
-        Map<String, String> addressComponents = place.getAddressComponentMap();
+        PlaceDetail place = fromJson(args[0]);
+        Map<String, String> addressComponents = new HashMap<>();
+        for (AddressComponent component : place.getAddressComponents()) {
+            for (String type : component.getTypes()) {
+                if ("street_number".equals(type)) {
+                    addressComponents.put("street_map", component.getLongName());
+                } else {
+                    addressComponents.put(type, component.getLongName());
+                }
+            }
+        }
         String country = addressComponents.get(PlaceDetail.COUNTRY);
 
         return switch (attributeCode) {
-            case SpecialAttributes.PRI_SELECT_COUNTRY:
-                yield country;
-
             case SpecialAttributes.PRI_ADDRESS_ADDRESS1:
                 yield place.getVicinity();
 
             case SpecialAttributes.PRI_ADDRESS_CITY:
                 yield addressComponents.get(PlaceDetail.CITY);
 
+            case SpecialAttributes.PRI_SELECT_COUNTRY:
             case SpecialAttributes.PRI_ADDRESS_COUNTRY:
                 yield country;
 
@@ -68,7 +94,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 yield place.getFormattedAddress();
 
             case SpecialAttributes.PRI_ADDRESS_JSON:
-                yield placeJson(place);
+                yield args[0];
 
             case SpecialAttributes.PRI_ADDRESS_LATITUDE:
                 yield place.getGeometry().getLocation().getLat();
@@ -85,8 +111,9 @@ public class AddressGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_ADDRESS_SUBURB:
                 yield addressComponents.get(PlaceDetail.SUBURB);
 
+            case SpecialAttributes.PRI_TIMEZONE_ID:
             case SpecialAttributes.PRI_TIME_ZONE:
-                yield timeZoneFormat(place.getUtcOffset());
+                yield country + "/" + addressComponents.get(PlaceDetail.CITY);
 
             case SpecialAttributes.LNK_SELECT_COUNTRY:
                 yield "[\"SEL_" +
@@ -100,7 +127,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
         };
     }
 
-    private String placeJson(PlaceDetail place) {
+    private String toJson(PlaceDetail place) {
         try {
             String json = mapper.writeValueAsString(place);
             log.debug("Address successfully converted to json: " + json);
@@ -112,10 +139,15 @@ public class AddressGenerator extends CustomFakeDataGenerator {
         }
     }
 
-    private String timeZoneFormat(int utcOffset) {
-        return utcOffset >= 0
-                ? "UTC+" + (utcOffset / 60)
-                : "UTC" + (utcOffset / 60);
+    private PlaceDetail fromJson(String placeDetailString) {
+        try {
+            PlaceDetail json = mapper.readValue(placeDetailString, PlaceDetail.class);
+            log.debug("Address successfully converted from json: " + json);
+            return json;
+        } catch (JsonProcessingException e) {
+            log.error("Error converting address from json, " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
-
 }

@@ -37,11 +37,15 @@ public class Regex {
     public static final String STATUS_REGEX = "(ACTIVE|null)";
     public static final String SUBMIT_STATUS = "(QUE_SUBMIT|null)";
 
-    
     /**
      * Custom longitude Latitude regex
     */
     public static final String LATITUDE_PATTERN = "^(\\+|-)?(?:90(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-8][0-9])(?:(?:\\.[0-9]{1,6})?))$";
     public static final String LONGITUDE_PATTERN = "^(\\+|-)?(?:180(?:(?:\\.0{1,6})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\\.[0-9]{1,6})?))$";
 
+    public static final String DESCRIPTION_REGEX = "^[a-zA-Z0-9\\- (_),.%&’:';<>\\/\\\"\\n]{50,1000}$";
+    public static final String LINKEDIN_URL_REGEX = "(http://|https://)?[a-z]{2,3}\\.linkedin\\.com\\/.*$";
+    public static final String HOURS_REGEX = "^((2[0-3]|[1][0-9]|[1-9])([.][0-9]{1})*)$";
+    public static final String NUMBER_REGEX = "^-?\\d{1,10}$";
+    public static final String DECIMAL_REGEX = "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$";
 }

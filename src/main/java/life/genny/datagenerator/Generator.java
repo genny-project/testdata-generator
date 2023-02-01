@@ -1,9 +1,5 @@
 package life.genny.datagenerator;
 
-import javax.inject.Inject;
-
-import org.jboss.logging.Logger;
-
 import life.genny.datagenerator.services.FakeDataGenerator;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.serviceq.Service;
@@ -12,13 +8,14 @@ public class Generator {
     public interface GeneratorListener {
         void onStart();
 
+        void onProgress(int current, int total);
+
         void onFinish();
+
+        void onError(String def, Throwable e);
     }
 
     public static class GeneratorTask implements Runnable {
-
-        @Inject
-        Logger log;
 
         private Service service;
         private FakeDataGenerator generator;
@@ -40,13 +37,13 @@ public class Generator {
             try {
                 service.initToken();
             } catch (Exception e) {
-                log.error("Something went wrong on initToken: " + e.getMessage());
-                e.printStackTrace();
+                listener.onError(entityDef, e);
             }
             listener.onStart();
             for (int i = 0; i < totalDataGenerated; i++) {
                 BaseEntity generatedEntity = generator.generateEntity(entityDef);
                 // generator.entityAttributesAreValid(generatedEntity, true);
+                listener.onProgress(i, totalDataGenerated);
             }
             listener.onFinish();
         }

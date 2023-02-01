@@ -54,42 +54,42 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .assertAll();
     }
+    
+    @Test
+    void generateEmail() {
+        String firstName = DataFakerCustomUtils.generateName();
+        String lastName = DataFakerCustomUtils.generateName();
+        String auDomain = "gmail.au";
 
-    // @Test
-    // void generateEmail() {
-    //     String firstName = DataFakerCustomUtils.generateName();
-    //     String lastName = DataFakerCustomUtils.generateName();
-    //     String auDomain = "gmail.au";
+        new JUnitTester<String, String>()
+                .setTest((input) -> {
+                    return Expected(input.input);
+                })
+                .setVerification((result, expected) -> {
+                    Pattern pattern = Pattern.compile(expected);
+                    Matcher matcher = pattern.matcher(result);
+                    assertTrue(matcher.matches());
+                })
 
-    //     new JUnitTester<String, String>()
-    //             .setTest((input) -> {
-    //                 return Expected(input.input);
-    //             })
-    //             .setVerification((result, expected) -> {
-    //                 Pattern pattern = Pattern.compile(expected);
-    //                 Matcher matcher = pattern.matcher(result);
-    //                 assertTrue(matcher.matches());
-    //             })
+                .createTest("Generate Random Email Check")
+                .setInput(DataFakerCustomUtils.generateEmail())
+                .setExpected(Regex.CUSTOM_EMAIL_REGEX)
+                .build()
 
-    //             .createTest("Generate Random Email Check")
-    //             .setInput(DataFakerCustomUtils.generateEmail())
-    //             .setExpected(Regex.CUSTOM_EMAIL_REGEX)
-    //             .build()
+                .createTest("Generate Email Check 1")
+                .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName))
+                .setExpected("(" + firstName + ")\\.(" + lastName +
+                        ")\\+[A-Za-z0-9.\\-_]*\\@[A-Za-z.]+(\\.[A-Za-z]+)+")
+                .build()
 
-    //             .createTest("Generate Email Check 1")
-    //             .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName))
-    //             .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS
-    //                     + "*\\@[A-Za-z]+(.[A-Za-z]+)+")
-    //             .build()
+                .createTest("Generate Email Check 2")
+                .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName, auDomain))
+                .setExpected("(" + firstName + ")\\.(" + lastName + ")\\+" +
+                        "[A-Za-z0-9.\\-_]*\\@(" + auDomain + ")+")
+                .build()
 
-    //             .createTest("Generate Email Check 2")
-    //             .setInput(DataFakerCustomUtils.generateEmail(firstName, lastName, auDomain))
-    //             .setExpected("^(" + firstName + ")\\.(" + lastName + ")\\+" + Regex.WORD_CHARS + "*\\@(" + auDomain
-    //                     + ")+")
-    //             .build()
-
-    //             .assertAll();
-    // }
+                .assertAll();
+    }
 
     @Test
     void generateInitials() {

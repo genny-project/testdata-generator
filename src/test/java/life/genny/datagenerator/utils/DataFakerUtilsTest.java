@@ -16,13 +16,14 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import life.genny.datagenerator.Constants;
 import life.genny.datagenerator.Regex;
 import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.Expected;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
 public class DataFakerUtilsTest extends BaseTestCase {
+
+    private final String IGNORE = "YOU CAN IGNORE THIS!!";
 
     @Test
     void randStringFromRegex() {
@@ -39,17 +40,17 @@ public class DataFakerUtilsTest extends BaseTestCase {
                 })
 
                 .createTest("Email Regex Check")
-                .setInput(Constants.EMAIL_REGEX)
+                .setInput(Regex.CUSTOM_EMAIL_REGEX)
                 .setExpected(String.class)
                 .build()
 
                 .createTest("LinkedIn URL Regex Check")
-                .setInput(Constants.LINKEDIN_URL_REGEX)
+                .setInput(Regex.LINKEDIN_URL_REGEX)
                 .setExpected(String.class)
                 .build()
 
                 .createTest("Hours Regex Check")
-                .setInput(Constants.HOURS_REGEX)
+                .setInput(Regex.HOURS_REGEX)
                 .setExpected(String.class)
                 .build()
 
@@ -63,24 +64,24 @@ public class DataFakerUtilsTest extends BaseTestCase {
                     return new Expected<>(input.input);
                 })
                 .setVerification((result, expected) -> {
-                    Pattern pattern = Pattern.compile(Constants.NUMBER_REGEX);
+                    Pattern pattern = Pattern.compile(Regex.NUMBER_REGEX);
                     Matcher matcher = pattern.matcher(result.toString());
                     assertEquals(result.getClass(), expected);
                     assertTrue(matcher.matches());
                 })
 
                 .createTest("Generate Random Integer From Regex Check 1")
-                .setInput(DataFakerUtils.randIntFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randIntFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Integer.class)
                 .build()
 
                 .createTest("Generate Random Integer From Regex Check 2")
-                .setInput(DataFakerUtils.randIntFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randIntFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Integer.class)
                 .build()
 
                 .createTest("Generate Random Integer From Regex Check 3")
-                .setInput(DataFakerUtils.randIntFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randIntFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Integer.class)
                 .build()
 
@@ -94,24 +95,24 @@ public class DataFakerUtilsTest extends BaseTestCase {
                     return new Expected<>(input.input);
                 })
                 .setVerification((result, expected) -> {
-                    Pattern pattern = Pattern.compile(Constants.DECIMAL_REGEX);
+                    Pattern pattern = Pattern.compile(Regex.DECIMAL_REGEX);
                     Matcher matcher = pattern.matcher(result.toString());
                     assertTrue(matcher.matches());
                     assertEquals(result.getClass(), expected);
                 })
 
                 .createTest("Generate Random Double From Regex Check 1")
-                .setInput(DataFakerUtils.randDoubleFromRegex(Constants.DECIMAL_REGEX))
+                .setInput(DataFakerUtils.randDoubleFromRegex(Regex.DECIMAL_REGEX))
                 .setExpected(Double.class)
                 .build()
 
                 .createTest("Generate Random Double From Regex Check 2")
-                .setInput(DataFakerUtils.randDoubleFromRegex(Constants.DECIMAL_REGEX))
+                .setInput(DataFakerUtils.randDoubleFromRegex(Regex.DECIMAL_REGEX))
                 .setExpected(Double.class)
                 .build()
 
                 .createTest("Generate Random Double From Regex Check 3")
-                .setInput(DataFakerUtils.randDoubleFromRegex(Constants.DECIMAL_REGEX))
+                .setInput(DataFakerUtils.randDoubleFromRegex(Regex.DECIMAL_REGEX))
                 .setExpected(Double.class)
                 .build()
 
@@ -125,24 +126,24 @@ public class DataFakerUtilsTest extends BaseTestCase {
                     return new Expected<>(input.input);
                 })
                 .setVerification((result, expected) -> {
-                    Pattern pattern = Pattern.compile(Constants.NUMBER_REGEX);
+                    Pattern pattern = Pattern.compile(Regex.NUMBER_REGEX);
                     Matcher matcher = pattern.matcher(result.toString());
                     assertEquals(result.getClass(), expected);
                     assertTrue(matcher.matches());
                 })
 
                 .createTest("Generate Random Long From Regex Check 1")
-                .setInput(DataFakerUtils.randLongFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randLongFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Long.class)
                 .build()
 
                 .createTest("Generate Random Long From Regex Check 2")
-                .setInput(DataFakerUtils.randLongFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randLongFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Long.class)
                 .build()
 
                 .createTest("Generate Random Long From Regex Check 3")
-                .setInput(DataFakerUtils.randLongFromRegex(Constants.NUMBER_REGEX))
+                .setInput(DataFakerUtils.randLongFromRegex(Regex.NUMBER_REGEX))
                 .setExpected(Long.class)
                 .build()
 
@@ -166,12 +167,12 @@ public class DataFakerUtilsTest extends BaseTestCase {
 
                 .createTest("Create Random String Check 1")
                 .setInput(DataFakerUtils.randString())
-                .setExpected(Constants.IGNORE)
+                .setExpected(IGNORE)
                 .build()
 
                 .createTest("Create Random String Check 2")
                 .setInput(DataFakerUtils.randString())
-                .setExpected(Constants.IGNORE)
+                .setExpected(IGNORE)
                 .build()
 
                 .setVerification((result, expected) -> {
@@ -187,12 +188,12 @@ public class DataFakerUtilsTest extends BaseTestCase {
 
                 .createTest("Create Random String Check 3")
                 .setInput(DataFakerUtils.randString(maxLength))
-                .setExpected(Constants.IGNORE)
+                .setExpected(IGNORE)
                 .build()
 
                 .createTest("Create Random String Check 4")
                 .setInput(DataFakerUtils.randString(10, maxLength))
-                .setExpected(Constants.IGNORE)
+                .setExpected(IGNORE)
                 .build()
 
                 .assertAll();

@@ -93,27 +93,38 @@ public class AppStartup {
 
     private void generateTasks(String defCode, int totalData) {
         int generatedData = 0;
-        int status = 1;
+        int queue = 1;
         // final String defCode = entityDef.getCode();
         while (generatedData < totalData) {
             int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int generatedFinal = generatedData + generate;
-            final int statusFinal = status;
+            final int queueFinal = queue;
             executor.submit(new GeneratorTask(service, generator, defCode, generate, new GeneratorListener() {
-                @Override
-                public void onStart() {
-                    log.info("Start generating %s %s"
-                            .formatted(defCode, statusFinal));
-                }
+                        @Override
+                        public void onStart() {
+                            log.info("Start generating %s %s"
+                                    .formatted(defCode, queueFinal));
+                        }
 
-                @Override
-                public void onFinish() {
-                    log.info("Generated %s (%s/%s)"
+                        @Override
+                        public void onProgress(int current, int total) {
+                            log.info("Generating data (" + current + "/" + total + ")");
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            log.info("Generated %s (%s/%s)"
                             .formatted(defCode, generatedFinal, totalData));
-                }
-            }));
+                        }
+
+                        @Override
+                        public void onError(String def, Throwable e) {
+                            log.error("Something went bad generating " + def + ": " + e.getMessage());
+                            e.printStackTrace();
+                        }
+                    }));
             generatedData = generatedFinal;
-            status++;
+            queue++;
         }
     }
 }

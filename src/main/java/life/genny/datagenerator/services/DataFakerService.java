@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -60,11 +61,19 @@ public class DataFakerService {
     @ConfigProperty(name = "data.product-code")
     String productCode;
 
+    @ActivateRequestContext
     public BaseEntity getBaseEntityDef(String definition) {
         if (definition == null)
             throw new NullParameterException("Definition is null!!");
 
-        BaseEntity entityDefinition = beUtils.getBaseEntity(productCode, definition);
+        BaseEntity entityDefinition = null;
+        try {
+            entityDefinition = beUtils.getBaseEntity(productCode, definition);
+        } catch (Exception e) {
+            log.error("Something went wrong getting the BaseEntity: " + e.getMessage());
+            e.printStackTrace();
+        }
+
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
@@ -79,7 +88,7 @@ public class DataFakerService {
         //     return entityDefinition;
         // }
 
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
+        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
         for (EntityAttribute ea : attEAs) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;
@@ -143,9 +152,22 @@ public class DataFakerService {
     }
 
     public BaseEntity save(BaseEntity entity) {
-        log.debug("Updating entity.");
-        entity = beUtils.updateBaseEntity(productCode, entity);
-        log.debug("Entity " + entity.getCode() + " updated");
+        if (entity.getCode().startsWith("DEF_")) {
+            try {
+                log.debug("Creating entity " + entity.getCode());
+                entity = beUtils.create(Definition.from(entity),
+                        entity.getName());
+                log.debug("Created entity: " + entity.getCode() + " in product: " +
+                        entity.getRealm());
+            } catch (Exception e) {
+                log.info("Something went bad: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            log.debug("Updating entity: " + entity.getCode());
+            entity = beUtils.updateBaseEntity(productCode, entity);
+            log.debug("Updated entity: " + entity.getCode());
+        }
         return entity;
     }
 }

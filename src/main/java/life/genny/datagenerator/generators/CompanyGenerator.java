@@ -41,7 +41,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
         // Generate DEF_HOST_CPY_REP
         if (defCode.equals(Entities.DEF_HOST_COMPANY)) {
-            tempEntitycode = entity.getCode();
             repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
                 BaseEntity hostCompanyRep = generator
@@ -129,8 +128,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                 yield DataFakerUtils.randStringFromRegex(Regex.YOUTUBE_URL_REGEX);
 
             case SpecialAttributes.LNK_DJP_JOB_AGREE:
-            case SpecialAttributes.PRI_ASSOC_HC:
-            case SpecialAttributes.PRI_ASSOC_INDUSTRY:
                 yield DataFakerCustomUtils.generateSelection();
 
             case SpecialAttributes.PRI_HC_SERVICES_AGREEMENT_HTML:
@@ -141,9 +138,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_HOST_COMPANY_REP:
                 yield companyReps;
-
-            case SpecialAttributes.LNK_ASSOC_INDUSTRY:
-                yield DataFakerCustomUtils.generateName();
 
             case SpecialAttributes.LNK_COMPANY_INC:
                 yield DataFakerUtils.randDateTime().toString();
@@ -185,7 +179,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                 yield "[\"SEL_YES\"]";
 
             case SpecialAttributes.LNK_HOST_COMPANY:
-                yield tempEntitycode;
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
 
             default:
                 yield null;

@@ -6,7 +6,6 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation
      */
     public static final String PRI_SUBMIT = "PRI_SUBMIT";
-    public static final String PRI_ASSOC_HC = "PRI_ASSOC_HC";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_PERSON
@@ -17,6 +16,11 @@ public class SpecialAttributes {
     public static final String PRI_GENDER = "PRI_GENDER";
     public static final String LNK_GENDER_SELECT = "LNK_GENDER_SELECT";
     public static final String PRI_WHATSAPP = "PRI_WHATSAPP";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_USER
+     */
+    public static final String PRI_PREFERRED_NAME = "PRI_PREFERRED_NAME";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_CONTACT
@@ -64,18 +68,16 @@ public class SpecialAttributes {
     public static final String PRI_DJP_AGREE = "PRI_DJP_AGREE";
     public static final String PRI_PROFILE = "PRI_PROFILE";
     public static final String PRI_VIDEO_INTRO = "PRI_VIDEO_INTRO";
-    public static final String PRI_ASSOC_INDUSTRY = "PRI_ASSOC_INDUSTRY";
     public static final String PRI_HC_SERVICES_AGREEMENT_HTML = "PRI_HC_SERVICES_AGREEMENT_HTML";
     public static final String PRI_DJP_DOCUMENT_ACCEPTED = "PRI_DJP_DOCUMENT_ACCEPTED";
     public static final String PRI_NAME = "PRI_NAME";
     public static final String PRI_LEGAL_NAME = "PRI_LEGAL_NAME";
+    public static final String PRI_COMPANY_WEBSITE_URL = "PRI_COMPANY_WEBSITE_URL";
     public static final String LNK_COMPANY_INC = "LNK_COMPANY_INC";
     public static final String LNK_VIC_GOV_DIGITAL_JOBS = "LNK_VIC_GOV_DIGITAL_JOBS";
     public static final String LNK_HOST_COMPANY_REP = "LNK_HOST_COMPANY_REP";
-    public static final String LNK_ASSOC_INDUSTRY = "LNK_ASSOC_INDUSTRY";
     public static final String LNK_DJP_JOB_AGREE = "LNK_DJP_JOB_AGREE";
     public static final String LNK_SPECIFY_ABN = "LNK_SPECIFY_ABN";
-    public static final String PRI_COMPANY_WEBSITE_URL = "PRI_COMPANY_WEBSITE_URL";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY_REP
@@ -92,24 +94,18 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation for DEF_INTERN
      */
     public static final String PRI_CV = "PRI_CV";
-    public static final String PRI_PREV_EMPLOYER = "PRI_PREV_EMPLOYER";
     public static final String PRI_AGENT_NAME = "PRI_AGENT_NAME";
     public static final String PRI_ADDED_BY = "PRI_ADDED_BY";
     public static final String PRI_EMAIL_ADDITIONAL = "PRI_EMAIL_ADDITIONAL";
-    // public static final String PRI_DAYS_PER_WEEK = "PRI_DAYS_PER_WEEK";
-    // public static final String PRI_WHICH_DAYS_STRIPPED =
-    // "PRI_WHICH_DAYS_STRIPPED";
-    // public static final String PRI_ASSOC_COMP_INTERNSHIP =
-    // "PRI_ASSOC_COMP_INTERNSHIP";
-    // public static final String PRI_SEARCH_HISTORY = "PRI_SEARCH_HISTORY";
-    // public static final String PRI_STATUS_COLOR = "PRI_STATUS_COLOR";
-    // public static final String PRI_ANZCO = "PRI_ANZCO";
-    // public static final String PRI_ASSOC_OCCUPATION = "PRI_ASSOC_OCCUPATION";
-    // public static final String PRI_ASSOC_DURATION = "PRI_ASSOC_DURATION";
-    // public static final String PRI_ASSOC_CURRENT_SOFTWARE =
-    // "PRI_ASSOC_CURRENT_SOFTWARE";
-    // public static final String PRI_STAGE = "PRI_STAGE";
+    public static final String PRI_PREV_PERIOD = "PRI_PREV_PERIOD";
     public static final String PRI_STUDENT_ID = "PRI_STUDENT_ID";
+    public static final String PRI_CAREER_OBJ = "PRI_CAREER_OBJ";
+    public static final String PRI_DAYS_PER_WEEK = "PRI_DAYS_PER_WEEK";
+    public static final String PRI_WHICH_DAYS_STRIPPED = "PRI_WHICH_DAYS_STRIPPED";
+    public static final String LNK_PREV_PERIOD = "LNK_PREV_PERIOD";
+    public static final String LNK_DAYS_PER_WEEK = "LNK_DAYS_PER_WEEK";
+    public static final String LNK_WHICH_DAYS = "LNK_WHICH_DAYS";
+    public static final String LNK_INTERNSHIP_DURATION = "LNK_INTERNSHIP_DURATION";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_INTERNSHIP
@@ -117,7 +113,17 @@ public class SpecialAttributes {
     public static final String PRI_SUPER_MOBILE = "PRI_SUPER_MOBILE";
     public static final String PRI_SUPER_NAME = "PRI_SUPER_NAME";
     public static final String PRI_SUPER_EMAIL = "PRI_SUPER_EMAIL";
-
+    public static final String PRI_NO_OF_INTERNS = "PRI_NO_OF_INTERNS";
+    public static final String PRI_ASSOC_NUM_INTERNS = "PRI_ASSOC_NUM_INTERNS";
+    public static final String PRI_SPECIFIC_LEARNING_OUTCOMES = "PRI_SPECIFIC_LEARNING_OUTCOMES";
+    public static final String PRI_INTERNSHIP_DETAILS = "PRI_INTERNSHIP_DETAILS";
+    public static final String PRI_ROLES_AND_RESPONSIBILITIES = "PRI_ROLES_AND_RESPONSIBILITIES";
+    public static final String PRI_BASE_LEARNING_OUTCOMES = "PRI_BASE_LEARNING_OUTCOMES";
+    public static final String LNK_WORKSITE_SELECT = "LNK_WORKSITE_SELECT";
+    public static final String LNK_INTERVIEW_TYPE = "LNK_INTERVIEW_TYPE";
+    public static final String LNK_INTERNSHIP_TYPE = "LNK_INTERNSHIP_TYPE";
+    public static final String LNK_BUSINESS_HOURS = "LNK_BUSINESS_HOURS";
+    public static final String LNK_NO_OF_INTERNS = "LNK_NO_OF_INTERNS";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_EDU_PROVIDER
@@ -156,8 +162,4 @@ public class SpecialAttributes {
     public static final String PRI_KEYCLOAK_UUID  = "PRI_KEYCLOAK_UUID";
     public static final String PRI_USERNAME  = "PRI_USERNAME";
     public static final String PRI_UUID  = "PRI_UUID";
-    
-
-
-
 }

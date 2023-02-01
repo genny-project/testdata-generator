@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -60,13 +61,22 @@ public class DataFakerService {
     @ConfigProperty(name = "data.product-code")
     String productCode;
 
+    @ActivateRequestContext
     public BaseEntity getBaseEntityDef(String definition) {
         if (definition == null)
             throw new NullParameterException("Definition is null!!");
+        log.debug("This is just testing 1");
+        BaseEntity entityDefinition = null;
+        try {
+            entityDefinition = beUtils.getBaseEntity(productCode, definition);
+        } catch (Exception e) {
+            log.error("Something went wrong getting the BaseEntity: " + e.getMessage());
+            e.printStackTrace();
+        }
 
-        BaseEntity entityDefinition = beUtils.getBaseEntity(productCode, definition);
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
+        log.debug("This is just testing 2");
 
         List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
         for (EntityAttribute ea : attEAs) {
@@ -79,6 +89,7 @@ public class DataFakerService {
                 e.printStackTrace();
                 continue;
             }
+            log.debug("This is just testing 3");
 
             DataType dtt = attribute.getDataType();
             List<Validation> validations = dtt.getValidationList();

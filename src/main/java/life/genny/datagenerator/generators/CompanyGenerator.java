@@ -78,6 +78,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
+        log.debug("###DEBUG!!!");
         String entityCode = args[0];
         String companyReps = args[1];
         return switch (entityCode) {

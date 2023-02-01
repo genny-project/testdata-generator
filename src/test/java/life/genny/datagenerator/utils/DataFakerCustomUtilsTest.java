@@ -54,7 +54,7 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .assertAll();
     }
-
+    
     @Test
     void generateEmail() {
         String firstName = DataFakerCustomUtils.generateName();

@@ -124,4 +124,42 @@ public class SpecialAttributes {
     public static final String LNK_INTERNSHIP_TYPE = "LNK_INTERNSHIP_TYPE";
     public static final String LNK_BUSINESS_HOURS = "LNK_BUSINESS_HOURS";
     public static final String LNK_NO_OF_INTERNS = "LNK_NO_OF_INTERNS";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_EDU_PROVIDER
+     */
+    public static final String PRI_ABN = "PRI_ABN";
+    public static final String PRI_ANZCO = "PRI_ANZCO";
+    public static final String PRI_CODE = "PRI_CODE";
+    public static final String PRI_COMPANY_DESCRIPTION  = "PRI_COMPANY_DESCRIPTION";
+    public static final String PRI_DESCRIPTION  = "PRI_DESCRIPTION";
+    public static final String PRI_IMAGE = "PRI_IMAGE";
+    public static final String PRI_IMAGE_URL    = "PRI_IMAGE_URL";
+    public static final String PRI_IMAGES   = "PRI_IMAGES";
+    public static final String PRI_NUMBER_STAFF = "PRI_NUMBER_STAFF";
+    public static final String PRI_PQ_STAGE = "PRI_PQ_STAGE";
+    public static final String PRI_PROCESS_ID   = "PRI_PROCESS_ID";
+    public static final String PRI_PROVIDER_ID  = "PRI_PROVIDER_ID";
+    public static final String LNK_ROLE = "LNK_ROLE";
+    public static final String PRI_DEFAULT_REDIRECT = "PRI_DEFAULT_REDIRECT";
+    public static final String PRI_IS_EDU_PROVIDER  = "PRI_IS_EDU_PROVIDER";
+    public static final String PRI_STATUS   = "PRI_STATUS";
+    public static final String PRI_PREFIX  = "PRI_PREFIX";
+    public static final String LNK_COMPANY_INDUSTRY = "LNK_COMPANY_INDUSTRY";
+    public static final String LNK_NUMBER_STAFF = "LNK_NUMBER_STAFF";
+    public static final String PRI_TIMEZONE  = "PRI_TIMEZONE";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_EDU_PRO_REP
+     */
+    public static final String LNK_AUTHOR  = "LNK_AUTHOR";
+    public static final String LNK_EDU_PROVIDER  = "LNK_EDU_PROVIDER";
+    public static final String LNK_SEND_EMAIL  = "LNK_SEND_EMAIL";
+    public static final String PRI_ASSOC_EP  = "PRI_ASSOC_EP";
+    public static final String PRI_DEPARTMENT  = "PRI_DEPARTMENT";
+    public static final String PRI_DOB  = "PRI_DOB";
+    public static final String PRI_IS_EDU_PRO_REP  = "PRI_IS_EDU_PRO_REP";
+    public static final String PRI_KEYCLOAK_UUID  = "PRI_KEYCLOAK_UUID";
+    public static final String PRI_USERNAME  = "PRI_USERNAME";
+    public static final String PRI_UUID  = "PRI_UUID";
 }

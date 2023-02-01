@@ -51,7 +51,7 @@ public class AppStartup {
     QwandaUtils qwandaUtils;
 
     private ExecutorService executor;
-    private List<Entry<String, Integer>> dataGeneration = new ArrayList<>(20);
+    private List<Entry<String, Integer>> dataGeneration = new ArrayList<>(1);
 
     @PostConstruct
     void setUp() {

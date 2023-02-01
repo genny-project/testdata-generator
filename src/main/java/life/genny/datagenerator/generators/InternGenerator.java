@@ -48,6 +48,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
+        log.debug("InternGEnerator Debug!!");
         String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
         Map<String, LocalDateTime> prevPeriod = generatePeriod();
         int daysPerWeek = DataFakerUtils.randInt(1, 5);

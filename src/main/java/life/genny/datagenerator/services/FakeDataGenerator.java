@@ -17,6 +17,8 @@ import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.AddressGenerator;
 import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.ContactGenerator;
+import life.genny.datagenerator.generators.EduGenerator;
+
 import life.genny.datagenerator.generators.InternGenerator;
 import life.genny.datagenerator.generators.PersonGenerator;
 import life.genny.datagenerator.generators.UserGenerator;
@@ -57,6 +59,9 @@ public class FakeDataGenerator {
     CompanyGenerator companyGenerator;
 
     @Inject
+    EduGenerator eduGenerator;
+
+    @Inject
     InternGenerator internGenerator;
 
     private BaseEntity generateEntityDef(String definition) {
@@ -66,6 +71,7 @@ public class FakeDataGenerator {
             definition = DEF + definition;
 
         BaseEntity entity = fakerService.getBaseEntityDef(definition);
+
         return entity;
     }
 
@@ -88,7 +94,7 @@ public class FakeDataGenerator {
         entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(defCode, entity);
-        return entity;
+        return entity; 
     }
 
     private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
@@ -102,6 +108,10 @@ public class FakeDataGenerator {
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
                 yield companyGenerator.generate(defCode, entity);
+
+            case Entities.DEF_EDU_PROVIDER:
+            case Entities.DEF_EDU_PRO_REP:
+                yield eduGenerator.generate(defCode, entity);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:

@@ -85,7 +85,7 @@ public class FakeDataGenerator {
         // entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(defCode, entity);
-        return entity;
+        return entity; 
     }
 
     private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {

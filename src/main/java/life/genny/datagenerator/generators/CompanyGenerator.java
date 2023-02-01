@@ -39,12 +39,8 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
         List<String> repCodes = null;
         int max = DataFakerUtils.randInt(1, 4);
 
-        if (defCode.equals(Entities.DEF_HOST_COMPANY_REP))
-            tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY_REP, defCode);
-
         // Generate DEF_HOST_CPY_REP
         if (defCode.equals(Entities.DEF_HOST_COMPANY)) {
-            tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY, entity.getCode());
             repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
                 BaseEntity hostCompanyRep = generator
@@ -82,7 +78,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
-        log.debug("Generating " + attributeCode);
         String entityCode = args[0];
         String companyReps = args[1];
         return switch (entityCode) {

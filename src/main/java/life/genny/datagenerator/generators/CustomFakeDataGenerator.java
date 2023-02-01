@@ -23,7 +23,7 @@ public abstract class CustomFakeDataGenerator {
     FakeDataGenerator generator;
 
     protected final String IGNORE = "NEED TO BE CHANGED";
-
+    
     protected Map<String, String> tempEntityMap = new HashMap<>();
     private List<PlaceDetail> places = new ArrayList<>();
 

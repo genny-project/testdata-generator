@@ -67,8 +67,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
                     : null;
             String className = ea.getAttribute().getDataType().getClassName();
 
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, entity.getCode(),
-                    superName, prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, defCode, superName,
+                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
                     String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
 
             if (newObj != null) {
@@ -89,16 +89,17 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     @Override
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
-        String entityCode = args[0];
+        String defCode = args[0];
         String superName = args[1];
         String startPrevPeriod = args[2];
         String endPrevPeriod = args[3];
         String daysPerWeek = args[4];
         String daysStripped = args[5];
-        return switch (entityCode) {
+        return switch (defCode) {
             case Entities.DEF_INTERN -> generateIntern(attributeCode, startPrevPeriod,
                     endPrevPeriod, daysPerWeek, daysStripped);
-            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName, daysPerWeek, daysStripped);
+            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName,
+                    daysPerWeek, daysStripped);
             default -> null;
         };
     }
@@ -174,8 +175,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     Object generateInternship(String attributeCode, String... args) {
         String name = args[0];
-        int daysPerWeek = Integer.parseInt(args[2]);
-        String daysStripped = StringUtils.substringBetween(args[3], "[", "]");
+        int daysPerWeek = Integer.parseInt(args[1]);
+        String daysStripped = StringUtils.substringBetween(args[2], "[", "]");
 
         return switch (attributeCode) {
             case SpecialAttributes.PRI_SUPER_MOBILE:
@@ -195,7 +196,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_INTERNSHIP_DETAILS:
             case SpecialAttributes.PRI_SPECIFIC_LEARNING_OUTCOMES:
                 yield generateDescriptionParagraph();
-                
+
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:
             case SpecialAttributes.PRI_ROLES_AND_RESPONSIBILITIES:
             case SpecialAttributes.PRI_CAREER_OBJ:
@@ -211,19 +212,20 @@ public class InternGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.LNK_INTERNSHIP_TYPE:
             case SpecialAttributes.LNK_WORKSITE_SELECT:
             case SpecialAttributes.LNK_INTERVIEW_TYPE:
-                yield DataFakerCustomUtils.generateSelection();
+                yield "[\"" + DataFakerCustomUtils.generateSelection() + "\"]";
 
             case SpecialAttributes.LNK_NO_OF_INTERNS:
-                yield "[\"SEL_NO_OF_INTERNS_" + convertNumberToWord(1) + "\"]";
+                yield "[\"SEL_NO_OF_INTERNS_" +
+                        convertNumberToWord(1).toUpperCase() + "\"]";
 
             case SpecialAttributes.LNK_DAYS_PER_WEEK:
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
 
             case SpecialAttributes.LNK_HOST_COMPANY:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
+                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY) + "\"]";
 
             case SpecialAttributes.LNK_HOST_COMPANY_REP:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
+                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP) + "\"]";
 
             case SpecialAttributes.LNK_WHICH_DAYS:
                 List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
@@ -255,7 +257,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
     }
 
     private String generateDescriptionParagraph() {
-        return generateDescriptionParagraph(0);
+        return generateDescriptionParagraph(1);
     }
 
     private String generateDescriptionParagraph(int length) {

@@ -20,6 +20,8 @@ public class EduGenerator extends CustomFakeDataGenerator {
     @Override
     BaseEntity generateImpl(String defCode,  BaseEntity entity) {
         List<String> repCodes = null;
+        log.debug("defCode equals DEF_EDU#####");
+
         int max = DataFakerUtils.randInt(1, 4);
         if (defCode.equals(Entities.DEF_EDU_PROVIDER)) {
             repCodes = new ArrayList<>(max);

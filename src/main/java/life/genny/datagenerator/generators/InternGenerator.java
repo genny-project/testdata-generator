@@ -32,6 +32,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
+        log.debug("InternGEnerator Debug!!");
         String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0

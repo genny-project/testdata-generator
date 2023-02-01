@@ -66,6 +66,7 @@ public class FakeDataGenerator {
             definition = DEF + definition;
 
         BaseEntity entity = fakerService.getBaseEntityDef(definition);
+
         return entity;
     }
 
@@ -74,15 +75,19 @@ public class FakeDataGenerator {
         BaseEntity entity = generateEntityDef(defCode);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
-        if ("PER".equals(entity.getValue(Attribute.PRI_PREFIX).get()))
-            entity = personGenerator.generate(Entities.DEF_PERSON, entity);
-        
+        if (!entity.getValue(Attribute.PRI_PREFIX).isEmpty()) {
+            if ("PER".equals(entity.getValue(Attribute.PRI_PREFIX).get())) {
+                log.debug("PRI_PREFIX attribute is not empty " + entity.getValue(Attribute.PRI_PREFIX).get());
+                entity = personGenerator.generate(Entities.DEF_PERSON, entity);
+            }
+        }
+
         // entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(defCode, entity);
         return entity;
     }
-    
+
     private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
         log.debug("Generating attributes of " + defCode);
 
@@ -93,7 +98,13 @@ public class FakeDataGenerator {
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-            yield companyGenerator.generate(defCode, entity);
+                yield companyGenerator.generate(defCode, entity);
+
+            case Entities.DEF_EDU_PROVIDER:
+                yield eduGenerator.generate(defCode, entity);
+
+            case Entities.DEF_EDU_PRO_REP:
+                yield eduGenerator.generate(defCode, entity);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:

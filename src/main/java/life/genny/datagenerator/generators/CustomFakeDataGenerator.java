@@ -39,8 +39,9 @@ public abstract class CustomFakeDataGenerator {
     }
 
     public BaseEntity generate(String defCode, BaseEntity entity) {
-        log.debug("Generating " + defCode);
+        log.debug("Generating --" + defCode);
         BaseEntity be = generateImpl(defCode, entity);
+
         // be = generator.saveEntity(be);
         log.debug("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
         generator.entityAttributesAreValid(entity, true);

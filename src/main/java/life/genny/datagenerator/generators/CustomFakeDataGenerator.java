@@ -23,7 +23,7 @@ public abstract class CustomFakeDataGenerator {
     FakeDataGenerator generator;
 
     protected final String IGNORE = "NEED TO BE CHANGED";
-    
+
     protected Map<String, String> tempEntityMap = new HashMap<>();
     private List<PlaceDetail> places = new ArrayList<>();
 
@@ -43,7 +43,7 @@ public abstract class CustomFakeDataGenerator {
     public BaseEntity generate(String defCode, BaseEntity entity) {
         log.info("Generating " + defCode + " attributes for " + entity.getCode());
         BaseEntity be = generateImpl(defCode, entity);
-        // be = generator.saveEntity(be);
+        be = generator.saveEntity(be);
         log.debug("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
         generator.entityAttributesAreValid(entity, true, false);
         return be;

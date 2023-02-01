@@ -82,10 +82,7 @@ public class AppStartup {
         log.info("Starting up new application...");
 
         executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
-        // Entry<String, Integer> data = dataGeneration.get(0);
         for (Entry<String, Integer> data : dataGeneration) {
-            // BaseEntity entityDef = generator.generateEntity(data.getKey());
-            // generator.entityAttributesAreValid(entityDef, true);
             generateTasks(data.getKey(), data.getValue());
         }
         executor.shutdown();
@@ -100,29 +97,29 @@ public class AppStartup {
             final int generatedFinal = generatedData + generate;
             final int queueFinal = queue;
             executor.submit(new GeneratorTask(service, generator, defCode, generate, new GeneratorListener() {
-                        @Override
-                        public void onStart() {
-                            log.info("Start generating %s %s"
-                                    .formatted(defCode, queueFinal));
-                        }
+                @Override
+                public void onStart() {
+                    log.info("Start generating %s %s"
+                            .formatted(defCode, queueFinal));
+                }
 
-                        @Override
-                        public void onProgress(int current, int total) {
-                            log.info("Generating data (" + current + "/" + total + ")");
-                        }
+                @Override
+                public void onProgress(int current, int total) {
+                    log.info("Generating data (" + current + "/" + total + ")");
+                }
 
-                        @Override
-                        public void onFinish() {
-                            log.info("Generated %s (%s/%s)"
+                @Override
+                public void onFinish(String def, List<BaseEntity> generatedEntities) {
+                    log.info("Generated %s (%s/%s)"
                             .formatted(defCode, generatedFinal, totalData));
-                        }
+                }
 
-                        @Override
-                        public void onError(String def, Throwable e) {
-                            log.error("Something went bad generating " + def + ": " + e.getMessage());
-                            e.printStackTrace();
-                        }
-                    }));
+                @Override
+                public void onError(String def, Throwable e) {
+                    log.error("Something went bad generating " + def + ": " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }));
             generatedData = generatedFinal;
             queue++;
         }

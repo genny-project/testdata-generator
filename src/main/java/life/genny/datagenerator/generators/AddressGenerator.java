@@ -41,7 +41,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
                         .findFirst().orElse(null) != null)
-                .collect(Collectors.toList());
+                .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {
             String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0

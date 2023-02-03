@@ -88,7 +88,7 @@ public class DataFakerService {
         //     return entityDefinition;
         // }
 
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
+        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
         for (EntityAttribute ea : attEAs) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;

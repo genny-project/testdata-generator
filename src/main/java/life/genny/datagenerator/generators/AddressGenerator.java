@@ -130,7 +130,6 @@ public class AddressGenerator extends CustomFakeDataGenerator {
     private String toJson(PlaceDetail place) {
         try {
             String json = mapper.writeValueAsString(place);
-            log.debug("Address successfully converted to json: " + json);
             return json;
         } catch (JsonProcessingException e) {
             log.error("Error converting address to json, " + e.getMessage());
@@ -142,7 +141,6 @@ public class AddressGenerator extends CustomFakeDataGenerator {
     private PlaceDetail fromJson(String placeDetailString) {
         try {
             PlaceDetail json = mapper.readValue(placeDetailString, PlaceDetail.class);
-            log.debug("Address successfully converted from json: " + json);
             return json;
         } catch (JsonProcessingException e) {
             log.error("Error converting address from json, " + e.getMessage());

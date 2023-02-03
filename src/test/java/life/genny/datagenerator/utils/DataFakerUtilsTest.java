@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
+import life.genny.datagenerator.BaseTestCase;
 import life.genny.datagenerator.Regex;
-import life.genny.qwandaq.utils.testsuite.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.Expected;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
 
-import life.genny.qwandaq.utils.testsuite.BaseTestCase;
+import life.genny.datagenerator.BaseTestCase;
 import life.genny.qwandaq.utils.testsuite.JUnitTester;
 
 public class FileUtilsTest extends BaseTestCase {

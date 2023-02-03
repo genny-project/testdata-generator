@@ -75,9 +75,9 @@ public class FakeDataGenerator {
         return entity;
     }
 
-    public BaseEntity generateEntity(String defCode) {
-        log.debug("Generating " + defCode);
-        BaseEntity entity = generateEntityDef(defCode);
+    public BaseEntity generateEntity(String code) {
+        log.debug("Generating " + code);
+        BaseEntity entity = generateEntityDef(code);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
         String prefixCode = entity.getCode().split("_")[0];
@@ -93,7 +93,7 @@ public class FakeDataGenerator {
 
         entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
-        entity = generateEntityAttribtues(defCode, entity);
+        entity = generateEntityAttribtues(code, entity);
         return entity; 
     }
 
@@ -121,7 +121,7 @@ public class FakeDataGenerator {
                 yield personGenerator.generate(defCode, entity);
         };
 
-        entity = generateDataTypeAttributes(entity);
+        // entity = generateDataTypeAttributes(entity);
         return entity;
     }
 
@@ -175,6 +175,14 @@ public class FakeDataGenerator {
         log.debug("Success generating attribute for " + entity.getCode());
 
         return entity;
+    }
+
+    public BaseEntity getEntity(String code) {
+        return fakerService.getEntityByCode(code);
+    }
+
+    public List<BaseEntity> getEntities(String code) {
+        return fakerService.getEntitiesByDefinition(code);
     }
 
     public boolean entityAttributesAreValid(BaseEntity entity) {

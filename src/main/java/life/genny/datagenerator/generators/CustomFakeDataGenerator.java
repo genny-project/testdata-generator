@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -12,6 +13,7 @@ import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.services.FakeDataGenerator;
+import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
 
 public abstract class CustomFakeDataGenerator {
@@ -24,7 +26,8 @@ public abstract class CustomFakeDataGenerator {
 
     protected final String IGNORE = "NEED TO BE CHANGED";
 
-    protected Map<String, String> tempEntityMap = new HashMap<>();
+    protected BaseEntity entity = null;
+    protected static Map<String, String> tempEntityMap;
     private List<PlaceDetail> places = new ArrayList<>();
 
     protected List<PlaceDetail> getPlaces() {
@@ -41,11 +44,18 @@ public abstract class CustomFakeDataGenerator {
     }
 
     public BaseEntity generate(String defCode, BaseEntity entity) {
+        if (tempEntityMap == null)
+            tempEntityMap = new HashMap<>(10);
+
         log.info("Generating " + defCode + " attributes for " + entity.getCode());
         BaseEntity be = generateImpl(defCode, entity);
-        be = generator.saveEntity(be);
-        log.debug("Done generation of : " + defCode + ". Resultant code: " + be.getCode());
-        generator.entityAttributesAreValid(entity, true, false);
+        if (be.getCode().equals(defCode)) {
+            be = generator.saveEntity(be);
+            be = postGenerate(be, new HashMap<>());
+        }
+
+        log.debug("Done generation of: " + defCode + ". Resultant code: " + be.getCode());
+        generator.entityAttributesAreValid(be, true, false);
         return be;
     }
 
@@ -65,4 +75,19 @@ public abstract class CustomFakeDataGenerator {
     abstract BaseEntity generateImpl(String defCode, BaseEntity entity);
 
     abstract Object runGeneratorImpl(String attributeCode, String regex, String... args);
+
+    protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
+        log.info("my entity code: " + entity.getCode());
+        if (relations.size() > 0) {
+            for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+                for (Entry<String, Object> data : relations.entrySet())
+                    if (ea.getAttributeCode().equals(data.getKey()))
+                        ea.setValue(data.getValue());
+            }
+
+            generator.entityAttributesAreValid(entity, true);
+            generator.saveEntity(entity);
+        }
+        return entity;
+    }
 }

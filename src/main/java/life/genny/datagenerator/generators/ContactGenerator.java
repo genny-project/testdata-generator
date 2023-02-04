@@ -14,16 +14,12 @@ public class ContactGenerator extends CustomFakeDataGenerator {
     @Override
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
-                    entity.getName().replace(" ", "."));
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea,
+                        entity.getName().replace(" ", ".")));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;

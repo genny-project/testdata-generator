@@ -3,14 +3,15 @@ package life.genny.datagenerator.services;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -23,7 +24,6 @@ import life.genny.datagenerator.configs.MySQLConfig;
 import life.genny.datagenerator.model.Address;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DatabaseUtils;
-import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
@@ -75,6 +75,9 @@ public class DataFakerService {
     @ConfigProperty(name = "data.product-code")
     String productCode;
 
+    @Inject
+    EntityManager entityManager;
+
     @ActivateRequestContext
     public BaseEntity getBaseEntityDef(String definition) {
         if (definition == null)
@@ -91,8 +94,7 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT_);
-        for (EntityAttribute ea : attEAs) {
+        for (EntityAttribute ea : entityDefinition.findPrefixEntityAttributes(Prefix.ATT_)) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;
             try {
@@ -110,6 +112,9 @@ public class DataFakerService {
             attribute.setDataType(dtt);
             ea.setAttribute(attribute);
         }
+
+        entityDefinition.setBaseEntityAttributes(new HashSet<>(
+                entityDefinition.getBaseEntityAttributes().stream().distinct().toList()));
 
         return entityDefinition;
     }
@@ -226,6 +231,10 @@ public class DataFakerService {
             if (eaFound == null)
                 filteredEA.add(ea);
         }
+
+        // for (EntityAttribute ea : filteredEA)
+        // newBE.addAnswer(new Answer(entity, entity, ea.getAttributeCode(),
+        // ea.getValueString()));
         // for (EntityAttribute ea : definition.getBaseEntityAttributes()) {
         // String attrCode = ea.getAttributeCode().substring(Prefix.ATT_.length());
         // Attribute attribute = qwandaUtils.getAttribute(attrCode);
@@ -272,13 +281,13 @@ public class DataFakerService {
         // entity.addAnswer(new Answer(entity, entity, linkDef, "[\"" +
         // definition.getCode() + "\"]"));
 
-        // author of the BE
+        // // author of the BE
         // Attribute lnkAuthorAttr = qwandaUtils.getAttribute(Attribute.LNK_AUTHOR);
         // entity.addAnswer(new Answer(entity, entity, lnkAuthorAttr, "[\"" +
         // userToken.getUserCode() + "\"]"));
 
         newBE.setBaseEntityAttributes(filteredEA);
-        System.out.println(filteredEA.size());
+        System.out.println("size: " + filteredEA.size());
         update(newBE);
 
         return newBE;
@@ -297,10 +306,17 @@ public class DataFakerService {
         }
 
         entity.setRealm(productCode);
-        dbUtils.saveBaseEntity(entity);
-        CacheUtils.putObject(productCode, entity.getCode(), entity);
+        try {
+            dbUtils.saveBaseEntity(entity);
+            CacheUtils.putObject(productCode, entity.getCode(), entity);
+        } catch (Exception e) {
+            System.out.println(e);
+            log.error("Something when bad updating base entity, " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
+    // @ActivateRequestContext
     // private void insertIntoDB(BaseEntity entity) {
     // log.debug("Saving BaseEntity " + entity.getRealm() + ":" + entity.getCode());
 
@@ -317,15 +333,19 @@ public class DataFakerService {
     // log.debug("New BaseEntity being saved to DB -> " + entity.getCode() + " : " +
     // entity.getName());
     // try {
+    // System.out.println(1111111);
     // entityManager.merge(entity);
+    // System.out.println(2222222);
     // } catch (Exception e) {
+    // System.out.println(e);
     // log.error("Something went wrong persisting the entity, " + e.getMessage());
     // e.printStackTrace();
     // }
     // } else {
     // if (entity.getId() == null) {
     // log.warn("New entity did not have id. Assigning id of new entity as existing
-    // entity's id (" + existingEntity.getId() + ")");
+    // entity's id ("
+    // + existingEntity.getId() + ")");
     // entity.setId(existingEntity.getId());
     // }
     // entityManager.merge(entity);

@@ -63,18 +63,13 @@ public class InternGenerator extends CustomFakeDataGenerator {
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, defCode, superName,
-                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
-                    String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
-
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea, defCode, superName,
+                        prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
+                        String.valueOf(daysPerWeek), StringUtils.join(daysStripped)));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;

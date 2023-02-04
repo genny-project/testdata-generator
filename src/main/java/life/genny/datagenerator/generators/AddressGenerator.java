@@ -37,22 +37,19 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
         List<String> containCodes = new ArrayList<>(
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
-        List<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes().stream()
+        List<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes()
+                .stream()
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
                         .findFirst().orElse(null) != null)
                 .collect(Collectors.toList());
 
         for (EntityAttribute ea : filteredEntityAttribute) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, toJson(place));
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea, toJson(place)));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
 

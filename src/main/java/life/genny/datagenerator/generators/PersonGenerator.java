@@ -36,16 +36,11 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
         entity.setName(firstName + " " + lastName);
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
-                    firstName, lastName, gender);
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea, firstName, lastName, gender));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;

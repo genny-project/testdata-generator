@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,13 +122,14 @@ public class FakeDataGenerator {
                 yield personGenerator.generate(defCode, entity);
         };
 
-        // entity = generateDataTypeAttributes(entity);
+        entity = generateDataTypeAttributes(entity);
         return entity;
     }
 
     private BaseEntity generateDataTypeAttributes(BaseEntity entity) {
-        log.debug("Entity Attribute count: " + entity.getBaseEntityAttributes().size());
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        Set<EntityAttribute> entityAttributes = entity.getBaseEntityAttributes();
+        log.debug("Entity Attribute count: " + entityAttributes.size());
+        for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();
             List<Validation> validations = dtt.getValidationList();
             if (validations.size() > 0) {

@@ -11,11 +11,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
+import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.utils.CommonUtils;
 
 /**
  * Generate all important attributes for DEF_HOST_CPY and DEF_HOST_CPY_REP
@@ -38,15 +40,11 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, defCode);
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea, defCode));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;
@@ -77,59 +75,60 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * @return Generated {@link EntityAttribute} value
      */
     Object generateHostCompanyAttr(String attributeCode) {
+        log.info("Generating DEF_HOST_CPY attribute: " + attributeCode);
         return switch (attributeCode) {
-            // case SpecialAttributes.PRI_NAME:
-            // case SpecialAttributes.PRI_LEGAL_NAME:
-            //     yield DataFakerCustomUtils.generateName();
+            case SpecialAttributes.PRI_NAME:
+            case SpecialAttributes.PRI_LEGAL_NAME:
+                yield DataFakerCustomUtils.generateName();
 
-            // case SpecialAttributes.PRI_OHS_DOC:
-            // case SpecialAttributes.PRI_TC_DOC:
-            //     yield "";
+            case SpecialAttributes.PRI_OHS_DOC:
+            case SpecialAttributes.PRI_TC_DOC:
+                yield "";
 
-            // case SpecialAttributes.PRI_DJP_DOCUMENT_ACCEPTED:
-            // case SpecialAttributes.PRI_DOC_DJP:
-            // case SpecialAttributes.PRI_DOC_HCRI:
-            // case SpecialAttributes.PRI_DOC_HCS:
-            // case SpecialAttributes.PRI_DOC_OHS:
-            //     yield true;
+            case SpecialAttributes.PRI_DJP_DOCUMENT_ACCEPTED:
+            case SpecialAttributes.PRI_DOC_DJP:
+            case SpecialAttributes.PRI_DOC_HCRI:
+            case SpecialAttributes.PRI_DOC_HCS:
+            case SpecialAttributes.PRI_DOC_OHS:
+                yield true;
 
-            // case SpecialAttributes.LNK_VIC_GOV_DIGITAL_JOBS:
-            //     yield String.valueOf(true);
+            case SpecialAttributes.LNK_VIC_GOV_DIGITAL_JOBS:
+                yield String.valueOf(true);
 
-            // case SpecialAttributes.PRI_PROFILE:
-            // case SpecialAttributes.PRI_DOC_OHS_STATUS:
-            // case SpecialAttributes.PRI_DOC_HCS_STATUS:
-            // case SpecialAttributes.PRI_DOC_DJP_STATUS:
-            // case SpecialAttributes.PRI_DOC_HCRI_STATUS:
-            //     yield "Complete";
+            case SpecialAttributes.PRI_PROFILE:
+            case SpecialAttributes.PRI_DOC_OHS_STATUS:
+            case SpecialAttributes.PRI_DOC_HCS_STATUS:
+            case SpecialAttributes.PRI_DOC_DJP_STATUS:
+            case SpecialAttributes.PRI_DOC_HCRI_STATUS:
+                yield "Complete";
 
-            // case SpecialAttributes.PRI_DJP_AGREE:
-            //     yield DataFakerUtils.randStringFromRegex(Regex.AGREE_REGEX);
+            case SpecialAttributes.PRI_DJP_AGREE:
+                yield DataFakerUtils.randStringFromRegex(Regex.AGREE_REGEX);
 
-            // case SpecialAttributes.PRI_VIDEO_INTRO:
-            //     yield DataFakerUtils.randStringFromRegex(Regex.YOUTUBE_URL_REGEX);
+            case SpecialAttributes.PRI_VIDEO_INTRO:
+                yield DataFakerUtils.randStringFromRegex(Regex.YOUTUBE_URL_REGEX);
 
-            // case SpecialAttributes.LNK_DJP_JOB_AGREE:
-            //     yield DataFakerCustomUtils.generateSelection();
+            case SpecialAttributes.LNK_DJP_JOB_AGREE:
+                yield DataFakerCustomUtils.generateSelection();
 
-            // case SpecialAttributes.PRI_HC_SERVICES_AGREEMENT_HTML:
-            //     yield DataFakerCustomUtils.generateHTMLString();
+            case SpecialAttributes.PRI_HC_SERVICES_AGREEMENT_HTML:
+                yield DataFakerCustomUtils.generateHTMLString();
 
-            // case SpecialAttributes.PRI_COMPANY_WEBSITE_URL:
-            //     yield DataFakerCustomUtils.generateWebsiteURL();
+            case SpecialAttributes.PRI_COMPANY_WEBSITE_URL:
+                yield DataFakerCustomUtils.generateWebsiteURL();
 
-            // case SpecialAttributes.LNK_HOST_COMPANY_REP:
-            //     yield "";
+            case SpecialAttributes.LNK_HOST_COMPANY_REP:
+                yield "";
 
-            // case SpecialAttributes.LNK_COMPANY_INC:
-            //     yield DataFakerUtils.randDateTime().toString();
+            case SpecialAttributes.LNK_COMPANY_INC:
+                yield DataFakerUtils.randDateTime().toString();
 
-            // case SpecialAttributes.LNK_SPECIFY_ABN:
-            //     yield "[\"SEL_YES\"]";
+            case SpecialAttributes.LNK_SPECIFY_ABN:
+                yield "[\"SEL_YES\"]";
 
-            // case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
-            // case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
-            //     yield IGNORE;
+            case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
+            case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
+                yield IGNORE;
 
             default:
                 yield null;
@@ -171,8 +170,9 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     @Override
     protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
         // MAIN DEF_ for this generator
-        EntityAttribute isHostCompany = entity.getBaseEntityAttributes().stream()
-                .filter(ea -> ea.getAttributeCode().equals(SpecialAttributes.PRI_IS_HOST_CPY) ||
+        EntityAttribute isHostCompany = entity.getBaseEntityAttributes()
+                .stream().filter(ea -> CommonUtils.removePrefix(ea.getAttributeCode())
+                        .equals(SpecialAttributes.PRI_IS_HOST_CPY) ||
                         (ea.getAttributeCode().equals(SpecialAttributes.LNK_DEF) &&
                                 StringUtils.substringBetween(ea.getValue(), "[\"", "\"]")
                                         .equals(Entities.DEF_HOST_COMPANY)))
@@ -180,7 +180,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
         // Generate DEF_HOST_CPY_REP
         if (isHostCompany != null) {
-            tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY, entity.getCode());
+            tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY, "[\"" + entity.getCode() + "\"]");
             List<String> repCodes = null;
             int max = DataFakerUtils.randInt(1, 4);
             repCodes = new ArrayList<>(max);

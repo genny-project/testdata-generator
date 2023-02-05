@@ -191,12 +191,15 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                         .generateEntity(Entities.DEF_HOST_COMPANY_REP);
                 repCodes.add(hostCompanyRep.getCode());
             }
-            if (repCodes.size() > 0)
+            if (repCodes.size() > 0) {
+                tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY_REP,
+                        fromListToString(repCodes));
                 relations.put(SpecialAttributes.LNK_HOST_COMPANY_REP,
                         fromListToString(repCodes));
+            }
 
             // DEF_INTERNSHIP
-            for (int i = 0; i < 2; i++) 
+            for (int i = 0; i < 2; i++)
                 generator.generateEntity(Entities.DEF_INTERNSHIP);
         }
 

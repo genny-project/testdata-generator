@@ -219,10 +219,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
 
             case SpecialAttributes.LNK_HOST_COMPANY:
-                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY) + "\"]";
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
 
             case SpecialAttributes.LNK_HOST_COMPANY_REP:
-                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP) + "\"]";
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
 
             case SpecialAttributes.LNK_WHICH_DAYS:
                 List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()

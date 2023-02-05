@@ -20,6 +20,7 @@ import life.genny.datagenerator.model.AddressComponent;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 @ApplicationScoped
@@ -37,7 +38,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
         List<String> containCodes = new ArrayList<>(
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
-        List<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes()
+        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
                 .stream()
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
@@ -53,7 +54,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
             }
         }
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes())
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))
             for (EntityAttribute filteredEA : filteredEntityAttribute)
                 if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
                     ea.setValue(filteredEA.getValue());

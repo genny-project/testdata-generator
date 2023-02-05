@@ -24,6 +24,7 @@ import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 /**
@@ -62,7 +63,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             try {
                 ea.setValue(runGenerator(ea, defCode, superName,
                         prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),

@@ -4,6 +4,7 @@ import javax.enterprise.context.ApplicationScoped;
 
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 @ApplicationScoped
@@ -13,7 +14,7 @@ public class UserGenerator extends CustomFakeDataGenerator {
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String firstName = entity.getName().split(" ")[0];
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             try {
                 ea.setValue(runGenerator(ea, firstName));
             } catch (Exception e) {

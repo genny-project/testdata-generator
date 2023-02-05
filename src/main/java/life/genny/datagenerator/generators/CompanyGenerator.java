@@ -16,6 +16,7 @@ import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.utils.CommonUtils;
 
@@ -39,7 +40,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             try {
                 ea.setValue(runGenerator(ea, defCode));
             } catch (Exception e) {
@@ -75,7 +76,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      * @return Generated {@link EntityAttribute} value
      */
     Object generateHostCompanyAttr(String attributeCode) {
-        log.info("Generating DEF_HOST_CPY attribute: " + attributeCode);
         return switch (attributeCode) {
             case SpecialAttributes.PRI_NAME:
             case SpecialAttributes.PRI_LEGAL_NAME:
@@ -169,6 +169,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
 
     @Override
     protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
+
         // MAIN DEF_ for this generator
         EntityAttribute isHostCompany = entity.getBaseEntityAttributes()
                 .stream().filter(ea -> CommonUtils.removePrefix(ea.getAttributeCode())
@@ -178,25 +179,25 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
                                         .equals(Entities.DEF_HOST_COMPANY)))
                 .findFirst().orElse(null);
 
-        // Generate DEF_HOST_CPY_REP
+        // Generate sub definitions
         if (isHostCompany != null) {
             tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY, "[\"" + entity.getCode() + "\"]");
-            List<String> repCodes = null;
+
+            // DEF_HOST_CPY_REP
             int max = DataFakerUtils.randInt(1, 4);
-            repCodes = new ArrayList<>(max);
+            List<String> repCodes = new ArrayList<>(max);
             for (int i = 0; i < max; i++) {
                 BaseEntity hostCompanyRep = generator
                         .generateEntity(Entities.DEF_HOST_COMPANY_REP);
                 repCodes.add(hostCompanyRep.getCode());
             }
+            if (repCodes.size() > 0)
+                relations.put(SpecialAttributes.LNK_HOST_COMPANY_REP,
+                        fromListToString(repCodes));
 
-            String reps = null;
-            if (repCodes != null) {
-                reps = "[\"" +
-                        String.join("\", \"", repCodes.toArray(new String[0])) +
-                        "\"]";
-                relations.put(SpecialAttributes.LNK_HOST_COMPANY_REP, reps);
-            }
+            // DEF_INTERNSHIP
+            for (int i = 0; i < 2; i++) 
+                generator.generateEntity(Entities.DEF_INTERNSHIP);
         }
 
         return super.postGenerate(entity, relations);

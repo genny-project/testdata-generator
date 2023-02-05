@@ -52,7 +52,7 @@ public abstract class CustomFakeDataGenerator {
         BaseEntity be = generateImpl(defCode, entity);
         if (be.getCode().equals(defCode)) {
             try {
-                System.out.println(be.getBaseEntityAttributes());
+                be = generator.generateDataTypeAttributes(entity);
                 be = generator.saveEntity(be);
                 be = postGenerate(be, new HashMap<>());
             } catch (Exception e) {
@@ -67,7 +67,7 @@ public abstract class CustomFakeDataGenerator {
 
     public Object runGenerator(EntityAttribute ea, String... args) throws TypeMismatchException {
         if (ea.getValue() != null)
-                return ea.getValue();
+            return ea.getValue();
 
         String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
         String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
@@ -100,6 +100,7 @@ public abstract class CustomFakeDataGenerator {
     abstract Object runGeneratorImpl(String attributeCode, String regex, String... args);
 
     protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
+        log.debug("Entering post generation of " + entity.getCode());
         if (relations.size() > 0) {
             for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
                 for (Entry<String, Object> data : relations.entrySet())
@@ -107,9 +108,14 @@ public abstract class CustomFakeDataGenerator {
                         ea.setValue(data.getValue());
             }
 
-            generator.entityAttributesAreValid(entity, true);
             generator.saveEntity(entity);
         }
         return entity;
+    }
+
+    protected String fromListToString(List<String> codes) {
+        return "[\"" +
+                String.join("\", \"", codes.toArray(new String[0])) +
+                "\"]";
     }
 }

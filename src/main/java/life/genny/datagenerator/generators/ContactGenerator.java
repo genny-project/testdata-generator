@@ -6,6 +6,7 @@ import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 @ApplicationScoped
@@ -13,7 +14,7 @@ public class ContactGenerator extends CustomFakeDataGenerator {
 
     @Override
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             try {
                 ea.setValue(runGenerator(ea,
                         entity.getName().replace(" ", ".")));

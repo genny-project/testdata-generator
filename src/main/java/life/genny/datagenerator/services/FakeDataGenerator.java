@@ -81,8 +81,7 @@ public class FakeDataGenerator {
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
         String prefixCode = entity.getCode().split("_")[0];
-        EntityAttribute prefixAttr = entity.findPrefixEntityAttributes(Prefix.ATT_)
-                .stream()
+        EntityAttribute prefixAttr = entity.getBaseEntityAttributes().stream()
                 .filter(ea -> Attribute.PRI_PREFIX.equals(ea.getAttributeCode()))
                 .findFirst()
                 .orElse(null);

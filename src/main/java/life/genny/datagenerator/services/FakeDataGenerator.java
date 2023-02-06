@@ -91,7 +91,7 @@ public class FakeDataGenerator {
                 .orElse(null);
 
         String prefix = prefixAttr != null ? prefixAttr.getValue() : "";
-        if ("PER".equals(prefixCode + "_") || Prefix.PER.equals(prefix + "_")) {
+        if ("PER".equals(prefixCode + "_") || Prefix.PER_.equals(prefix + "_")) {
             entity = personGenerator.generate(Entities.DEF_PERSON, entity);
             entity = userGenerator.generate(Entities.DEF_USER, entity);
         }
@@ -144,7 +144,7 @@ public class FakeDataGenerator {
                         : null;
                 String className = dtt.getClassName();
 
-                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI)) {
+                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI_)) {
                     if (String.class.getName().equals(className))
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randStringFromRegex(regex));

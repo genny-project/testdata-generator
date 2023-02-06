@@ -78,19 +78,7 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        // try {
-        //     entityDefinition = beUtils.create(Definition.from(entityDefinition),
-        //             entityDefinition.getName());
-        //     log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
-        //             entityDefinition.getRealm());
-        // } catch (Exception e) {
-        //     log.info("Something went bad: " + e.getMessage());
-        //     e.printStackTrace();
-        //     return entityDefinition;
-        // }
-
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
-        for (EntityAttribute ea : attEAs) {
+        for (EntityAttribute ea : entityDefinition.findPrefixEntityAttributes(Prefix.ATT_)) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;
             try {

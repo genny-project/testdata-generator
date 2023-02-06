@@ -41,12 +41,8 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
-            try {
-                ea.setValue(runGenerator(ea, defCode));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+            Object newObj = runGenerator(defCode, ea, defCode);
+                ea.setValue(newObj);
         }
         return entity;
     }
@@ -201,6 +197,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             // DEF_INTERNSHIP
             for (int i = 0; i < 2; i++)
                 generator.generateEntity(Entities.DEF_INTERNSHIP);
+
         }
 
         return super.postGenerate(entity, relations);

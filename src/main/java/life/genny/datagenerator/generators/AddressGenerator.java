@@ -46,12 +46,9 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {
-            try {
-                ea.setValue(runGenerator(ea, toJson(place)));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+            Object newObj = runGenerator(defCode, ea, toJson(place));
+            if (newObj != null)
+                ea.setValue(newObj);
         }
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))

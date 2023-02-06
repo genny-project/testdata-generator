@@ -15,6 +15,7 @@ import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.generators.AddressGenerator;
+import life.genny.datagenerator.generators.ApplicationGenerator;
 import life.genny.datagenerator.generators.CompanyGenerator;
 import life.genny.datagenerator.generators.ContactGenerator;
 import life.genny.datagenerator.generators.EduGenerator;
@@ -64,6 +65,9 @@ public class FakeDataGenerator {
     @Inject
     InternGenerator internGenerator;
 
+    @Inject
+    ApplicationGenerator applicationGenerator;
+
     private BaseEntity generateEntityDef(String definition) {
         Pattern pattern = Pattern.compile("^\\DEF_[A-Z_]+");
         Matcher matcher = pattern.matcher(definition);
@@ -81,8 +85,7 @@ public class FakeDataGenerator {
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
         String prefixCode = entity.getCode().split("_")[0];
-        EntityAttribute prefixAttr = entity.findPrefixEntityAttributes(Prefix.ATT_)
-                .stream()
+        EntityAttribute prefixAttr = entity.getBaseEntityAttributes().stream()
                 .filter(ea -> Attribute.PRI_PREFIX.equals(ea.getAttributeCode()))
                 .findFirst()
                 .orElse(null);
@@ -118,6 +121,9 @@ public class FakeDataGenerator {
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
                 yield internGenerator.generate(defCode, entity);
+
+            case Entities.DEF_APPLICATION:
+                yield applicationGenerator.generate(defCode, entity);
 
             default:
                 yield personGenerator.generate(defCode, entity);
@@ -202,11 +208,12 @@ public class FakeDataGenerator {
         List<EntityAttribute> passAttributes = new ArrayList<>(100);
         boolean valid = true;
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             DataType dtt = ea.getAttribute().getDataType();
             List<Validation> validations = dtt.getValidationList();
 
-            if (validations.size() > 0 && ea.getValue() != null) {
+            if (validations.size() > 0 && ea.getValue() != null &&
+                    !("" + ea.getValue()).equals("null")) {
                 Pattern pattern = Pattern.compile(validations.get(0).getRegex());
                 Matcher matcher = pattern.matcher(ea.getValue().toString());
                 if (matcher.matches()) {

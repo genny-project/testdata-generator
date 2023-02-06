@@ -15,8 +15,9 @@ public class SpecialAttributes {
     public static final String PRI_LASTNAME = "PRI_LASTNAME";
     public static final String PRI_INITIALS = "PRI_INITIALS";
     public static final String PRI_GENDER = "PRI_GENDER";
+    public static final String PRI_WHATSAPP = "PRI_WHATSAPP";    
     public static final String LNK_GENDER_SELECT = "LNK_GENDER_SELECT";
-    public static final String PRI_WHATSAPP = "PRI_WHATSAPP";
+    public static final String LNK_ALL_EMAILS = "LNK_ALL_EMAIL";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_USER
@@ -126,6 +127,7 @@ public class SpecialAttributes {
     public static final String LNK_INTERNSHIP_TYPE = "LNK_INTERNSHIP_TYPE";
     public static final String LNK_BUSINESS_HOURS = "LNK_BUSINESS_HOURS";
     public static final String LNK_NO_OF_INTERNS = "LNK_NO_OF_INTERNS";
+    public static final String LNK_OCCUPATION = "LNK_OCCUPATION";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_EDU_PROVIDER
@@ -164,4 +166,17 @@ public class SpecialAttributes {
     public static final String PRI_KEYCLOAK_UUID  = "PRI_KEYCLOAK_UUID";
     public static final String PRI_USERNAME  = "PRI_USERNAME";
     public static final String PRI_UUID  = "PRI_UUID";
+
+    /**
+     * Special case for {@link EntityAttribute} generation for DEF_APPLICATION
+     */
+    public static final String PRI_SUPER_JOB_TITLE = "PRI_SUPER_JOB_TITLE";
+    public static final String PRI_OUTCOME_LIFE_REP_NAME = "PRI_OUTCOME_LIFE_REP_NAME";
+    public static final String PRI_HOURS_PER_WEEK = "PRI_HOURS_PER_WEEK";
+    public static final String PRI_APPLICANT_CODE = "PRI_APPLICANT_CODE";
+    public static final String PRI_APPLIED_BY = "PRI_APPLIED_BY";
+    public static final String PRI_INTERN_STUDENT_ID = "PRI_INTERN_STUDENT_ID";
+    public static final String PRI_INTERN_EMAIL = "PRI_INTERN_EMAIL";
+    public static final String LNK_INTERN = "LNK_INTERN";
+    public static final String LNK_INTERNSHIP = "LNK_INTERNSHIP";
 }

@@ -53,7 +53,7 @@ public class AppStartup {
     private ExecutorService executor;
     private List<Entry<String, Integer>> dataGeneration = new ArrayList<>(1);
 
-    @PostConstruct
+   @PostConstruct
     void setUp() {
         service.fullServiceInit();
 

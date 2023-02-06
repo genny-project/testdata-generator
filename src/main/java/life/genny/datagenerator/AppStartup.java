@@ -61,15 +61,18 @@ public class AppStartup {
             String[] dataCount = dataDef.split("=");
             dataGeneration.add(Map.entry(dataCount[0], Integer.valueOf(dataCount[1])));
         }
+        log.debug("prefixes####111");
 
         // Checking BaseEntity prefix
         for (Entry<String, Integer> data : dataGeneration) {
             BaseEntity beDef = beUtils.getBaseEntity(data.getKey());
             String prefix = "";
-            for (EntityAttribute ea : beDef.getBaseEntityAttributes())
+            
+            for (EntityAttribute ea : beDef.getBaseEntityAttributes()) {
                 if (ea.getAttributeCode().equals("PRI_PREFIX"))
                     prefix = ea.getValue();
-
+            }
+            log.debug("prefixes####" + prefix);
             if (!StringUtils.isBlank(prefix))
                 log.info("Prefix for " + data.getKey() + " exists: " + prefix);
             else {

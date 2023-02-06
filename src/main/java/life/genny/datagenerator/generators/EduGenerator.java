@@ -31,10 +31,13 @@ public class EduGenerator extends CustomFakeDataGenerator {
             }
         }
         String reps = null;
-        if (repCodes != null)
+        if (repCodes != null){
             reps = "[\"" +
-                    String.join("\", \"", repCodes.toArray(new String[0])) +
-                    "\"]";
+            String.join("\", \"", repCodes.toArray(new String[0])) +
+            "\"]";
+        }
+        log.debug("DEF_EDU##### "+repCodes);
+
 
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
@@ -69,31 +72,11 @@ public class EduGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_ABN:
             case SpecialAttributes.PRI_ADDRESS_ADDRESS1:
 
-            case SpecialAttributes.PRI_ADDRESS_CITY:
-
-            case SpecialAttributes.PRI_ADDRESS_COUNTRY:
-
-            case SpecialAttributes.PRI_ADDRESS_FULL:
-
-            case SpecialAttributes.PRI_ADDRESS_JSON:
-
-            case SpecialAttributes.PRI_ADDRESS_LATITUDE:
-
-            case SpecialAttributes.PRI_ADDRESS_LONGITUDE:
-
-            case SpecialAttributes.PRI_ADDRESS_POSTCODE:
-
-            case SpecialAttributes.PRI_ADDRESS_STATE:
-
-            case SpecialAttributes.PRI_ADDRESS_SUBURB:
-
             case SpecialAttributes.PRI_COMPANY_DESCRIPTION:
                 yield DataFakerUtils.randStringFromRegex(Regex.TEXT_PARAGRAPH_REGEX);
 
             case SpecialAttributes.PRI_COMPANY_WEBSITE_URL:
                 yield DataFakerUtils.randStringFromRegex(Regex.WEBSITE_URL_REGEX);
-
-            case SpecialAttributes.PRI_EMAIL:
 
             case SpecialAttributes.PRI_IMAGE_URL:
                 yield DataFakerUtils.randStringFromRegex(Regex.WEBSITE_URL_REGEX);
@@ -101,17 +84,11 @@ public class EduGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_IS_EDU_PROVIDER:
                 yield DataFakerUtils.randBoolean();
 
-            case SpecialAttributes.PRI_LANDLINE:
-
             case SpecialAttributes.PRI_LEGAL_NAME:
                 yield DataFakerUtils.randString();
 
-            case SpecialAttributes.PRI_MOBILE:
-
             case SpecialAttributes.PRI_NAME:
                 yield DataFakerUtils.randStringFromRegex(Regex.ALPHABET);
-
-            case SpecialAttributes.PRI_PHONE:
 
             case SpecialAttributes.PRI_PROFILE:
                 yield DataFakerUtils.randStringFromRegex(Regex.STATUS_REGEX);
@@ -126,10 +103,6 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.PRI_SUBMIT:
                 yield DataFakerUtils.randStringFromRegex(Regex.SUBMIT_STATUS);
-
-            case SpecialAttributes.PRI_TIMEZONE:
-
-            case SpecialAttributes.PRI_TIMEZONE_ID:
 
             default:
                 yield null;

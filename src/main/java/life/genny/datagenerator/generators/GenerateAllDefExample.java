@@ -21,17 +21,18 @@ public class GenerateAllDefExample implements Runnable {
     private final DataFakerService dataFakerService;
     private final int dataCount;
     private final Logger log;
-    private final String productCode;
     private final Map<String, CustomFakeDataGenerator> generators;
-    public GenerateAllDefExample(BaseEntityUtils beUtils, DataFakerService dataFakerService, int dataCount, Logger log, String productCode, Map<String, CustomFakeDataGenerator> generators) {
+    public GenerateAllDefExample(BaseEntityUtils beUtils, DataFakerService dataFakerService, int dataCount, Logger log, Map<String, CustomFakeDataGenerator> generators) {
         this.beUtils = beUtils;
         this.dataFakerService = dataFakerService;
         this.dataCount = dataCount;
         this.log = log;
-        this.productCode = productCode;
         this.generators = generators;
     }
 
+    /**
+     * to create any custom attribute value based on relation
+     */
     private final OnSetAttributeByRelation internshipHostCompanyRep = (attributeCode, beFor, beFrom) -> switch (attributeCode) {
         case SpecialAttributes.PRI_OUTCOME_LIFE_REP_NAME -> beFrom[0].getName(); //this is example
         default -> null;
@@ -97,6 +98,15 @@ public class GenerateAllDefExample implements Runnable {
         }
     }
 
+    /**
+     * to create relation attribute between one and two more BaseEntities
+     * @param lnkCode LNK_ code of the relation attribute
+     * @param relFor target of relation
+     * @param weight attribute weight
+     * @param onSetAttributeByRelation listener for handling custom attributes based on relation
+     * @param relFrom BaseEntities source of relation
+     * @return EntityAttribute object
+     */
     private EntityAttribute createRelation(String lnkCode, BaseEntity relFor, double weight, OnSetAttributeByRelation onSetAttributeByRelation, BaseEntity... relFrom) {
         if (!lnkCode.startsWith("LNK_")) throw new IllegalArgumentException("Incorrect relation code %s".formatted(lnkCode));
         log.info("generating relation "+lnkCode);
@@ -126,6 +136,13 @@ public class GenerateAllDefExample implements Runnable {
         return ea;
     }
 
+    /**
+     * to create BaseEntity object based on Def Code
+     * @param defCode
+     * @param name
+     * @return BaseEntity object with all attributes
+     * @throws Throwable
+     */
     private BaseEntity create(String defCode, String name) throws Throwable {
         log.info("generating "+defCode+", name: "+name);
         BaseEntity be = dataFakerService.createBaseEntity(defCode, name);
@@ -161,6 +178,13 @@ public class GenerateAllDefExample implements Runnable {
         return be;
     }
 
+    /**
+     * to generate missed attribute
+     * @param entityAttribute obj of EntityAttribute
+     * @param name name of BaseEntity
+     * @param be obj of BaseEntity
+     * @param defCode not used
+     */
     private void generateAttribute(EntityAttribute entityAttribute, String name, BaseEntity be, String defCode) { // generate the attribute value here
         String regex = entityAttribute.getAttribute().getDataType().getValidationList().size() > 0
                 ? entityAttribute.getAttribute().getDataType().getValidationList().get(0).getRegex()

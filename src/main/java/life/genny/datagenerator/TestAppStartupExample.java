@@ -11,7 +11,6 @@ import org.jboss.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -52,6 +51,7 @@ public class TestAppStartupExample {
         log.info("initializing service");
         service.fullServiceInit();
 
+        //Create generator mapping here
         Map<String, CustomFakeDataGenerator> generatorMap = new HashMap<>();
         generatorMap.put(Entities.DEF_PERSON, personGenerator);
         generatorMap.put(Entities.DEF_USER, userGenerator);
@@ -67,8 +67,8 @@ public class TestAppStartupExample {
 
         log.info("Starting generate");
         ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, productCode, generatorMap));
-        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, productCode, generatorMap));
+        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, generatorMap));
+        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, generatorMap));
         executorService.shutdown();
     }
 }

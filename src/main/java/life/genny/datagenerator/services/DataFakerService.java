@@ -198,6 +198,12 @@ public class DataFakerService {
         return entity;
     }
 
+    /**
+     * to create BaseEntity object based on DEF Code
+     * @param code DEF_CODE
+     * @param name name of BaseEntity
+     * @return BaseEntity object with all attribute except ATT_ and DFT_
+     */
     @ActivateRequestContext
     public BaseEntity createBaseEntity(String code, String name) {
         code = code.strip();
@@ -218,6 +224,11 @@ public class DataFakerService {
         }
     }
 
+    /**
+     * to find Attribute object from database or cache
+     * @param attributeCode code of Attribute
+     * @return Attribute object
+     */
     public Attribute findAttribute(String attributeCode) {
         Attribute attribute;
         try {
@@ -236,6 +247,12 @@ public class DataFakerService {
         return null;
     }
 
+    /**
+     * to create a BaseEntity object and automatically insert it into database and cache, filter the Entity Attribute also
+     * @param definition Definition of BaseEntity
+     * @param name name of BaseEntity
+     * @return BaseEntity object with valid attribute
+     */
     public BaseEntity createBeObject(final Definition definition, String name) {
 
         if (definition == null)
@@ -304,6 +321,10 @@ public class DataFakerService {
         return item;
     }
 
+    /**
+     * to insert or update single object of BaseEntity
+     * @param baseEntity object of BaseEntity
+     */
     @ActivateRequestContext
     public void updateBaseEntity(BaseEntity baseEntity) {
         try {
@@ -314,6 +335,10 @@ public class DataFakerService {
         }
     }
 
+    /**
+     * to insert or update multiple objects of BaseEntity
+     * @param baseEntities list objects of BaseEntity
+     */
     @ActivateRequestContext
     public void updateBaseEntity(List<BaseEntity> baseEntities) {
         for (BaseEntity baseEntity: baseEntities) {
@@ -323,9 +348,5 @@ public class DataFakerService {
                 log.info(e.getMessage() + ", " + baseEntity.getCode(), e);
             }
         }
-    }
-
-    public Attribute getAttributeByCode(String attributeCode) {
-        return findAttribute(attributeCode);
     }
 }

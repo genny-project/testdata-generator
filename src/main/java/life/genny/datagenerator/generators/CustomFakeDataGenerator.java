@@ -72,7 +72,7 @@ public abstract class CustomFakeDataGenerator {
             return ea.getValue();
 
         String attributeCode = ea.getAttributeCode(); // CommonUtils.removePrefix(ea.getAttributeCode());
-        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        // ATT_ has been removed in DataFakerService.createBaseEntity, so there is no ATT_ in the attribute anymore
 
         String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
                 ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()

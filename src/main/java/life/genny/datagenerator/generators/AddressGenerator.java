@@ -37,7 +37,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
 
 //        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
-        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        // ATT_ has been removed in DataFakerService.createBaseEntity, so there is no ATT_ in the attribute anymore
         Set<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes();
 //                .stream()
 //                .filter(ea -> containCodes.stream()

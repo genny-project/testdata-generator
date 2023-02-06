@@ -17,7 +17,7 @@ public class ContactGenerator extends CustomFakeDataGenerator {
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         //        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
 
-        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        // ATT_ has been removed in DataFakerService.createBaseEntity, so there is no ATT_ in the attribute anymore
         for (EntityAttribute ea : entity.getBaseEntityAttributes()){
             Object newObj = runGenerator(defCode, ea, entity.getName().replace(" ", "."));
             if (newObj != null)

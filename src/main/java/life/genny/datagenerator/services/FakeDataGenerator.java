@@ -81,12 +81,14 @@ public class FakeDataGenerator {
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
 
         String prefixCode = entity.getCode().split("_")[0];
-        EntityAttribute prefixAttr = entity.getBaseEntityAttributes().stream()
+        EntityAttribute prefixAttr = entity.findPrefixEntityAttributes(Prefix.ATT_)
+                .stream()
                 .filter(ea -> Attribute.PRI_PREFIX.equals(ea.getAttributeCode()))
                 .findFirst()
                 .orElse(null);
+
         String prefix = prefixAttr != null ? prefixAttr.getValue() : "";
-        if ("PER".equals(prefixCode + "_") || Prefix.PER_.equals(prefix + "_")) {
+        if ("PER".equals(prefixCode + "_") || Prefix.PER.equals(prefix + "_")) {
             entity = personGenerator.generate(Entities.DEF_PERSON, entity);
             entity = userGenerator.generate(Entities.DEF_USER, entity);
         }
@@ -94,7 +96,7 @@ public class FakeDataGenerator {
         entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
         entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
         entity = generateEntityAttribtues(code, entity);
-        return entity; 
+        return entity;
     }
 
     private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
@@ -121,13 +123,13 @@ public class FakeDataGenerator {
                 yield personGenerator.generate(defCode, entity);
         };
 
-        // entity = generateDataTypeAttributes(entity);
         return entity;
     }
 
-    private BaseEntity generateDataTypeAttributes(BaseEntity entity) {
-        log.debug("Entity Attribute count: " + entity.getBaseEntityAttributes().size());
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+    public BaseEntity generateDataTypeAttributes(BaseEntity entity) {
+        List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_);
+        log.debug("Entity Attribute count: " + entityAttributes.size());
+        for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();
             List<Validation> validations = dtt.getValidationList();
             if (validations.size() > 0) {
@@ -136,7 +138,7 @@ public class FakeDataGenerator {
                         : null;
                 String className = dtt.getClassName();
 
-                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI_)) {
+                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI)) {
                     if (String.class.getName().equals(className))
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randStringFromRegex(regex));
@@ -172,7 +174,7 @@ public class FakeDataGenerator {
                 }
             }
         }
-        log.debug("Success generating attribute for " + entity.getCode());
+        log.debug("Success generating datatype base attribute for " + entity.getCode());
 
         return entity;
     }
@@ -200,7 +202,7 @@ public class FakeDataGenerator {
         List<EntityAttribute> passAttributes = new ArrayList<>(100);
         boolean valid = true;
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             DataType dtt = ea.getAttribute().getDataType();
             List<Validation> validations = dtt.getValidationList();
 

@@ -6,6 +6,7 @@ import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 @ApplicationScoped
@@ -13,17 +14,13 @@ public class ContactGenerator extends CustomFakeDataGenerator {
 
     @Override
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal,
-                    entity.getName().replace(" ", "."));
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+            try {
+                ea.setValue(runGenerator(ea,
+                        entity.getName().replace(" ", ".")));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;

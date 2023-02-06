@@ -20,6 +20,7 @@ import life.genny.datagenerator.model.AddressComponent;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 @ApplicationScoped
@@ -37,26 +38,23 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
         List<String> containCodes = new ArrayList<>(
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
-        List<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes().stream()
+        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
+                .stream()
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
                         .findFirst().orElse(null) != null)
                 .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, toJson(place));
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+            try {
+                ea.setValue(runGenerator(ea, toJson(place)));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes())
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))
             for (EntityAttribute filteredEA : filteredEntityAttribute)
                 if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
                     ea.setValue(filteredEA.getValue());

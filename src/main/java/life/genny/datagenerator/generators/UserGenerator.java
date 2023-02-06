@@ -15,13 +15,9 @@ public class UserGenerator extends CustomFakeDataGenerator {
         String firstName = entity.getName().split(" ")[0];
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
-            try {
-                ea.setValue(runGenerator(ea, firstName));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
-
+            Object newObj = runGenerator(defCode, ea, firstName);
+            if (newObj != null)
+                ea.setValue(newObj);
         }
         return entity;
     }

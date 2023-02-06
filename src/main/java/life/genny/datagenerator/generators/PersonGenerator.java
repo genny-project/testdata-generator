@@ -37,12 +37,9 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
         entity.setName(firstName + " " + lastName);
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
-            try {
-                ea.setValue(runGenerator(ea, firstName, lastName, gender));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+            Object newObj = runGenerator(defCode, ea, firstName, lastName, gender);
+            if (newObj != null)
+                ea.setValue(newObj);
         }
         return entity;
     }
@@ -72,6 +69,9 @@ public class PersonGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_GENDER_SELECT:
                 yield "[\"SEL_GENDER_" + args[2].replace(" ", "_").toUpperCase() + "\"]";
+
+            case SpecialAttributes.LNK_ALL_EMAILS:
+                yield "true";
 
             case SpecialAttributes.PRI_SUBMIT:
             default:

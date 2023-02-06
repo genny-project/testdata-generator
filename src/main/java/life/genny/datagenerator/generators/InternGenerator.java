@@ -23,6 +23,7 @@ import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
+import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -49,8 +50,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        log.debug("InternGEnerator Debug!!");
-        String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
+        String superName = DataFakerCustomUtils.generateName() + " " +
+                DataFakerCustomUtils.generateName();
         Map<String, LocalDateTime> prevPeriod = generatePeriod();
         int daysPerWeek = DataFakerUtils.randInt(1, 5);
 
@@ -64,14 +65,11 @@ public class InternGenerator extends CustomFakeDataGenerator {
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
-            try {
-                ea.setValue(runGenerator(ea, defCode, superName,
-                        prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
-                        String.valueOf(daysPerWeek), StringUtils.join(daysStripped)));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+            Object newObj = runGenerator(defCode, ea, defCode, superName,
+                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
+                    String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
+            if (newObj != null)
+                ea.setValue(newObj);
         }
         return entity;
     }
@@ -133,7 +131,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
                         endPrevPeriod.format(dtFormatter);
 
             case SpecialAttributes.PRI_CAREER_OBJ:
-                yield generateDescriptionParagraph(
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
             case SpecialAttributes.PRI_DAYS_PER_WEEK:
@@ -192,12 +190,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.PRI_INTERNSHIP_DETAILS:
             case SpecialAttributes.PRI_SPECIFIC_LEARNING_OUTCOMES:
-                yield generateDescriptionParagraph();
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag();
 
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:
             case SpecialAttributes.PRI_ROLES_AND_RESPONSIBILITIES:
             case SpecialAttributes.PRI_CAREER_OBJ:
-                yield generateDescriptionParagraph(
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
             case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
@@ -235,6 +233,26 @@ public class InternGenerator extends CustomFakeDataGenerator {
         };
     }
 
+    @Override
+    protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
+        EntityAttribute lnkDef = entity.getBaseEntityAttributes().stream()
+                .filter(ea -> ea.getAttributeCode().equals(Attribute.LNK_DEF))
+                .findFirst()
+                .orElse(null);
+
+        if (lnkDef != null) {
+            // DEF_INTERN
+            if (lnkDef.getValueString().equals(Entities.DEF_INTERN))
+                tempEntityMap.put(SpecialAttributes.LNK_INTERN, entity.getCode());
+
+            // DEF_INTERNSHIP
+            if (lnkDef.getValueString().equals(Entities.DEF_INTERNSHIP))
+                tempEntityMap.put(SpecialAttributes.LNK_INTERNSHIP, entity.getCode());
+        }
+
+        return super.postGenerate(entity, relations);
+    }
+
     private Map<String, LocalDateTime> generatePeriod() {
         LocalDate startDate = DataFakerUtils.randDateTime().toLocalDate();
         LocalDate endDate = DataFakerUtils.randDateTime(startDate).toLocalDate();
@@ -251,18 +269,5 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 "Zero", "One", "Two", "Three", "Four", "Five",
                 "Six", "Seven", "Eight", "Nine", "Ten"));
         return numbers.get(num);
-    }
-
-    private String generateDescriptionParagraph() {
-        return generateDescriptionParagraph(1);
-    }
-
-    private String generateDescriptionParagraph(int length) {
-        String objHtml = "";
-        for (int i = 0; i < length; i++)
-            objHtml += DataFakerCustomUtils.generateHTMLTag(
-                    DataFakerUtils.randStringFromRegex(Regex.DESCRIPTION_REGEX),
-                    "p");
-        return objHtml;
     }
 }

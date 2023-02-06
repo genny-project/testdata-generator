@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
@@ -65,7 +66,8 @@ public abstract class CustomFakeDataGenerator {
         return be;
     }
 
-    public Object runGenerator(EntityAttribute ea, String... args) throws TypeMismatchException {
+    public Object runGenerator(String defCode, EntityAttribute ea, String... args)
+            throws TypeMismatchException {
         if (ea.getValue() != null)
             return ea.getValue();
 
@@ -75,10 +77,20 @@ public abstract class CustomFakeDataGenerator {
                 : null;
         String className = ea.getAttribute().getDataType().getClassName();
 
-        Object newObj = runGeneratorImpl(attributeCode, regexVal, args);
-        if (newObj != null) {
-            dataTypeInvalidArgument(attributeCode, newObj, className);
+        Object newObj = null;
+        try {
+            newObj = runGeneratorImpl(attributeCode, regexVal, args);
+            if (newObj != null)
+                dataTypeInvalidArgument(attributeCode, newObj, className);
+        } catch (NoSuchElementException e) {
+            log.error("Something went wrong generating " + defCode +
+                    " attribute value, " + e.getMessage());
+        } catch (Exception e) {
+            log.error("Something went wrong generating " + defCode +
+                    " attribute value, " + e.getMessage());
+            e.printStackTrace();
         }
+
         return newObj;
     }
 

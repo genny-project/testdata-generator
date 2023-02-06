@@ -70,7 +70,7 @@ public class DataFakerCustomUtils {
      * @return The generated value
      */
     public static String generateEmail(String firstName, String lastName) {
-        return DataFakerCustomUtils.generateEmail(firstName, lastName,
+        return generateEmail(firstName, lastName,
                 "gmail." + DataFakerUtils.randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX));
     }
 
@@ -167,7 +167,7 @@ public class DataFakerCustomUtils {
      */
     public static String generateHTMLTag(String content) {
         String tag = DataFakerUtils.randStringFromRegex(Regex.HTML_TAG_REGEX);
-        return DataFakerCustomUtils.generateHTMLTag(content, tag);
+        return generateHTMLTag(content, tag);
     }
 
     /**
@@ -221,16 +221,68 @@ public class DataFakerCustomUtils {
         return result;
     }
 
+    /**
+     * Generate random descriptive html tag
+     * 
+     * @return The generated value
+     */
+    public static String generateDescriptiveHTMLTag() {
+        return generateDescriptiveHTMLTag("p");
+    }
+
+    /**
+     * Generate random descriptive html tag
+     * 
+     * @param tag The html tag
+     * @return The generated value
+     */
+    public static String generateDescriptiveHTMLTag(String tag) {
+        return generateDescriptiveHTMLTag(tag, 1);
+    }
+
+    /**
+     * Generate random descriptive html tag
+     * 
+     * @param tag    The html tag
+     * @param length The repetition
+     * @return The generated value
+     */
+    public static String generateDescriptiveHTMLTag(String tag, int length) {
+        String objHtml = "";
+        for (int i = 0; i < length; i++)
+            objHtml += generateHTMLTag(
+                    DataFakerUtils.randStringFromRegex(Regex.DESCRIPTION_REGEX),
+                    tag);
+        return objHtml;
+    }
+
+    /**
+     * Generate random website url
+     * 
+     * @return The generated value
+     */
     public static String generateWebsiteURL() {
-        return DataFakerCustomUtils.generateWebsiteURL(
-                DataFakerCustomUtils.generateName());
+        return generateWebsiteURL(generateName());
     }
 
+    /**
+     * Generate random website url
+     * 
+     * @param domain The website root domain
+     * @return The generated value
+     */
     public static String generateWebsiteURL(String domain) {
-        return DataFakerCustomUtils.generateWebsiteURL(domain,
-                DataFakerUtils.randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX));
+        return generateWebsiteURL(domain, DataFakerUtils
+                .randStringFromRegex(Regex.TOP_LEVEL_DOMAIN_REGEX));
     }
 
+    /**
+     * Generate random website url
+     * 
+     * @param domain The website root domain
+     * @param tld    The top level domain
+     * @return The generated value
+     */
     public static String generateWebsiteURL(String domain, String tld) {
         if (!tld.startsWith("."))
             tld = "." + tld;

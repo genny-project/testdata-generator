@@ -1,15 +1,12 @@
 package life.genny.datagenerator.generators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import life.genny.datagenerator.Entities;
 import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,12 +35,15 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
         List<String> containCodes = new ArrayList<>(
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
-        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
-                .stream()
-                .filter(ea -> containCodes.stream()
-                        .filter(containCode -> ea.getAttributeCode().contains(containCode))
-                        .findFirst().orElse(null) != null)
-                .toList();
+
+//        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        Set<EntityAttribute> filteredEntityAttribute = entity.getBaseEntityAttributes();
+//                .stream()
+//                .filter(ea -> containCodes.stream()
+//                        .filter(containCode -> ea.getAttributeCode().contains(containCode))
+//                        .findFirst().orElse(null) != null)
+//                .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {
             Object newObj = runGenerator(defCode, ea, toJson(place));
@@ -51,10 +51,10 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 ea.setValue(newObj);
         }
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))
-            for (EntityAttribute filteredEA : filteredEntityAttribute)
-                if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
-                    ea.setValue(filteredEA.getValue());
+//        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))
+//            for (EntityAttribute filteredEA : filteredEntityAttribute)
+//                if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
+//                    ea.setValue(filteredEA.getValue());
 
         return entity;
     }

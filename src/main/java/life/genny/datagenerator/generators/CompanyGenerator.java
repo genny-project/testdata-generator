@@ -40,7 +40,10 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+//        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()){
             Object newObj = runGenerator(defCode, ea, defCode);
                 ea.setValue(newObj);
         }

@@ -1,13 +1,10 @@
 package life.genny.datagenerator.generators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import life.genny.datagenerator.Entities;
 import org.apache.commons.lang3.StringUtils;
 
 import life.genny.datagenerator.Regex;
@@ -37,9 +34,12 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
                 continue;
             daysStripped.add(day);
         }
-        Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
+        daysStripped.sort(Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+//        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             Object newObj = runGenerator(defCode, ea, superName, String.valueOf(daysPerWeek),
                     StringUtils.join(daysStripped));
             if (newObj != null)
@@ -52,6 +52,10 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         String superName = args[0];
         int daysPerWeek = Integer.parseInt(args[1]);
+
+//        log.info("ApplicationGenerator:runGeneratorImpl("+attributeCode+","+regex+","+ Arrays.toString(args) +")");
+        if (tempEntityMap == null)
+            tempEntityMap = new HashMap<>(10);
 
         return switch (attributeCode) {
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:

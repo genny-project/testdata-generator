@@ -64,7 +64,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        //        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()){
             Object newObj = runGenerator(defCode, ea, defCode, superName,
                     prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
                     String.valueOf(daysPerWeek), StringUtils.join(daysStripped));

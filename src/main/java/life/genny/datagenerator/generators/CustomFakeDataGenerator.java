@@ -71,7 +71,9 @@ public abstract class CustomFakeDataGenerator {
         if (ea.getValue() != null)
             return ea.getValue();
 
-        String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
+        String attributeCode = ea.getAttributeCode(); // CommonUtils.removePrefix(ea.getAttributeCode());
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+
         String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
                 ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
                 : null;

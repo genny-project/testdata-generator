@@ -2,6 +2,7 @@ package life.genny.datagenerator.generators;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
@@ -14,7 +15,10 @@ public class ContactGenerator extends CustomFakeDataGenerator {
 
     @Override
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        //        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()){
             Object newObj = runGenerator(defCode, ea, entity.getName().replace(" ", "."));
             if (newObj != null)
                 ea.setValue(newObj);

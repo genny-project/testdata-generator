@@ -4,14 +4,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.transaction.Transactional;
 
+import life.genny.qwandaq.exception.runtime.DebugException;
+import life.genny.qwandaq.exception.runtime.DefinitionException;
 import life.genny.qwandaq.exception.runtime.ItemNotFoundException;
+import life.genny.qwandaq.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -34,11 +41,8 @@ import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.exception.runtime.NullParameterException;
-import life.genny.qwandaq.utils.BaseEntityUtils;
-import life.genny.qwandaq.utils.CommonUtils;
-import life.genny.qwandaq.utils.QwandaUtils;
-import life.genny.qwandaq.utils.SearchUtils;
 import life.genny.qwandaq.validation.Validation;
+import org.w3c.dom.Attr;
 
 @ApplicationScoped
 public class DataFakerService {
@@ -56,6 +60,9 @@ public class DataFakerService {
 
     @Inject
     QwandaUtils qwandaUtils;
+
+    @Inject
+    life.genny.qwandaq.utils.DatabaseUtils databaseUtils;
 
     @Inject
     BaseEntityUtils beUtils;
@@ -192,60 +199,133 @@ public class DataFakerService {
     }
 
     @ActivateRequestContext
-    public BaseEntity getBaseEntity(String code) {
+    public BaseEntity createBaseEntity(String code, String name) {
         code = code.strip();
         if (StringUtils.isBlank(productCode))
             throw new NullParameterException("productCode");
         if (StringUtils.isBlank(code))
             throw new NullParameterException("code");
         try {
-            BaseEntity def = entityManager
+            BaseEntity defBe = entityManager
                     .createQuery("SELECT BE FROM BaseEntity BE WHERE BE.realm=:realmStr AND BE.code=:code", BaseEntity.class)
                     .setParameter("realmStr", productCode)
                     .setParameter("code", code)
                     .getSingleResult();
 
-            List<EntityAttribute> attEAs = def.findPrefixEntityAttributes(Prefix.ATT_);
-            attEAs.addAll(def.findPrefixEntityAttributes(Prefix.PRI_));
-            attEAs.addAll(def.findPrefixEntityAttributes(Prefix.LNK_));
-
-            List<EntityAttribute> attributes = new ArrayList<>();
-            for (EntityAttribute ea : attEAs) {
-                String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-                Attribute attribute;
-                try {
-                    attribute = qwandaUtils.getAttribute(productCode, attributeCode);
-                } catch (Exception e) {
-                    log.error("Ran into a problem: " + e.getMessage());
-                    e.printStackTrace();
-                    continue;
-                }
-
-                DataType dtt = attribute.getDataType();
-                attribute.setDataType(dtt);
-                ea.setAttribute(attribute);
-                ea.setAttributeCode(attributeCode);
-                attributes.add(ea);
-            }
-            def.setBaseEntityAttributes(attributes);
-            return def;
+            return createBeObject(Definition.from(defBe), name);
         } catch (NoResultException e) {
             throw new ItemNotFoundException(productCode, code);
         }
     }
 
+    public Attribute findAttribute(String attributeCode) {
+        Attribute attribute;
+        try {
+            attribute = qwandaUtils.getAttribute(productCode, attributeCode);
+            return attribute;
+        } catch (Exception e) {
+            log.error("Ran into a problem: " + attributeCode + " not found in cache");
+            try {
+                attribute = databaseUtils.findAttributeByCode(productCode, attributeCode);
+                CacheUtils.putObject(productCode, attributeCode, attribute);
+                return attribute;
+            } catch (Exception ex) {
+                log.error("Ran into a problem: " + attributeCode + " not found in database", ex);
+            }
+        }
+        return null;
+    }
 
-    @ActivateRequestContext
-    public BaseEntity create(Definition from, String name) {
-        return beUtils.create(from, name);
+    public BaseEntity createBeObject(final Definition definition, String name) {
+
+        if (definition == null)
+            throw new NullParameterException("definition");
+
+        BaseEntity item = null;
+        Optional<EntityAttribute> uuidEA = definition.findEntityAttribute(Prefix.ATT_.concat(Attribute.PRI_UUID));
+
+        String code;
+
+        if (uuidEA.isPresent()) {
+            log.debug("Creating user base entity");
+            item = beUtils.createUser(definition);
+        } else {
+            String prefix = definition.getValueAsString(Attribute.PRI_PREFIX);
+            if (StringUtils.isBlank(prefix)) {
+                throw new DefinitionException("No prefix set for the def: " + definition.getCode());
+            }
+            code = (prefix + "_" + UUID.randomUUID().toString().substring(0, 32)).toUpperCase();
+
+
+            log.info("Creating BE with code=" + code + ", name=" + name);
+            if(StringUtils.isBlank(name)) {
+                name = code;
+            }
+            item = new BaseEntity(code, name);
+            item.setRealm(definition.getRealm());
+        }
+
+        // save to DB and cache
+        updateBaseEntity(item);
+
+        List<EntityAttribute> atts = definition.findPrefixEntityAttributes(Prefix.ATT_);
+        for (EntityAttribute ea : atts) {
+            double weight = item.getBaseEntityAttributes().size();
+
+            String attrCode = ea.getAttributeCode().substring(Prefix.ATT_.length());
+            Attribute attribute = findAttribute(attrCode);
+
+            if (attribute == null) {
+                log.warn("No Attribute found for def attr " + attrCode);
+                continue;
+            }
+            if (item.containsEntityAttribute(attribute.getCode())) {
+                log.info(item.getCode() + " already has value for " + attribute.getCode());
+                continue;
+            }
+
+            // Find any default val for this Attr
+            String defaultDefValueAttr = Prefix.DFT_.concat(attrCode);
+            Object defaultVal = definition.getValue(defaultDefValueAttr, attribute.getDefaultValue());
+
+            item.addAttribute(attribute, ea.getWeight() == null ? weight : ea.getWeight(), defaultVal);
+        }
+
+        Attribute linkDef = findAttribute(Attribute.LNK_DEF);
+        item.addAnswer(new Answer(item, item, linkDef, "[\"" + definition.getCode() + "\"]"));
+
+        // author of the BE
+        Attribute lnkAuthorAttr = findAttribute(Attribute.LNK_AUTHOR);
+        item.addAnswer(new Answer(item, item, lnkAuthorAttr, "[\"" + productCode + "\"]"));
+
+        // save to DB and cache
+//        updateBaseEntity(item);
+
+        return item;
     }
 
     @ActivateRequestContext
     public void updateBaseEntity(BaseEntity baseEntity) {
-        beUtils.updateBaseEntity(baseEntity);
+        try {
+            beUtils.updateBaseEntity(baseEntity);
+        }catch (Exception e){
+            log.info(e.getMessage()+", "+baseEntity.getCode());
+            throw e;
+        }
+    }
+
+    @ActivateRequestContext
+    public void updateBaseEntity(List<BaseEntity> baseEntities) {
+        for (BaseEntity baseEntity: baseEntities) {
+            try {
+                beUtils.updateBaseEntity(baseEntity);
+            } catch (Exception e) {
+                log.info(e.getMessage() + ", " + baseEntity.getCode(), e);
+            }
+        }
     }
 
     public Attribute getAttributeByCode(String attributeCode) {
-        return qwandaUtils.getAttribute(attributeCode);
+        return findAttribute(attributeCode);
     }
 }

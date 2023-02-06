@@ -1,2 +1,6 @@
 #!/bin/zsh
-fuser -k 5005/tcp
+PID=$(netstat -vanp tcp | grep $1)
+for value in $PID
+do
+kill -9 $value
+done

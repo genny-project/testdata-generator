@@ -3,6 +3,7 @@ package life.genny.datagenerator.generators;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import life.genny.datagenerator.Entities;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Regex;
@@ -36,7 +37,10 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         String lastName = DataFakerCustomUtils.generateName();
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
         entity.setName(firstName + " " + lastName);
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+//        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+
+        // ATT_ already removed in DataFakerService.createBaseEntity, so no ATT_ anymore in attribute
+        for (EntityAttribute ea : entity.getBaseEntityAttributes()){
             Object newObj = runGenerator(defCode, ea, firstName, lastName, gender);
             if (newObj != null)
                 ea.setValue(newObj);

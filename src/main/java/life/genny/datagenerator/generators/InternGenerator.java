@@ -63,7 +63,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             try {
                 ea.setValue(runGenerator(ea, defCode, superName,
                         prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),

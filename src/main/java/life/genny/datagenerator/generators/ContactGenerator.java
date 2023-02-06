@@ -14,7 +14,7 @@ public class ContactGenerator extends CustomFakeDataGenerator {
 
     @Override
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             try {
                 ea.setValue(runGenerator(ea,
                         entity.getName().replace(" ", ".")));

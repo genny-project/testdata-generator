@@ -40,7 +40,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             try {
                 ea.setValue(runGenerator(ea, defCode));
             } catch (Exception e) {

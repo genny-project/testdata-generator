@@ -38,7 +38,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
 
         List<String> containCodes = new ArrayList<>(
                 Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
-        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
+        List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT)
                 .stream()
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
@@ -54,7 +54,7 @@ public class AddressGenerator extends CustomFakeDataGenerator {
             }
         }
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_))
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT))
             for (EntityAttribute filteredEA : filteredEntityAttribute)
                 if (ea.getAttributeCode().equals(filteredEA.getAttributeCode()))
                     ea.setValue(filteredEA.getValue());

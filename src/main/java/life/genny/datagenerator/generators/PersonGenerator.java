@@ -36,7 +36,7 @@ public class PersonGenerator extends CustomFakeDataGenerator {
         String lastName = DataFakerCustomUtils.generateName();
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
         entity.setName(firstName + " " + lastName);
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             try {
                 ea.setValue(runGenerator(ea, firstName, lastName, gender));
             } catch (Exception e) {

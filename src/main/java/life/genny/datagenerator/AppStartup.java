@@ -26,7 +26,7 @@ import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.serviceq.Service;
 
-@ApplicationScoped
+//@ApplicationScoped
 public class AppStartup {
 
     @Inject
@@ -53,7 +53,7 @@ public class AppStartup {
     private ExecutorService executor;
     private List<Entry<String, Integer>> dataGeneration = new ArrayList<>(1);
 
-    @PostConstruct
+//    @PostConstruct
     void setUp() {
         service.fullServiceInit();
 

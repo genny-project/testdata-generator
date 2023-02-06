@@ -1,4 +1,5 @@
 #!/bin/zsh
+set
 # get all config
 if [[ -z "${1}" ]]
 then
@@ -8,7 +9,7 @@ export CONF=$1
 fi
 
 echo "importing some environments from $CONF";
-source $CONF
+export $(grep -v "^$" $CONF | grep -v "^#" | xargs)
 source .env
 
 echo "keycloak.realm $GENNY_KEYCLOAK_REALM"
@@ -27,9 +28,11 @@ echo "product_codes $PRODUCT_CODES"
 export PRODUCT_CODES=$PRODUCT_CODES
 echo "infinispan_url $INFINISPAN_URL"
 export INFINISPAN_URL=$INFINISPAN_URL
+export PROJECT_URL="https://${PRODUCT_CODES}.genny.life"
 echo "project_url $PROJECT_URL"
-export PROJECT_URL=$PROJECT_URL
 echo "fyodor url $FYODOR_SERVICE_API"
 export FYODOR_SERVICE_API=$FYODOR_SERVICE_API
+
+echo "\n\n\n\n\n\n\ngenerate $TOTAL_GENERATION\n\n\n\n\n\n\n"
 
 mvn clean quarkus:dev -DskipTests

@@ -128,6 +128,8 @@ public class FakeDataGenerator {
 
     public BaseEntity generateDataTypeAttributes(BaseEntity entity) {
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT);
+        log.debug("####entity####"+entityAttributes);
+
         log.debug("Entity Attribute count: " + entityAttributes.size());
         for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();

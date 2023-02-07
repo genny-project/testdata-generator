@@ -1,12 +1,7 @@
 package life.genny.datagenerator.generators;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import javax.enterprise.context.ApplicationScoped;
 
-import org.apache.commons.lang3.StringUtils;
 
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.Regex;
@@ -16,7 +11,6 @@ import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
-import life.genny.qwandaq.utils.CommonUtils;
 
 @ApplicationScoped
 public class EduGenerator extends CustomFakeDataGenerator {
@@ -30,9 +24,9 @@ public class EduGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             try {
-                ea.setValue(runGenerator(ea, defCode));
+                ea.setValue(runGenerator(defCode, ea, defCode));
             } catch (Exception e) {
                 log.error("Something went wrong generating attribute value, " + e.getMessage());
                 e.printStackTrace();
@@ -184,45 +178,4 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
         };
     }
-
-    @Override
-    protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
-
-        // MAIN DEF_ for this generator
-        EntityAttribute isEDuProvider = entity.getBaseEntityAttributes()
-                .stream().filter(ea -> CommonUtils.removePrefix(ea.getAttributeCode())
-                        .equals(SpecialAttributes.PRI_IS_EDU_PROVIDER) ||
-                        (ea.getAttributeCode().equals(SpecialAttributes.LNK_DEF) &&
-                                StringUtils.substringBetween(ea.getValue(), "[\"", "\"]")
-                                        .equals(Entities.DEF_EDU_PROVIDER)))
-                .findFirst().orElse(null);
-
-        // Generate sub definitions
-        if (isEDuProvider != null) {
-            tempEntityMap.put(SpecialAttributes.LNK_EDU_PROVIDER, "[\"" + entity.getCode() + "\"]");
-
-            // DEF_EDU_PRO_REP
-            int max = DataFakerUtils.randInt(1, 4);
-            List<String> repCodes = new ArrayList<>(max);
-            for (int i = 0; i < max; i++) {
-                BaseEntity hostCompanyRep = generator
-                        .generateEntity(Entities.DEF_EDU_PRO_REP);
-                repCodes.add(hostCompanyRep.getCode());
-            }
-            // if (repCodes.size() > 0) {
-            //     tempEntityMap.put(SpecialAttributes.LNK_HOST_COMPANY_REP,
-            //             fromListToString(repCodes));
-            //     relations.put(SpecialAttributes.LNK_HOST_COMPANY_REP,
-            //             fromListToString(repCodes));
-            // }
-
-            // DEF_INTERN
-            for (int i = 0; i < 2; i++)
-                generator.generateEntity(Entities.DEF_INTERN);
-        }
-
-        return super.postGenerate(entity, relations);
-    }
-
-
 }

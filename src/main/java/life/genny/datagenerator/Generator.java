@@ -75,7 +75,7 @@ public class Generator {
                 // generator.createRelation(hostCompanyReps, internships, null,
                 //         SpecialAttributes.LNK_HOST_COMPANY_REP);
 
-                generator.generateEntity(Entities.DEF_APPLICATION);
+                generator.generateEntity(Entities.DEF_EDU_PROVIDER);
             } catch (Throwable e) {
                 listener.onError(e);
             }

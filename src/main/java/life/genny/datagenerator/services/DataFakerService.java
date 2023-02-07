@@ -99,7 +99,7 @@ public class DataFakerService {
             dtt.setValidationList(validations);
             attribute.setDataType(dtt);
             ea.setAttribute(attribute);
-            ea.setAttributeCode(Prefix.ATT + attributeCode);
+            ea.setAttributeCode(Prefix.ATT_ + attributeCode);
         }
 
         return entityDefinition;
@@ -173,10 +173,10 @@ public class DataFakerService {
 
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
-        List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT)
+        List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_)
                 .stream().distinct().toList();
 
-        if (entity.getCode().startsWith(Prefix.DEF)) {
+        if (entity.getCode().startsWith(Prefix.DEF_)) {
             try {
                 entity = beUtils.create(Definition.from(entity),
                         entity.getName());

@@ -49,8 +49,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        log.debug("InternGEnerator Debug!!");
-        String superName = DataFakerCustomUtils.generateName() + " " + DataFakerCustomUtils.generateName();
+        String superName = DataFakerCustomUtils.generateName() + " " +
+                DataFakerCustomUtils.generateName();
         Map<String, LocalDateTime> prevPeriod = generatePeriod();
         int daysPerWeek = DataFakerUtils.randInt(1, 5);
 
@@ -63,15 +63,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
-            try {
-                ea.setValue(runGenerator(ea, defCode, superName,
-                        prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
-                        String.valueOf(daysPerWeek), StringUtils.join(daysStripped)));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+            Object newObj = runGenerator(defCode, ea, defCode, superName,
+                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
+                    String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
+            if (newObj != null)
+                ea.setValue(newObj);
         }
         return entity;
     }
@@ -133,7 +130,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
                         endPrevPeriod.format(dtFormatter);
 
             case SpecialAttributes.PRI_CAREER_OBJ:
-                yield generateDescriptionParagraph(
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
             case SpecialAttributes.PRI_DAYS_PER_WEEK:
@@ -192,12 +189,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.PRI_INTERNSHIP_DETAILS:
             case SpecialAttributes.PRI_SPECIFIC_LEARNING_OUTCOMES:
-                yield generateDescriptionParagraph();
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag();
 
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:
             case SpecialAttributes.PRI_ROLES_AND_RESPONSIBILITIES:
             case SpecialAttributes.PRI_CAREER_OBJ:
-                yield generateDescriptionParagraph(
+                yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
             case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
@@ -217,12 +214,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_DAYS_PER_WEEK:
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
-
-            case SpecialAttributes.LNK_HOST_COMPANY:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
-
-            case SpecialAttributes.LNK_HOST_COMPANY_REP:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
 
             case SpecialAttributes.LNK_WHICH_DAYS:
                 List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
@@ -251,18 +242,5 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 "Zero", "One", "Two", "Three", "Four", "Five",
                 "Six", "Seven", "Eight", "Nine", "Ten"));
         return numbers.get(num);
-    }
-
-    private String generateDescriptionParagraph() {
-        return generateDescriptionParagraph(1);
-    }
-
-    private String generateDescriptionParagraph(int length) {
-        String objHtml = "";
-        for (int i = 0; i < length; i++)
-            objHtml += DataFakerCustomUtils.generateHTMLTag(
-                    DataFakerUtils.randStringFromRegex(Regex.DESCRIPTION_REGEX),
-                    "p");
-        return objHtml;
     }
 }

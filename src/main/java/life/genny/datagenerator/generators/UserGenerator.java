@@ -14,14 +14,10 @@ public class UserGenerator extends CustomFakeDataGenerator {
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String firstName = entity.getName().split(" ")[0];
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
-            try {
-                ea.setValue(runGenerator(ea, firstName));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
-
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+            Object newObj = runGenerator(defCode, ea, firstName);
+            if (newObj != null)
+                ea.setValue(newObj);
         }
         return entity;
     }

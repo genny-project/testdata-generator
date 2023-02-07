@@ -8,6 +8,7 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -59,6 +60,9 @@ public class DataFakerService {
     @Inject
     SearchUtils searchUtils;
 
+    @Inject
+    EntityManager entityManager;
+
     @ConfigProperty(name = "data.product-code")
     String productCode;
 
@@ -78,19 +82,7 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        // try {
-        //     entityDefinition = beUtils.create(Definition.from(entityDefinition),
-        //             entityDefinition.getName());
-        //     log.debug("Created entity: " + entityDefinition.getCode() + " in product: " +
-        //             entityDefinition.getRealm());
-        // } catch (Exception e) {
-        //     log.info("Something went bad: " + e.getMessage());
-        //     e.printStackTrace();
-        //     return entityDefinition;
-        // }
-
-        List<EntityAttribute> attEAs = entityDefinition.findPrefixEntityAttributes(Prefix.ATT);
-        for (EntityAttribute ea : attEAs) {
+        for (EntityAttribute ea : entityDefinition.findPrefixEntityAttributes(Prefix.ATT_)) {
             String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
             Attribute attribute;
             try {
@@ -168,6 +160,17 @@ public class DataFakerService {
         return details;
     }
 
+    public BaseEntity addAttribute(BaseEntity entity, String attrCode, Object attrValue) {
+        Attribute attr;
+        if (attrCode.startsWith(Prefix.ATT_))
+            attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(attrCode));
+        else
+            attr = qwandaUtils.getAttribute(attrCode);
+
+        entity.addAnswer(new Answer(entity, entity, attr, "" + attrValue));
+        return entity;
+    }
+
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT)
@@ -186,10 +189,8 @@ public class DataFakerService {
         }
 
         // Saving or updating the attributes
-        for (EntityAttribute ea : entityAttributes) {
-            Attribute attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(ea.getAttributeCode()));
-            entity.addAnswer(new Answer(entity, entity, attr, "" + ea.getValue()));
-        }
+        for (EntityAttribute ea : entityAttributes) 
+            entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
         entity = beUtils.updateBaseEntity(productCode, entity);
 
         log.debug("Entity " + entity.getCode() + " saved");

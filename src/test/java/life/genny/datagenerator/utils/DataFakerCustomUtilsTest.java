@@ -54,7 +54,7 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
 
                 .assertAll();
     }
-    
+
     @Test
     void generateEmail() {
         String firstName = DataFakerCustomUtils.generateName();
@@ -201,6 +201,35 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
                 .createTest("Generate Random HTML Tag Check 4")
                 .setInput(DataFakerCustomUtils.generateHTMLTag(tagContent, "ul", "li", "strong"))
                 .setExpected(true)
+                .build()
+
+                .assertAll();
+    }
+
+    @Test
+    void generateDescriptiveHTMLTag() {
+        String regex = "(<[A-Za-z0-9]+>)+.*(</[A-Za-z0-9]+>)+";
+        new JUnitTester<String, String>()
+                .setTest(input -> {
+                    return Expected(input.input);
+                })
+                .setVerification((result, expected) -> {
+                    assertTrue(Pattern.compile(expected).matcher(result).matches());
+                })
+
+                .createTest("Generate Random Descriptive HTML Tag Check 1")
+                .setInput(DataFakerCustomUtils.generateDescriptiveHTMLTag())
+                .setExpected(regex)
+                .build()
+
+                .createTest("Generate Random Descriptive HTML Tag Check 1")
+                .setInput(DataFakerCustomUtils.generateDescriptiveHTMLTag("li"))
+                .setExpected(regex)
+                .build()
+
+                .createTest("Generate Random Descriptive HTML Tag Check 1")
+                .setInput(DataFakerCustomUtils.generateDescriptiveHTMLTag("a", 3))
+                .setExpected(regex)
                 .build()
 
                 .assertAll();

@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -43,15 +42,12 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 .filter(ea -> containCodes.stream()
                         .filter(containCode -> ea.getAttributeCode().contains(containCode))
                         .findFirst().orElse(null) != null)
-                .collect(Collectors.toList());
+                .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {
-            try {
-                ea.setValue(runGenerator(ea, toJson(place)));
-            } catch (Exception e) {
-                log.error("Something went wrong generating attribute value, " + e.getMessage());
-                e.printStackTrace();
-            }
+            Object newObj = runGenerator(defCode, ea, toJson(place));
+            if (newObj != null)
+                ea.setValue(newObj);
         }
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT))

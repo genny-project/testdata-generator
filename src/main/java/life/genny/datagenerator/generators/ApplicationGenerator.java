@@ -92,11 +92,6 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_APPLICANT_CODE:
                 yield "";
 
-            case SpecialAttributes.PRI_APPLIED_BY:
-                yield StringUtils.substringBetween(
-                        tempEntityMap.get(SpecialAttributes.LNK_INTERN),
-                        "[\"", "\"]");
-
             case SpecialAttributes.LNK_NO_OF_INTERNS:
                 yield "[\"SEL_NO_OF_INTERNS_" +
                         convertNumberToWord(1).toUpperCase() + "\"]";
@@ -107,15 +102,6 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
 
             case SpecialAttributes.LNK_DAYS_PER_WEEK:
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
-
-            case SpecialAttributes.LNK_HOST_COMPANY:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
-
-            case SpecialAttributes.LNK_INTERN:
-                yield tempEntityMap.get(SpecialAttributes.LNK_INTERN);
-
-            case SpecialAttributes.LNK_INTERNSHIP:
-                yield tempEntityMap.get(SpecialAttributes.LNK_INTERNSHIP);
 
             case SpecialAttributes.LNK_INTERNSHIP_DURATION:
                 yield "[SEL_DURATION_12_WEEKS]";

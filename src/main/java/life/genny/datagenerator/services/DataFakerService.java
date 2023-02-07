@@ -9,10 +9,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 
-import life.genny.qwandaq.exception.runtime.ItemNotFoundException;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
 
@@ -163,6 +160,17 @@ public class DataFakerService {
         return details;
     }
 
+    public BaseEntity addAttribute(BaseEntity entity, String attrCode, Object attrValue) {
+        Attribute attr;
+        if (attrCode.startsWith(Prefix.ATT_))
+            attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(attrCode));
+        else
+            attr = qwandaUtils.getAttribute(attrCode);
+
+        entity.addAnswer(new Answer(entity, entity, attr, "" + attrValue));
+        return entity;
+    }
+
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_)
@@ -181,71 +189,11 @@ public class DataFakerService {
         }
 
         // Saving or updating the attributes
-        for (EntityAttribute ea : entityAttributes) {
-            Attribute attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(ea.getAttributeCode()));
-            entity.addAnswer(new Answer(entity, entity, attr, "" + ea.getValue()));
-        }
+        for (EntityAttribute ea : entityAttributes) 
+            entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
         entity = beUtils.updateBaseEntity(productCode, entity);
 
         log.debug("Entity " + entity.getCode() + " saved");
         return entity;
-    }
-
-    @ActivateRequestContext
-    public BaseEntity getBaseEntity(String code) {
-        code = code.strip();
-        if (StringUtils.isBlank(productCode))
-            throw new NullParameterException("productCode");
-        if (StringUtils.isBlank(code))
-            throw new NullParameterException("code");
-        try {
-            BaseEntity def = entityManager
-                    .createQuery("SELECT BE FROM BaseEntity BE WHERE BE.realm=:realmStr AND BE.code=:code", BaseEntity.class)
-                    .setParameter("realmStr", productCode)
-                    .setParameter("code", code)
-                    .getSingleResult();
-
-            List<EntityAttribute> attEAs = def.findPrefixEntityAttributes(Prefix.ATT_);
-            attEAs.addAll(def.findPrefixEntityAttributes(Prefix.PRI_));
-            attEAs.addAll(def.findPrefixEntityAttributes(Prefix.LNK_));
-
-            List<EntityAttribute> attributes = new ArrayList<>();
-            for (EntityAttribute ea : attEAs) {
-                String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-                Attribute attribute;
-                try {
-                    attribute = qwandaUtils.getAttribute(productCode, attributeCode);
-                } catch (Exception e) {
-                    log.error("Ran into a problem: " + e.getMessage());
-                    e.printStackTrace();
-                    continue;
-                }
-
-                DataType dtt = attribute.getDataType();
-                attribute.setDataType(dtt);
-                ea.setAttribute(attribute);
-                ea.setAttributeCode(attributeCode);
-                attributes.add(ea);
-            }
-            def.setBaseEntityAttributes(attributes);
-            return def;
-        } catch (NoResultException e) {
-            throw new ItemNotFoundException(productCode, code);
-        }
-    }
-
-
-    @ActivateRequestContext
-    public BaseEntity create(Definition from, String name) {
-        return beUtils.create(from, name);
-    }
-
-    @ActivateRequestContext
-    public void updateBaseEntity(BaseEntity baseEntity) {
-        beUtils.updateBaseEntity(baseEntity);
-    }
-
-    public Attribute getAttributeByCode(String attributeCode) {
-        return qwandaUtils.getAttribute(attributeCode);
     }
 }

@@ -271,7 +271,7 @@ public class FakeDataGenerator {
         }
     }
 
-    public BaseEntity transferEntityAttribute(BaseEntity toEntity, BaseEntity fromEntity,
+    public BaseEntity transferAttribute(BaseEntity toEntity, BaseEntity fromEntity,
             Map<String, String> attributeCodes) {
         for (Entry<String, String> data : attributeCodes.entrySet()) {
             String codeTo = data.getKey();
@@ -280,6 +280,7 @@ public class FakeDataGenerator {
                     .filter(ea -> ea.getAttributeCode() != null)
                     .findFirst()
                     .orElse(null);
+
             if (foundEntity == null)
                 throw new NullPointerException("Attribute with %s code could not be found."
                         .formatted(codeFrom));

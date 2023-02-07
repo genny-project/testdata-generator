@@ -291,6 +291,13 @@ public class DataFakerService {
             item.setRealm(definition.getRealm());
         }
 
+        Attribute linkDef = findAttribute(Attribute.LNK_DEF);
+        String lnkDefValue = "[\"" + definition.getCode() + "\"]";
+        item.addAnswer(new Answer(item, item, linkDef, lnkDefValue));
+
+        // author of the BE
+        Attribute lnkAuthorAttr = findAttribute(Attribute.LNK_AUTHOR);
+        item.addAnswer(new Answer(item, item, lnkAuthorAttr, "[\"" + productCode + "\"]"));
         // save to DB and cache
         updateBaseEntity(item);
 
@@ -316,13 +323,6 @@ public class DataFakerService {
 
             item.addAttribute(attribute, ea.getWeight() == null ? weight : ea.getWeight(), defaultVal);
         }
-
-        Attribute linkDef = findAttribute(Attribute.LNK_DEF);
-        item.addAnswer(new Answer(item, item, linkDef, "[\"" + definition.getCode() + "\"]"));
-
-        // author of the BE
-        Attribute lnkAuthorAttr = findAttribute(Attribute.LNK_AUTHOR);
-        item.addAnswer(new Answer(item, item, lnkAuthorAttr, "[\"" + productCode + "\"]"));
 
         // save to DB and cache
 //        updateBaseEntity(item);

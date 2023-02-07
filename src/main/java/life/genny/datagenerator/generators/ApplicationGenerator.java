@@ -54,8 +54,8 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
         int daysPerWeek = Integer.parseInt(args[1]);
 
 //        log.info("ApplicationGenerator:runGeneratorImpl("+attributeCode+","+regex+","+ Arrays.toString(args) +")");
-        if (tempEntityMap == null)
-            tempEntityMap = new HashMap<>(10);
+//        if (tempEntityMap == null)
+//            tempEntityMap = new HashMap<>(10);
 
         return switch (attributeCode) {
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:

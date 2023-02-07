@@ -1,6 +1,7 @@
 package life.genny.datagenerator;
 
 import io.quarkus.runtime.StartupEvent;
+import life.genny.datagenerator.configs.GeneratorConfig;
 import life.genny.datagenerator.generators.*;
 import life.genny.datagenerator.services.DataFakerService;
 import life.genny.qwandaq.utils.BaseEntityUtils;
@@ -15,9 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @ApplicationScoped
-public class TestAppStartupExample {
+public class AppStartup2 {
     @Inject
     Logger log;
 
@@ -46,6 +48,9 @@ public class TestAppStartupExample {
     @Inject UserGenerator userGenerator;
     @Inject ApplicationGenerator applicationGenerator;
 
+    @Inject
+    GeneratorConfig generatorConfig;
+
 
     void start(@Observes StartupEvent event) {
         log.info("initializing service");
@@ -66,9 +71,15 @@ public class TestAppStartupExample {
         generatorMap.put(Entities.DEF_APPLICATION, applicationGenerator);
 
         log.info("Starting generate");
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, generatorMap));
-        executorService.submit(new GenerateAllDefExample(beUtils, dataFakerService, 10, log, generatorMap));
+        ExecutorService executorService = Executors.newFixedThreadPool(generatorConfig.maxThread());
+        int totalData = generatorConfig.totalGeneration();
+        int generatedCount = 0;
+        while (generatedCount < totalData) {
+            final int generate = Math.min(totalData - generatedCount, generatorConfig.recordsPerThread());
+            Future<?> thread = executorService.submit(new GenerateAllDefTask(beUtils, dataFakerService, generate, log, generatorMap));
+            log.info("Add Generator:"+thread.toString());
+            generatedCount += generate;
+        }
         executorService.shutdown();
     }
 }

@@ -42,7 +42,7 @@ public class EduGenerator extends CustomFakeDataGenerator {
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), validations.get(0).getRegex(),
+            Object newObj = runGeneratorImpl(ea.getAttributeCode(), validations.isEmpty()?"": validations.get(0).getRegex(),
                     defCode, reps);
 
             if (newObj != null) {
@@ -126,7 +126,7 @@ public class EduGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_ADDRESS_STATE:
             case SpecialAttributes.PRI_ASSOC_EP:
             case SpecialAttributes.PRI_DEPARTMENT:
-            case SpecialAttributes.PRI_DOB:
+//            case SpecialAttributes.PRI_DOB:
             case SpecialAttributes.PRI_EMAIL:
 
             case SpecialAttributes.PRI_FIRSTNAME:
@@ -136,7 +136,7 @@ public class EduGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_IMAGE_URL:
                 yield DataFakerUtils.randStringFromRegex(Regex.WEBSITE_URL_REGEX);
 
-            case SpecialAttributes.PRI_INITIALS:
+//            case SpecialAttributes.PRI_INITIALS:
             case SpecialAttributes.PRI_IS_EDU_PRO_REP:
                 yield DataFakerUtils.randBoolean();
 

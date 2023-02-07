@@ -7,7 +7,6 @@ import life.genny.datagenerator.services.DataFakerService;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.CodedEntity;
-import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -16,13 +15,13 @@ import org.jboss.logging.Logger;
 
 import java.util.*;
 
-public class GenerateAllDefExample implements Runnable {
+public class GenerateAllDefTask implements Runnable {
     private final BaseEntityUtils beUtils;
     private final DataFakerService dataFakerService;
     private final int dataCount;
     private final Logger log;
     private final Map<String, CustomFakeDataGenerator> generators;
-    public GenerateAllDefExample(BaseEntityUtils beUtils, DataFakerService dataFakerService, int dataCount, Logger log, Map<String, CustomFakeDataGenerator> generators) {
+    public GenerateAllDefTask(BaseEntityUtils beUtils, DataFakerService dataFakerService, int dataCount, Logger log, Map<String, CustomFakeDataGenerator> generators) {
         this.beUtils = beUtils;
         this.dataFakerService = dataFakerService;
         this.dataCount = dataCount;
@@ -35,6 +34,14 @@ public class GenerateAllDefExample implements Runnable {
      */
     private final OnSetAttributeByRelation internshipHostCompanyRep = (attributeCode, beFor, beFrom) -> switch (attributeCode) {
         case SpecialAttributes.PRI_OUTCOME_LIFE_REP_NAME -> beFrom[0].getName(); //this is example
+        default -> null;
+    };
+
+    private final OnSetAttributeByRelation appInternSetAttr = (attributeCode, beFor, beFrom) -> switch (attributeCode) {
+        case SpecialAttributes.PRI_OUTCOME_LIFE_REP_NAME -> beFrom[0].getName();
+        case SpecialAttributes.LNK_NO_OF_INTERNS -> "[\"SEL_NO_OF_INTERNS_" + beFrom.length + "\"]";
+        case SpecialAttributes.PRI_NO_OF_INTERNS -> beFrom.length;
+        case SpecialAttributes.PRI_APPLIED_BY -> beFor.getAttributeMap().get(SpecialAttributes.LNK_INTERN).getValue();
         default -> null;
     };
 
@@ -67,9 +74,9 @@ public class GenerateAllDefExample implements Runnable {
             BaseEntity hcRep1 = create("DEF_HOST_CPY_REP", "Host Company Rep");
 
             //rel HC <-> HCR
-            EntityAttribute ea = createRelation("LNK_HOST_COMPANY", hcRep, hcRep.getBaseEntityAttributes().size(), null, hc);
-            EntityAttribute ea1 = createRelation("LNK_HOST_COMPANY", hcRep1, hcRep1.getBaseEntityAttributes().size(), null, hc);
-            EntityAttribute ea2 = createRelation("LNK_HOST_COMPANY_REP", hc, hc.getBaseEntityAttributes().size(), null, hcRep, hcRep1);
+            EntityAttribute ea = createRelation(SpecialAttributes.LNK_HOST_COMPANY, hcRep, hcRep.getBaseEntityAttributes().size(), null, hc);
+            EntityAttribute ea1 = createRelation(SpecialAttributes.LNK_HOST_COMPANY, hcRep1, hcRep1.getBaseEntityAttributes().size(), null, hc);
+            EntityAttribute ea2 = createRelation(SpecialAttributes.LNK_HOST_COMPANY_REP, hc, hc.getBaseEntityAttributes().size(), null, hcRep, hcRep1);
             //<-----------------/>
 
             //2x Internship
@@ -77,7 +84,7 @@ public class GenerateAllDefExample implements Runnable {
             BaseEntity internship1 = create("DEF_INTERNSHIP", "Internship");
 
             //rel INTERNSHIP <-> HC
-            EntityAttribute ea3 = createRelation("LNK_INTERNSHIP", hc, hc.getBaseEntityAttributes().size(), null, internship, internship1); // 1x HC <-- 2x Internship
+            EntityAttribute ea3 = createRelation(SpecialAttributes.LNK_INTERNSHIP, hc, hc.getBaseEntityAttributes().size(), null, internship, internship1); // 1x HC <-- 2x Internship
             EntityAttribute ea5 = createRelation("LNK_HOST_COMPANY", internship, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
             EntityAttribute ea6 = createRelation("LNK_HOST_COMPANY", internship1, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
 
@@ -88,10 +95,42 @@ public class GenerateAllDefExample implements Runnable {
             EntityAttribute ea10 = createRelation("LNK_HOST_COMPANY_REP", internship, internship.getBaseEntityAttributes().size(), internshipHostCompanyRep, hcRep1); // 1x Internship <-- 1x HCR
             //<-----------------/>
 
-            //create others Entities here
+            //1x Edu Provider
+            BaseEntity edu = create(Entities.DEF_EDU_PROVIDER, DataFakerCustomUtils.generateName());
+            //2x Edu Provider Rep
+            BaseEntity eduRep = create(Entities.DEF_EDU_PRO_REP, DataFakerCustomUtils.generateName());
+            BaseEntity eduRep1 = create(Entities.DEF_EDU_PRO_REP, DataFakerCustomUtils.generateName());
+            //rel Edu Rep <-- Edu Prov
+            EntityAttribute eduProvEduRep = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, eduRep, eduRep.getBaseEntityAttributes().size(), null, edu);
+            EntityAttribute eduProvEduRep1 = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, eduRep1, eduRep1.getBaseEntityAttributes().size(), null, edu);
+
+            //2x Intern
+            BaseEntity intern = create(Entities.DEF_INTERN, DataFakerCustomUtils.generateName());
+            BaseEntity intern1 = create(Entities.DEF_INTERN, DataFakerCustomUtils.generateName());
+            //rel Intern <-- Edu Prov
+            EntityAttribute internEdu = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, intern, intern.getBaseEntityAttributes().size(), null, edu);
+            EntityAttribute internEdu1 = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, intern1, intern1.getBaseEntityAttributes().size(), null, edu);
+
+            //2x App
+            BaseEntity app = create(Entities.DEF_APPLICATION, DataFakerCustomUtils.generateName());
+            BaseEntity app1 = create(Entities.DEF_APPLICATION, DataFakerCustomUtils.generateName());
+            //rel app <-- HC
+            EntityAttribute appHc = createRelation(SpecialAttributes.LNK_HOST_COMPANY, app, app.getBaseEntityAttributes().size(), null, hc);
+            EntityAttribute appHc1 = createRelation(SpecialAttributes.LNK_HOST_COMPANY, app1, app1.getBaseEntityAttributes().size(), null, hc);
+            //rel app <-- intern
+            EntityAttribute appIntern = createRelation(SpecialAttributes.LNK_INTERN, app, app.getBaseEntityAttributes().size(), appInternSetAttr, intern);
+            EntityAttribute appIntern1 = createRelation(SpecialAttributes.LNK_INTERN, app1, app1.getBaseEntityAttributes().size(), appInternSetAttr, intern1);
+
+            //rel app <-- internship
+            EntityAttribute appInternship = createRelation(SpecialAttributes.LNK_INTERNSHIP, app, app.getBaseEntityAttributes().size(), appInternSetAttr, internship);
+            EntityAttribute appInternship1 = createRelation(SpecialAttributes.LNK_INTERNSHIP, app1, app1.getBaseEntityAttributes().size(), appInternSetAttr, internship1);
+
+            //rel app <-- edu provider
+            EntityAttribute appEduProv = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, app, app.getBaseEntityAttributes().size(), appInternSetAttr, edu);
+            EntityAttribute appEduProv1 = createRelation(SpecialAttributes.LNK_EDU_PROVIDER, app1, app1.getBaseEntityAttributes().size(), appInternSetAttr, edu);
 
             log.error("saving BE " + hc.getCreated());
-            baseEntities.addAll(Arrays.asList(hc, hcRep, hcRep1, internship, internship1));
+            baseEntities.addAll(Arrays.asList(hc, hcRep, hcRep1, internship, internship1, edu, eduRep, eduRep1, intern, intern1, app, app1));
             dataFakerService.updateBaseEntity(baseEntities);
         }catch (Throwable e){
             log.error("error,", e);
@@ -125,6 +164,7 @@ public class GenerateAllDefExample implements Runnable {
         relValue.append("]");
 
         EntityAttribute ea = relFor.addAttribute(dataFakerService.findAttribute(lnkCode), weight, relValue.toString());
+        relFor.setFastAttributes(true);
         if (onSetAttributeByRelation != null) {
             for (EntityAttribute attr: relFor.getBaseEntityAttributes()) {
                 Object value = onSetAttributeByRelation.createValue(attr.getAttributeCode(), relFor, relFrom);
@@ -171,9 +211,9 @@ public class GenerateAllDefExample implements Runnable {
         be.setFastAttributes(true);
         for (EntityAttribute beAttr: be.getBaseEntityAttributes()) {
             if (beAttr.getValue() == null || "".equals(beAttr.getValue()))
-                generateAttribute(beAttr, name, be, defCode);
+                generateAttribute(beAttr, name, be);
 
-            log.info("--> "+beAttr.getAttributeCode()+": "+beAttr.getValue());
+//            log.info("--> "+beAttr.getAttributeCode()+": "+beAttr.getValue());
         }
         return be;
     }
@@ -183,9 +223,10 @@ public class GenerateAllDefExample implements Runnable {
      * @param entityAttribute obj of EntityAttribute
      * @param name name of BaseEntity
      * @param be obj of BaseEntity
-     * @param defCode not used
      */
-    private void generateAttribute(EntityAttribute entityAttribute, String name, BaseEntity be, String defCode) { // generate the attribute value here
+    private void generateAttribute(EntityAttribute entityAttribute, String name, BaseEntity be) { // generate missed attribute value here
+        if (entityAttribute.getValue() != null && !"".equals(entityAttribute.getValue())) return;
+
         String regex = entityAttribute.getAttribute().getDataType().getValidationList().size() > 0
                 ? entityAttribute.getAttribute().getDataType().getValidationList().get(0).getRegex()
                 : null;
@@ -194,7 +235,7 @@ public class GenerateAllDefExample implements Runnable {
         String[] names = name.split(" ");
         String gender = DataFakerUtils.randStringFromRegex(Regex.GENDER_REGEX);
 
-        log.info("generating attribute: "+entityAttribute.getAttributeCode()+" for "+be.getCode());
+//        log.info("generating attribute: "+entityAttribute.getAttributeCode()+" for "+be.getCode());
         Object oValue = switch (entityAttribute.getAttributeCode()) {
             case SpecialAttributes.LNK_AUTHOR:
                 yield "Test Data Generator";

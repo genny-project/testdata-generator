@@ -108,7 +108,6 @@ public class AddressGenerator extends CustomFakeDataGenerator {
                 yield "[\"SEL_" +
                         country.replace(" ", "_").toUpperCase() +
                         "\"]";
-
             case SpecialAttributes.PRI_ADDRESS_ADDRESS2:
             case SpecialAttributes.PRI_ADDRESS_EXTRA:
             default:

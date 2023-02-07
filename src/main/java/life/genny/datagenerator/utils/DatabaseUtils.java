@@ -20,7 +20,7 @@ public class DatabaseUtils {
     }
 
     public static DatabaseUtils initConnection(MySQLConfig mysqlConfig) throws SQLException {
-        String url = "jdbc:mysql://" + mysqlConfig.host() + ":" + mysqlConfig.port() + "/" + mysqlConfig.database();
+        String url = "jdbc:mysql://" + mysqlConfig.host() + ":" + mysqlConfig.port() + "/" + mysqlConfig.database()+"?serverTimezone=UTC";
         Connection conn = DriverManager.getConnection(url, mysqlConfig.user(), mysqlConfig.password());
         Statement statement = conn.createStatement();
         return new DatabaseUtils(conn, statement);

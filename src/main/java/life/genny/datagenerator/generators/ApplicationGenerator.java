@@ -40,6 +40,8 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
 
         // ATT_ has been removed in DataFakerService.createBaseEntity, so there is no ATT_ in the attribute anymore
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+            if (ea.getValue() != null && !"".equals(ea.getValue())) continue;
+
             Object newObj = runGenerator(defCode, ea, superName, String.valueOf(daysPerWeek),
                     StringUtils.join(daysStripped));
             if (newObj != null)

@@ -19,31 +19,33 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
     @Override
     BaseEntity generateImpl(String defCode,  BaseEntity entity) {
-        List<String> repCodes = null;
-        log.debug("defCode equals DEF_EDU#####");
-
-        int max = DataFakerUtils.randInt(1, 4);
-        if (defCode.equals(Entities.DEF_EDU_PROVIDER)) {
-            repCodes = new ArrayList<>(max);
-            for (int i = 0; i < max; i++) {
-                BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_EDU_PRO_REP);
-                repCodes.add(hostCompanyRep.getCode());
-            }
-        }
-        String reps = null;
-        if (repCodes != null){
-            reps = "[\"" +
-            String.join("\", \"", repCodes.toArray(new String[0])) +
-            "\"]";
-        }
-        log.debug("DEF_EDU##### "+repCodes);
+//        List<String> repCodes = null;
+//        log.debug("defCode equals DEF_EDU#####");
+//
+//        int max = DataFakerUtils.randInt(1, 4);
+//        if (defCode.equals(Entities.DEF_EDU_PROVIDER)) {
+//            repCodes = new ArrayList<>(max);
+//            for (int i = 0; i < max; i++) {
+//                BaseEntity hostCompanyRep = generator.generateEntity(Entities.DEF_EDU_PRO_REP);
+//                repCodes.add(hostCompanyRep.getCode());
+//            }
+//        }
+//        String reps = null;
+//        if (repCodes != null){
+//            reps = "[\"" +
+//            String.join("\", \"", repCodes.toArray(new String[0])) +
+//            "\"]";
+//        }
+//        log.debug("DEF_EDU##### "+repCodes);
 
 
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+            if (ea.getValue() != null && !"".equals(ea.getValue())) continue;
+
             List<Validation> validations = ea.getAttribute().getDataType().getValidationList();
             String className = ea.getAttribute().getDataType().getClassName();
             Object newObj = runGeneratorImpl(ea.getAttributeCode(), validations.isEmpty()?"": validations.get(0).getRegex(),
-                    defCode, reps);
+                    defCode, "[]");
 
             if (newObj != null) {
                 dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
@@ -57,20 +59,37 @@ public class EduGenerator extends CustomFakeDataGenerator {
     @Override
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         String entityCode = args[0];
-        String companyReps = args[1];
         return switch (entityCode) {
-            case Entities.DEF_EDU_PROVIDER -> generateEduProviderAttr(attributeCode, companyReps);
+            case Entities.DEF_EDU_PROVIDER -> generateEduProviderAttr(attributeCode);
             case Entities.DEF_EDU_PRO_REP -> generateEduProviderRepAttr(attributeCode);
             default -> null;
         };
     }
 
-    private Object generateEduProviderAttr(String attributeCode, String companyReps) {
+    private Object generateEduProviderAttr(String attributeCode) {
         return switch (attributeCode) {
             case SpecialAttributes.LNK_SELECT_COUNTRY:
             case SpecialAttributes.LNK_SPECIFY_ABN:
             case SpecialAttributes.PRI_ABN:
             case SpecialAttributes.PRI_ADDRESS_ADDRESS1:
+
+            case SpecialAttributes.PRI_ADDRESS_CITY:
+
+            case SpecialAttributes.PRI_ADDRESS_COUNTRY:
+
+            case SpecialAttributes.PRI_ADDRESS_FULL:
+
+            case SpecialAttributes.PRI_ADDRESS_JSON:
+
+            case SpecialAttributes.PRI_ADDRESS_LATITUDE:
+
+            case SpecialAttributes.PRI_ADDRESS_LONGITUDE:
+
+            case SpecialAttributes.PRI_ADDRESS_POSTCODE:
+
+            case SpecialAttributes.PRI_ADDRESS_STATE:
+
+            case SpecialAttributes.PRI_ADDRESS_SUBURB:
 
             case SpecialAttributes.PRI_COMPANY_DESCRIPTION:
                 yield DataFakerUtils.randStringFromRegex(Regex.TEXT_PARAGRAPH_REGEX);
@@ -168,6 +187,4 @@ public class EduGenerator extends CustomFakeDataGenerator {
 
         };
     }
-
-
 }

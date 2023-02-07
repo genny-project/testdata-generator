@@ -67,6 +67,8 @@ public class InternGenerator extends CustomFakeDataGenerator {
 
         // ATT_ has been removed in DataFakerService.createBaseEntity, so there is no ATT_ in the attribute anymore
         for (EntityAttribute ea : entity.getBaseEntityAttributes()){
+            if (ea.getValue() != null && !"".equals(ea.getValue())) continue;
+
             Object newObj = runGenerator(defCode, ea, defCode, superName,
                     prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
                     String.valueOf(daysPerWeek), StringUtils.join(daysStripped));

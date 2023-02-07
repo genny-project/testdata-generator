@@ -4,6 +4,7 @@ import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.services.DataFakerService;
+import life.genny.datagenerator.services.FakeDataGenerator;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.CodedEntity;
@@ -68,10 +69,10 @@ public class GenerateAllDefTask implements Runnable {
         try {
 
             //1x Host Company
-            BaseEntity hc = create(Entities.DEF_HOST_COMPANY, "Host Company");
+            BaseEntity hc = create(Entities.DEF_HOST_COMPANY, DataFakerCustomUtils.generateName()+", Pty. Ltd.");
             //2x Host Company Rep
-            BaseEntity hcRep = create(Entities.DEF_HOST_COMPANY_REP, "Host Company Rep");
-            BaseEntity hcRep1 = create("DEF_HOST_CPY_REP", "Host Company Rep");
+            BaseEntity hcRep = create(Entities.DEF_HOST_COMPANY_REP, DataFakerCustomUtils.generateName());
+            BaseEntity hcRep1 = create(Entities.DEF_HOST_COMPANY_REP, DataFakerCustomUtils.generateName());
 
             //rel HC <-> HCR
             EntityAttribute ea = createRelation(SpecialAttributes.LNK_HOST_COMPANY, hcRep, hcRep.getBaseEntityAttributes().size(), null, hc);
@@ -80,19 +81,19 @@ public class GenerateAllDefTask implements Runnable {
             //<-----------------/>
 
             //2x Internship
-            BaseEntity internship = create("DEF_INTERNSHIP", "Internship");
-            BaseEntity internship1 = create("DEF_INTERNSHIP", "Internship");
+            BaseEntity internship = create(Entities.DEF_INTERNSHIP, DataFakerCustomUtils.generateName());
+            BaseEntity internship1 = create(Entities.DEF_INTERNSHIP, DataFakerCustomUtils.generateName());
 
             //rel INTERNSHIP <-> HC
             EntityAttribute ea3 = createRelation(SpecialAttributes.LNK_INTERNSHIP, hc, hc.getBaseEntityAttributes().size(), null, internship, internship1); // 1x HC <-- 2x Internship
-            EntityAttribute ea5 = createRelation("LNK_HOST_COMPANY", internship, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
-            EntityAttribute ea6 = createRelation("LNK_HOST_COMPANY", internship1, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
+            EntityAttribute ea5 = createRelation(SpecialAttributes.LNK_HOST_COMPANY, internship, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
+            EntityAttribute ea6 = createRelation(SpecialAttributes.LNK_HOST_COMPANY, internship1, internship.getBaseEntityAttributes().size(), null, hc); // 1x Internship <-- 1x HC
 
             //rel INTERNSHIP <-> HCR
-            EntityAttribute ea7 = createRelation("LNK_INTERNSHIP", hcRep, hcRep.getBaseEntityAttributes().size(), null, internship); // 1x HCR <-- 1x Internship
-            EntityAttribute ea8 = createRelation("LNK_INTERNSHIP", hcRep1, hcRep1.getBaseEntityAttributes().size(), null, internship1); // 1x HCR <-- 1x Internship
-            EntityAttribute ea9 = createRelation("LNK_HOST_COMPANY_REP", internship, internship.getBaseEntityAttributes().size(), internshipHostCompanyRep, hcRep); // 1x Internship <-- 1x HCR
-            EntityAttribute ea10 = createRelation("LNK_HOST_COMPANY_REP", internship, internship.getBaseEntityAttributes().size(), internshipHostCompanyRep, hcRep1); // 1x Internship <-- 1x HCR
+            EntityAttribute ea7 = createRelation(SpecialAttributes.LNK_INTERNSHIP, hcRep, hcRep.getBaseEntityAttributes().size(), null, internship); // 1x HCR <-- 1x Internship
+            EntityAttribute ea8 = createRelation(SpecialAttributes.LNK_INTERNSHIP, hcRep1, hcRep1.getBaseEntityAttributes().size(), null, internship1); // 1x HCR <-- 1x Internship
+            EntityAttribute ea9 = createRelation(SpecialAttributes.LNK_HOST_COMPANY_REP, internship, internship.getBaseEntityAttributes().size(), internshipHostCompanyRep, hcRep); // 1x Internship <-- 1x HCR
+            EntityAttribute ea10 = createRelation(SpecialAttributes.LNK_HOST_COMPANY_REP, internship, internship.getBaseEntityAttributes().size(), internshipHostCompanyRep, hcRep1); // 1x Internship <-- 1x HCR
             //<-----------------/>
 
             //1x Edu Provider
@@ -365,6 +366,15 @@ public class GenerateAllDefTask implements Runnable {
 
             case SpecialAttributes.PRI_SUBMIT:
             default:
+                if (entityAttribute.getAttribute().getDataType().getClassName().equals("java.lang.String")) {
+                    yield DataFakerCustomUtils.generateName();
+                } else if (entityAttribute.getAttribute().getDataType().getClassName().equals("java.lang.Boolean")) {
+                    yield DataFakerUtils.randBoolean();
+                } else if (entityAttribute.getAttribute().getDataType().getClassName().equals("java.lang.Integer")) {
+                    yield DataFakerUtils.randInt(99);
+                } else if (entityAttribute.getAttribute().getDataType().getClassName().equals("java.lang.Double")) {
+                    yield DataFakerUtils.randDouble(99.999);
+                }
                 yield null;
         };
 

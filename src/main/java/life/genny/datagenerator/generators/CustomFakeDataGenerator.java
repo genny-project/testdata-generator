@@ -1,11 +1,8 @@
 package life.genny.datagenerator.generators;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 
@@ -29,7 +26,6 @@ public abstract class CustomFakeDataGenerator {
     protected final String IGNORE = "NEED TO BE CHANGED";
 
     protected BaseEntity entity = null;
-    protected static Map<String, String> tempEntityMap;
     private List<PlaceDetail> places = new ArrayList<>();
 
     protected List<PlaceDetail> getPlaces() {
@@ -46,16 +42,12 @@ public abstract class CustomFakeDataGenerator {
     }
 
     public BaseEntity generate(String defCode, BaseEntity entity) {
-        if (tempEntityMap == null)
-            tempEntityMap = new HashMap<>(10);
-
-        log.info("Generating " + defCode + " attributes for " + entity.getCode());
+        log.debug("Generating " + defCode + " attributes for " + entity.getCode());
         BaseEntity be = generateImpl(defCode, entity);
         if (be.getCode().equals(defCode)) {
             try {
                 be = generator.generateDataTypeAttributes(entity);
                 be = generator.saveEntity(be);
-                be = postGenerate(be, new HashMap<>());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -112,24 +104,4 @@ public abstract class CustomFakeDataGenerator {
     abstract BaseEntity generateImpl(String defCode, BaseEntity entity);
 
     abstract Object runGeneratorImpl(String attributeCode, String regex, String... args);
-
-    protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
-        log.debug("Entering post generation of " + entity.getCode());
-        if (relations.size() > 0) {
-            for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-                for (Entry<String, Object> data : relations.entrySet())
-                    if (ea.getAttributeCode().equals(data.getKey()))
-                        ea.setValue(data.getValue());
-            }
-
-            generator.saveEntity(entity);
-        }
-        return entity;
-    }
-
-    protected String fromListToString(List<String> codes) {
-        return "[\"" +
-                String.join("\", \"", codes.toArray(new String[0])) +
-                "\"]";
-    }
 }

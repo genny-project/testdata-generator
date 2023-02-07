@@ -23,7 +23,6 @@ import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
-import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
@@ -219,12 +218,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.LNK_DAYS_PER_WEEK:
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
 
-            case SpecialAttributes.LNK_HOST_COMPANY:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
-
-            case SpecialAttributes.LNK_HOST_COMPANY_REP:
-                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
-
             case SpecialAttributes.LNK_WHICH_DAYS:
                 List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
                         .map(day -> "SEL_WHICH_DAYS_" + day.toUpperCase())
@@ -234,26 +227,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
             default:
                 yield null;
         };
-    }
-
-    @Override
-    protected BaseEntity postGenerate(BaseEntity entity, Map<String, Object> relations) {
-        EntityAttribute lnkDef = entity.getBaseEntityAttributes().stream()
-                .filter(ea -> ea.getAttributeCode().equals(Attribute.LNK_DEF))
-                .findFirst()
-                .orElse(null);
-
-        if (lnkDef != null) {
-            // DEF_INTERN
-            if (lnkDef.getValueString().equals(Entities.DEF_INTERN))
-                tempEntityMap.put(SpecialAttributes.LNK_INTERN, entity.getCode());
-
-            // DEF_INTERNSHIP
-            if (lnkDef.getValueString().equals(Entities.DEF_INTERNSHIP))
-                tempEntityMap.put(SpecialAttributes.LNK_INTERNSHIP, entity.getCode());
-        }
-
-        return super.postGenerate(entity, relations);
     }
 
     private Map<String, LocalDateTime> generatePeriod() {

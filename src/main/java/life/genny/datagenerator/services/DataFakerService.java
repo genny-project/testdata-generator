@@ -170,6 +170,17 @@ public class DataFakerService {
         return details;
     }
 
+    public BaseEntity addAttribute(BaseEntity entity, String attrCode, Object attrValue) {
+        Attribute attr;
+        if (attrCode.startsWith(Prefix.ATT_))
+            attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(attrCode));
+        else
+            attr = qwandaUtils.getAttribute(attrCode);
+
+        entity.addAnswer(new Answer(entity, entity, attr, "" + attrValue));
+        return entity;
+    }
+
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_)
@@ -188,10 +199,8 @@ public class DataFakerService {
         }
 
         // Saving or updating the attributes
-        for (EntityAttribute ea : entityAttributes) {
-            Attribute attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(ea.getAttributeCode()));
-            entity.addAnswer(new Answer(entity, entity, attr, "" + ea.getValue()));
-        }
+        for (EntityAttribute ea : entityAttributes)
+            entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
         entity = beUtils.updateBaseEntity(productCode, entity);
 
         log.debug("Entity " + entity.getCode() + " saved");

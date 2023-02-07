@@ -1,24 +1,18 @@
 package life.genny.datagenerator.generators;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import life.genny.datagenerator.Entities;
-import org.jboss.logging.Logger;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.model.AddressComponent;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
-import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
+import org.jboss.logging.Logger;
+
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import java.util.*;
 
 @ApplicationScoped
 public class AddressGenerator extends CustomFakeDataGenerator {

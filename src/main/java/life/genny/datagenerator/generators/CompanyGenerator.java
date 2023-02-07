@@ -34,7 +34,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             Object newObj = runGenerator(defCode, ea, defCode);
                 ea.setValue(newObj);
         }

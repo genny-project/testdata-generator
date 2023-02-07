@@ -2,7 +2,6 @@ package life.genny.datagenerator.generators;
 
 import javax.enterprise.context.ApplicationScoped;
 
-
 import life.genny.datagenerator.Entities;
 import life.genny.datagenerator.Regex;
 import life.genny.datagenerator.SpecialAttributes;
@@ -24,7 +23,7 @@ public class EduGenerator extends CustomFakeDataGenerator {
      */
     @Override
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             try {
                 ea.setValue(runGenerator(defCode, ea, defCode));
             } catch (Exception e) {
@@ -151,6 +150,8 @@ public class EduGenerator extends CustomFakeDataGenerator {
                 yield DataFakerUtils.randBoolean();
 
             case SpecialAttributes.PRI_JOB_TITLE:
+                yield DataFakerCustomUtils.generateName();
+
             case SpecialAttributes.PRI_KEYCLOAK_UUID:
             case SpecialAttributes.PRI_LANDLINE:
             case SpecialAttributes.PRI_LASTNAME:

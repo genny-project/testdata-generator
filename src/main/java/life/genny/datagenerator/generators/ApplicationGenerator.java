@@ -39,7 +39,7 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             Object newObj = runGenerator(defCode, ea, superName, String.valueOf(daysPerWeek),
                     StringUtils.join(daysStripped));
             if (newObj != null)

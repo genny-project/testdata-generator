@@ -14,7 +14,7 @@ public class UserGenerator extends CustomFakeDataGenerator {
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String firstName = entity.getName().split(" ")[0];
 
-        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             Object newObj = runGenerator(defCode, ea, firstName);
             if (newObj != null)
                 ea.setValue(newObj);

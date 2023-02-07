@@ -24,6 +24,7 @@ import life.genny.datagenerator.SpecialAttributes;
 import life.genny.datagenerator.utils.DataFakerCustomUtils;
 import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
 
 /**
@@ -62,19 +63,14 @@ public class InternGenerator extends CustomFakeDataGenerator {
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
-        for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
-                    ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
-                    : null;
-            String className = ea.getAttribute().getDataType().getClassName();
-
-            Object newObj = runGeneratorImpl(ea.getAttributeCode(), regexVal, defCode, superName,
-                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
-                    String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
-
-            if (newObj != null) {
-                dataTypeInvalidArgument(ea.getAttributeCode(), newObj, className);
-                ea.setValue(newObj);
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
+            try {
+                ea.setValue(runGenerator(ea, defCode, superName,
+                        prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
+                        String.valueOf(daysPerWeek), StringUtils.join(daysStripped)));
+            } catch (Exception e) {
+                log.error("Something went wrong generating attribute value, " + e.getMessage());
+                e.printStackTrace();
             }
         }
         return entity;
@@ -223,10 +219,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
 
             case SpecialAttributes.LNK_HOST_COMPANY:
-                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY) + "\"]";
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY);
 
             case SpecialAttributes.LNK_HOST_COMPANY_REP:
-                yield "[\"" + tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP) + "\"]";
+                yield tempEntityMap.get(SpecialAttributes.LNK_HOST_COMPANY_REP);
 
             case SpecialAttributes.LNK_WHICH_DAYS:
                 List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()

@@ -6,6 +6,7 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation
      */
     public static final String PRI_SUBMIT = "PRI_SUBMIT";
+    public static final String LNK_DEF = "LNK_DEF";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_PERSON
@@ -73,6 +74,7 @@ public class SpecialAttributes {
     public static final String PRI_NAME = "PRI_NAME";
     public static final String PRI_LEGAL_NAME = "PRI_LEGAL_NAME";
     public static final String PRI_COMPANY_WEBSITE_URL = "PRI_COMPANY_WEBSITE_URL";
+    public static final String PRI_IS_HOST_CPY = "PRI_IS_HOST_CPY";
     public static final String LNK_COMPANY_INC = "LNK_COMPANY_INC";
     public static final String LNK_VIC_GOV_DIGITAL_JOBS = "LNK_VIC_GOV_DIGITAL_JOBS";
     public static final String LNK_HOST_COMPANY_REP = "LNK_HOST_COMPANY_REP";

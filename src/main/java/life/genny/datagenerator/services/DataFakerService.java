@@ -19,6 +19,7 @@ import life.genny.datagenerator.configs.MySQLConfig;
 import life.genny.datagenerator.model.Address;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DatabaseUtils;
+import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
@@ -106,21 +107,37 @@ public class DataFakerService {
             dtt.setValidationList(validations);
             attribute.setDataType(dtt);
             ea.setAttribute(attribute);
+            ea.setAttributeCode(Prefix.ATT + attributeCode);
         }
 
         return entityDefinition;
     }
 
-    public List<BaseEntity> getEntities() {
-        SearchEntity sbe = new SearchEntity("SBE_ALL_COMPANY", "All company")
-                .add(new Filter("LNK_DEF", Operator.CONTAINS, "DEF_HOST_CPY"))
+    public List<BaseEntity> getEntitiesByDefinition(String def) {
+        SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities")
+                .add(new Filter("LNK_DEF", Operator.CONTAINS, def))
                 // .add(new Column("PRI_ADDRESS", "Address"))
                 .setAllColumns(true)
                 .setRealm(productCode);
-
-        // List<String> codes = searchUtils.searchBaseEntityCodes(sbe);
         List<BaseEntity> entities = searchUtils.searchBaseEntitys(sbe);
         return entities;
+    }
+
+    public List<String> getEntityCodesByDefinition(String def) {
+        SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities")
+                .add(new Filter("LNK_DEF", Operator.CONTAINS, def))
+                .setRealm(productCode);
+        List<String> codes = searchUtils.searchBaseEntityCodes(sbe);
+        return codes;
+    }
+
+    public BaseEntity getEntityByCode(String code) {
+        SearchEntity sbe = new SearchEntity("SBE_ENTITY", "Entity")
+                .add(new Filter("PRI_CODE", Operator.EQUALS, code))
+                .setAllColumns(true)
+                .setRealm(productCode);
+        BaseEntity entity = searchUtils.searchBaseEntitys(sbe).get(0);
+        return entity;
     }
 
     public List<PlaceDetail> getAddresses() {
@@ -152,9 +169,12 @@ public class DataFakerService {
     }
 
     public BaseEntity save(BaseEntity entity) {
-        if (entity.getCode().startsWith("DEF_")) {
+        log.debug("Saving entity " + entity.getCode());
+        List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT)
+                .stream().distinct().toList();
+
+        if (entity.getCode().startsWith(Prefix.DEF)) {
             try {
-                log.debug("Creating entity " + entity.getCode());
                 entity = beUtils.create(Definition.from(entity),
                         entity.getName());
                 log.debug("Created entity: " + entity.getCode() + " in product: " +
@@ -163,11 +183,16 @@ public class DataFakerService {
                 log.info("Something went bad: " + e.getMessage());
                 e.printStackTrace();
             }
-        } else {
-            log.debug("Updating entity: " + entity.getCode());
-            entity = beUtils.updateBaseEntity(productCode, entity);
-            log.debug("Updated entity: " + entity.getCode());
         }
+
+        // Saving or updating the attributes
+        for (EntityAttribute ea : entityAttributes) {
+            Attribute attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(ea.getAttributeCode()));
+            entity.addAnswer(new Answer(entity, entity, attr, "" + ea.getValue()));
+        }
+        entity = beUtils.updateBaseEntity(productCode, entity);
+
+        log.debug("Entity " + entity.getCode() + " saved");
         return entity;
     }
 }

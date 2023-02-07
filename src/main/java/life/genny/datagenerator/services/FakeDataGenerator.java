@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -192,7 +194,7 @@ public class FakeDataGenerator {
     public void createRelation(BaseEntity entity1, BaseEntity entity2, String code1, String code2) {
         if (code1 != null) {
             try {
-                entity1 = fakerService.addAttribute(entity1, code1, entity2.getCode());
+                entity1 = fakerService.addAttribute(entity1, code1, "[\"" + entity2.getCode() + "\"]");
                 entity1 = fakerService.save(entity1);
             } catch (Exception e) {
                 log.error("Something wrong creating the relation on " +
@@ -202,7 +204,7 @@ public class FakeDataGenerator {
 
         if (code2 != null) {
             try {
-                entity2 = fakerService.addAttribute(entity2, code2, entity1.getCode());
+                entity2 = fakerService.addAttribute(entity2, code2, "[\"" + entity1.getCode() + "\"]");
                 entity2 = fakerService.save(entity2);
             } catch (Exception e) {
                 log.error("Something wrong creating the relation on " +
@@ -227,7 +229,7 @@ public class FakeDataGenerator {
         if (code2 != null) {
             for (BaseEntity be : entities) {
                 try {
-                    be = fakerService.addAttribute(be, code2, entity.getCode());
+                    be = fakerService.addAttribute(be, code2, "[\"" + entity.getCode() + "\"]");
                     be = fakerService.save(be);
                 } catch (Exception e) {
                     log.error("Something wrong creating the relation on " +
@@ -267,6 +269,25 @@ public class FakeDataGenerator {
                 }
             }
         }
+    }
+
+    public BaseEntity transferEntityAttribute(BaseEntity toEntity, BaseEntity fromEntity,
+            Map<String, String> attributeCodes) {
+        for (Entry<String, String> data : attributeCodes.entrySet()) {
+            String codeTo = data.getKey();
+            String codeFrom = data.getValue();
+            EntityAttribute foundEntity = fromEntity.getBaseEntityAttributes().stream()
+                    .filter(ea -> ea.getAttributeCode() != null)
+                    .findFirst()
+                    .orElse(null);
+            if (foundEntity == null)
+                throw new NullPointerException("Attribute with %s code could not be found."
+                        .formatted(codeFrom));
+
+            toEntity = fakerService.addAttribute(toEntity, codeTo, attributeCodes);
+        }
+        toEntity = fakerService.save(toEntity);
+        return toEntity;
     }
 
     public BaseEntity getEntity(String code) {

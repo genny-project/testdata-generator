@@ -1,9 +1,5 @@
 package life.genny.datagenerator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,7 +8,6 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import io.quarkus.runtime.StartupEvent;
@@ -20,8 +15,6 @@ import life.genny.datagenerator.Generator.*;
 import life.genny.datagenerator.configs.GeneratorConfig;
 import life.genny.datagenerator.services.DataFakerService;
 import life.genny.datagenerator.services.FakeDataGenerator;
-import life.genny.qwandaq.attribute.EntityAttribute;
-import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.serviceq.Service;
@@ -51,76 +44,57 @@ public class AppStartup {
     QwandaUtils qwandaUtils;
 
     private ExecutorService executor;
-    private List<Entry<String, Integer>> dataGeneration = new ArrayList<>(1);
+    private int currentGenerated = 0;
 
-   @PostConstruct
+    @PostConstruct
     void setUp() {
         service.fullServiceInit();
-
-        for (String dataDef : generatorConfig.totalGeneration().split(":")) {
-            String[] dataCount = dataDef.split("=");
-            dataGeneration.add(Map.entry(dataCount[0], Integer.valueOf(dataCount[1])));
-        }
-
-        // Checking BaseEntity prefix
-        for (Entry<String, Integer> data : dataGeneration) {
-            BaseEntity beDef = beUtils.getBaseEntity(data.getKey());
-            String prefix = "";
-            for (EntityAttribute ea : beDef.getBaseEntityAttributes())
-                if (ea.getAttributeCode().equals("PRI_PREFIX"))
-                    prefix = ea.getValue();
-
-            if (!StringUtils.isBlank(prefix))
-                log.info("Prefix for " + data.getKey() + " exists: " + prefix);
-            else {
-                log.warn("Prefix for " + data.getKey() + " doesn't exist");
-            }
-        }
     }
 
     void start(@Observes StartupEvent event) {
         log.info("Starting up new application...");
 
         executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
-        for (Entry<String, Integer> data : dataGeneration) {
-            generateTasks(data.getKey(), data.getValue());
-        }
+        generateTasks();
         executor.shutdown();
     }
 
-    private void generateTasks(String defCode, int totalData) {
+    private void generateTasks() {
+        currentGenerated = 0;
         int generatedData = 0;
         int queue = 1;
-        // final String defCode = entityDef.getCode();
+        int totalData = generatorConfig.totalGeneration();
         while (generatedData < totalData) {
-            int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
-            final int generatedFinal = generatedData + generate;
+            final int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int queueFinal = queue;
-            executor.submit(new GeneratorTask(service, generator, defCode, generate, new GeneratorListener() {
+            executor.submit(new GeneratorTask(service, generator, generate, new GeneratorListener() {
                 @Override
                 public void onStart() {
-                    log.info("Start generating %s %s"
-                            .formatted(defCode, queueFinal));
+                    log.info("Start generating batch %s.".formatted(queueFinal));
                 }
 
                 @Override
                 public void onProgress(int current, int total) {
-                    log.info("Generating data (" + current + "/" + total + ")");
+                    log.debug("Generating data (" + current + "/" + total + ")");
                 }
 
                 @Override
-                public void onFinish(String def, List<BaseEntity> generatedEntities) {
-                    log.info("Generated %s (%s/%s)"
-                            .formatted(defCode, generatedFinal, totalData));
+                public void onFinish() {
+                    currentGenerated += generate;
+                    log.info("Generation status: " +
+                            String.valueOf((currentGenerated * 100) / totalData) + "% complete.");
+                    if (currentGenerated == totalData)
+                        log.info("%d data successfully generated. Please check the data, make sure nothing is missing."
+                                .formatted(totalData));
                 }
 
                 @Override
-                public void onError(String def, Throwable e) {
-                    log.error("Something went bad generating " + def + ": " + e.getMessage());
+                public void onError(Throwable e) {
+                    log.error("Something went bad generating entity in multi-threads, ", e);
                     e.printStackTrace();
                 }
             }));
-            generatedData = generatedFinal;
+            generatedData += generate;
             queue++;
         }
     }

@@ -64,6 +64,8 @@ public class AppStartup {
         int generatedData = 0;
         int queue = 1;
         int totalData = generatorConfig.totalGeneration();
+        log.info("Generating data with total " + (totalData / generatorConfig.recordsPerThread()) +
+                " batches.");
         while (generatedData < totalData) {
             final int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int queueFinal = queue;
@@ -75,7 +77,7 @@ public class AppStartup {
 
                 @Override
                 public void onProgress(int current, int total) {
-                    log.debug("Generating data (" + current + "/" + total + ")");
+                    log.debug("Generating data on current thread: %d/%d".formatted(current, total));
                 }
 
                 @Override

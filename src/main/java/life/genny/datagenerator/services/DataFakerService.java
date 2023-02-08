@@ -173,6 +173,7 @@ public class DataFakerService {
 
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
+        String name = entity.getName();
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_)
                 .stream().distinct().toList();
 
@@ -188,7 +189,8 @@ public class DataFakerService {
             }
         }
 
-        // Saving or updating the attributes
+        // Saving or updating entity name and attributes
+        entity.setName(name);
         for (EntityAttribute ea : entityAttributes) 
             entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
         entity = beUtils.updateBaseEntity(productCode, entity);

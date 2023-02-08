@@ -136,8 +136,6 @@ public class FakeDataGenerator {
 
     public BaseEntity generateDataTypeAttributes(BaseEntity entity) {
         List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_);
-        log.debug("####entity####"+entityAttributes);
-
         log.debug("Entity Attribute count: " + entityAttributes.size());
         for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();
@@ -279,7 +277,7 @@ public class FakeDataGenerator {
             String codeTo = data.getKey();
             String codeFrom = data.getValue();
             EntityAttribute foundEntity = fromEntity.getBaseEntityAttributes().stream()
-                    .filter(ea -> ea.getAttributeCode() != null)
+                    .filter(ea -> ea.getAttributeCode().equalsIgnoreCase(codeFrom))
                     .findFirst()
                     .orElse(null);
 
@@ -287,7 +285,7 @@ public class FakeDataGenerator {
                 throw new NullPointerException("Attribute with %s code could not be found."
                         .formatted(codeFrom));
 
-            toEntity = fakerService.addAttribute(toEntity, codeTo, attributeCodes);
+            toEntity = fakerService.addAttribute(toEntity, codeTo, foundEntity.getValue());
         }
         toEntity = fakerService.save(toEntity);
         return toEntity;

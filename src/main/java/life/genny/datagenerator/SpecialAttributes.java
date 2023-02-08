@@ -9,6 +9,11 @@ public class SpecialAttributes {
     public static final String LNK_DEF = "LNK_DEF";
 
     /**
+     * Special case for {@link EntityAttribute} generation for DEF_COMMON
+     */
+    public static final String PRI_NAME = "PRI_NAME";
+
+    /**
      * Special case for {@link EntityAttribute} generation for DEF_PERSON
      */
     public static final String PRI_FIRSTNAME = "PRI_FIRSTNAME";
@@ -72,7 +77,6 @@ public class SpecialAttributes {
     public static final String PRI_VIDEO_INTRO = "PRI_VIDEO_INTRO";
     public static final String PRI_HC_SERVICES_AGREEMENT_HTML = "PRI_HC_SERVICES_AGREEMENT_HTML";
     public static final String PRI_DJP_DOCUMENT_ACCEPTED = "PRI_DJP_DOCUMENT_ACCEPTED";
-    public static final String PRI_NAME = "PRI_NAME";
     public static final String PRI_LEGAL_NAME = "PRI_LEGAL_NAME";
     public static final String PRI_COMPANY_WEBSITE_URL = "PRI_COMPANY_WEBSITE_URL";
     public static final String PRI_IS_HOST_CPY = "PRI_IS_HOST_CPY";
@@ -125,7 +129,6 @@ public class SpecialAttributes {
     public static final String LNK_WORKSITE_SELECT = "LNK_WORKSITE_SELECT";
     public static final String LNK_INTERVIEW_TYPE = "LNK_INTERVIEW_TYPE";
     public static final String LNK_INTERNSHIP_TYPE = "LNK_INTERNSHIP_TYPE";
-    public static final String LNK_BUSINESS_HOURS = "LNK_BUSINESS_HOURS";
     public static final String LNK_NO_OF_INTERNS = "LNK_NO_OF_INTERNS";
     public static final String LNK_OCCUPATION = "LNK_OCCUPATION";
 
@@ -176,7 +179,14 @@ public class SpecialAttributes {
     public static final String PRI_APPLICANT_CODE = "PRI_APPLICANT_CODE";
     public static final String PRI_APPLIED_BY = "PRI_APPLIED_BY";
     public static final String PRI_INTERN_STUDENT_ID = "PRI_INTERN_STUDENT_ID";
+    public static final String PRI_JOURNAL_STATUS = "PRI_JOURNAL_STATUS";
+    public static final String PRI_ASSOC_DURATION = "PRI_ASSOC_DURATION";
+    public static final String PRI_INTERN_NAME = "PRI_INTERN_NAME";
     public static final String PRI_INTERN_EMAIL = "PRI_INTERN_EMAIL";
+    public static final String PRI_INTERN_MOBILE = "PRI_INTERN_MOBILE";
+    public static final String PRI_NUM_JOURNALS = "PRI_NUM_JOURNALS";
+    public static final String PRI_AGREEMENT_HTML = "PRI_AGREEMENT_HTML";
+    public static final String PRI_ASSOC_NO_OF_INTERNS = "PRI_ASSOC_NO_OF_INTERNS";
     public static final String LNK_INTERN = "LNK_INTERN";
     public static final String LNK_INTERNSHIP = "LNK_INTERNSHIP";
 }

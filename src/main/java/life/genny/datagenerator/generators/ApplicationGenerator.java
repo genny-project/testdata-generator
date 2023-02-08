@@ -28,8 +28,8 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
     BaseEntity generateImpl(String defCode, BaseEntity entity) {
         String superName = DataFakerCustomUtils.generateName() + " " +
                 DataFakerCustomUtils.generateName();
-        int daysPerWeek = DataFakerUtils.randInt(1, 5);
 
+        int daysPerWeek = DataFakerUtils.randInt(1, 5);
         List<String> daysStripped = new ArrayList<>();
         while (daysStripped.size() < daysPerWeek) {
             String day = DataFakerUtils.randItemFromList(WORK_DAYS);
@@ -38,6 +38,8 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
             daysStripped.add(day);
         }
         Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
+        
+        for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             Object newObj = runGenerator(defCode, ea, superName, String.valueOf(daysPerWeek),
@@ -52,6 +54,7 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
     Object runGeneratorImpl(String attributeCode, String regex, String... args) {
         String superName = args[0];
         int daysPerWeek = Integer.parseInt(args[1]);
+        String daysStripped = StringUtils.substringBetween(args[2], "[", "]");
 
         return switch (attributeCode) {
             case SpecialAttributes.PRI_BASE_LEARNING_OUTCOMES:
@@ -81,6 +84,9 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_DAYS_PER_WEEK:
                 yield String.valueOf(daysPerWeek);
 
+            case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
+                yield daysStripped;
+
             case SpecialAttributes.PRI_OUTCOME_LIFE_REP_NAME:
                 yield DataFakerCustomUtils.generateName() + " " +
                         DataFakerCustomUtils.generateName();
@@ -91,6 +97,22 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_INTERNSHIP_DETAILS:
             case SpecialAttributes.PRI_APPLICANT_CODE:
                 yield "";
+
+            case SpecialAttributes.PRI_NUM_JOURNALS:
+                yield DataFakerUtils.randInt(1, 60);
+
+            case SpecialAttributes.PRI_JOURNAL_STATUS:
+                yield String.valueOf(DataFakerUtils.randInt(1, 60)) + "/60";
+
+            case SpecialAttributes.PRI_ASSOC_DURATION:
+                yield "12";
+
+            case SpecialAttributes.PRI_AGREEMENT_HTML:
+                yield DataFakerCustomUtils.generateHTMLString(
+                        DataFakerUtils.randStringFromRegex(Regex.TEXT_PARAGRAPH_REGEX));
+
+            case SpecialAttributes.PRI_ASSOC_NO_OF_INTERNS:
+                yield "1";
 
             case SpecialAttributes.LNK_NO_OF_INTERNS:
                 yield "[\"SEL_NO_OF_INTERNS_" +
@@ -103,8 +125,14 @@ public class ApplicationGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.LNK_DAYS_PER_WEEK:
                 yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
 
+            case SpecialAttributes.LNK_WHICH_DAYS:
+                List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
+                        .map(day -> "SEL_WHICH_DAYS_" + day.toUpperCase())
+                        .toList();
+                yield "[" + String.join(", ", whichDays) + "]";
+
             case SpecialAttributes.LNK_INTERNSHIP_DURATION:
-                yield "[SEL_DURATION_12_WEEKS]";
+                yield "\"SEL_DURATION_12_WEEKS\"]";
 
             default:
                 yield null;

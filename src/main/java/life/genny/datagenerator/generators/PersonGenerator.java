@@ -58,6 +58,9 @@ public class PersonGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_INITIALS:
                 yield DataFakerCustomUtils.generateInitials(args);
 
+            case SpecialAttributes.PRI_NAME:
+                yield args[0] + " " + args[1];
+
             case SpecialAttributes.PRI_FIRSTNAME:
                 yield args[0];
 

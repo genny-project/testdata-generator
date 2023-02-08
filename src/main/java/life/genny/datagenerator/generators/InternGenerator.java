@@ -5,17 +5,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.logging.Logger;
 
 import life.genny.datagenerator.Entities;
@@ -35,9 +31,6 @@ import life.genny.qwandaq.entity.BaseEntity;
 @ApplicationScoped
 public class InternGenerator extends CustomFakeDataGenerator {
 
-    private final List<String> WORK_DAYS = new ArrayList<>(
-            Arrays.asList("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"));
-
     @Inject
     Logger log;
 
@@ -52,21 +45,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
         String superName = DataFakerCustomUtils.generateName() + " " +
                 DataFakerCustomUtils.generateName();
         Map<String, LocalDateTime> prevPeriod = generatePeriod();
-        int daysPerWeek = DataFakerUtils.randInt(1, 5);
-
-        List<String> daysStripped = new ArrayList<>();
-        while (daysStripped.size() < daysPerWeek) {
-            String day = DataFakerUtils.randItemFromList(WORK_DAYS);
-            if (daysStripped.contains(day))
-                continue;
-            daysStripped.add(day);
-        }
-        Collections.sort(daysStripped, Comparator.comparing(WORK_DAYS::indexOf));
 
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT)) {
             Object newObj = runGenerator(defCode, ea, defCode, superName,
-                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString(),
-                    String.valueOf(daysPerWeek), StringUtils.join(daysStripped));
+                    prevPeriod.get("start").toString(), prevPeriod.get("end").toString());
             if (newObj != null)
                 ea.setValue(newObj);
         }
@@ -87,13 +69,10 @@ public class InternGenerator extends CustomFakeDataGenerator {
         String superName = args[1];
         String startPrevPeriod = args[2];
         String endPrevPeriod = args[3];
-        String daysPerWeek = args[4];
-        String daysStripped = args[5];
         return switch (defCode) {
             case Entities.DEF_INTERN -> generateIntern(attributeCode, startPrevPeriod,
-                    endPrevPeriod, daysPerWeek, daysStripped);
-            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName,
-                    daysPerWeek, daysStripped);
+                    endPrevPeriod);
+            case Entities.DEF_INTERNSHIP -> generateInternship(attributeCode, superName);
             default -> null;
         };
     }
@@ -108,8 +87,7 @@ public class InternGenerator extends CustomFakeDataGenerator {
     Object generateIntern(String attributeCode, String... args) {
         LocalDateTime startPrevPeriod = LocalDateTime.parse(args[0]);
         LocalDateTime endPrevPeriod = LocalDateTime.parse(args[1]);
-        int daysPerWeek = Integer.parseInt(args[2]);
-        String daysStripped = StringUtils.substringBetween(args[3], "[", "]");
+        
         return switch (attributeCode) {
             case SpecialAttributes.PRI_CV:
                 yield "YOU NEED TO ABSOLUTELY CHANGE THIS";
@@ -133,27 +111,12 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
-            case SpecialAttributes.PRI_DAYS_PER_WEEK:
-                yield String.valueOf(daysPerWeek);
-
-            case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
-                yield daysStripped;
-
             case SpecialAttributes.LNK_PREV_PERIOD:
                 yield "{\"startDate\": \"%s\", \"endDate\": \"%s\"}".formatted(
                         startPrevPeriod.toString(), endPrevPeriod.toString());
 
-            case SpecialAttributes.LNK_DAYS_PER_WEEK:
-                yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
-
-            case SpecialAttributes.LNK_WHICH_DAYS:
-                List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
-                        .map(day -> "SEL_WHICH_DAYS_" + day.toUpperCase())
-                        .collect(Collectors.toList());
-                yield "[" + String.join(", ", whichDays) + "]";
-
             case SpecialAttributes.LNK_INTERNSHIP_DURATION:
-                yield "[SEL_DURATION_12_WEEKS]";
+                yield "\"[SEL_DURATION_12_WEEKS]\"";
 
             default:
                 yield null;
@@ -169,8 +132,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
      */
     Object generateInternship(String attributeCode, String... args) {
         String name = args[0];
-        int daysPerWeek = Integer.parseInt(args[1]);
-        String daysStripped = StringUtils.substringBetween(args[2], "[", "]");
 
         return switch (attributeCode) {
             case SpecialAttributes.PRI_SUPER_MOBILE:
@@ -197,12 +158,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
                 yield DataFakerCustomUtils.generateDescriptiveHTMLTag("p",
                         DataFakerUtils.randInt(1, 4));
 
-            case SpecialAttributes.PRI_WHICH_DAYS_STRIPPED:
-                yield daysStripped;
-
-            case SpecialAttributes.PRI_DAYS_PER_WEEK:
-                yield String.valueOf(daysPerWeek);
-
             case SpecialAttributes.LNK_INTERNSHIP_TYPE:
             case SpecialAttributes.LNK_WORKSITE_SELECT:
             case SpecialAttributes.LNK_INTERVIEW_TYPE:
@@ -211,15 +166,6 @@ public class InternGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.LNK_NO_OF_INTERNS:
                 yield "[\"SEL_NO_OF_INTERNS_" +
                         convertNumberToWord(1).toUpperCase() + "\"]";
-
-            case SpecialAttributes.LNK_DAYS_PER_WEEK:
-                yield "[\"SEL_" + convertNumberToWord(daysPerWeek).toUpperCase() + "\"]";
-
-            case SpecialAttributes.LNK_WHICH_DAYS:
-                List<String> whichDays = Arrays.asList(daysStripped.split(", ")).stream()
-                        .map(day -> "SEL_WHICH_DAYS_" + day.toUpperCase())
-                        .collect(Collectors.toList());
-                yield "[" + String.join(", ", whichDays) + "]";
 
             default:
                 yield null;

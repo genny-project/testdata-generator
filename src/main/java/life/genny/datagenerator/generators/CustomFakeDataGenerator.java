@@ -54,7 +54,7 @@ public abstract class CustomFakeDataGenerator {
         }
 
         log.debug("Done generation of: " + defCode + ". Resultant code: " + be.getCode());
-        generator.entityAttributesAreValid(be, true, false);
+        // generator.entityAttributesAreValid(be, true, false);
         return be;
     }
 

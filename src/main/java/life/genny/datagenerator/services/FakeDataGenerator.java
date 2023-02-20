@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -192,6 +193,7 @@ public class FakeDataGenerator {
     }
 
     public void createRelation(BaseEntity entity1, BaseEntity entity2, String code1, String code2) {
+        log.debug("Creating relation between %s and %s".formatted(entity1.getCode(), entity2.getCode()));
         if (code1 != null) {
             try {
                 entity1 = fakerService.addAttribute(entity1, code1, "[\"" + entity2.getCode() + "\"]");
@@ -214,6 +216,8 @@ public class FakeDataGenerator {
     }
 
     public void createRelation(BaseEntity entity, List<BaseEntity> entities, String code1, String code2) {
+        log.debug("Creating relation between %s and %s".formatted(entity.getCode(),
+                entities.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]"))));
         if (code1 != null) {
             List<String> entityCodes = entities.stream().map(BaseEntity::getCode).toList();
             String codes = "[\"" + String.join("\", \"", entityCodes.toArray(new String[0])) + "\"]";
@@ -240,6 +244,9 @@ public class FakeDataGenerator {
     }
 
     public void createRelation(List<BaseEntity> entities1, List<BaseEntity> entities2, String code1, String code2) {
+        log.debug("Creating relation between %s and %s".formatted(
+                entities1.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]")),
+                entities2.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]"))));
         if (code1 != null) {
             for (BaseEntity entity : entities1) {
                 try {

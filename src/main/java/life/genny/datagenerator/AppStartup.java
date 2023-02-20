@@ -45,6 +45,7 @@ public class AppStartup {
 
     private ExecutorService executor;
     private int currentGenerated = 0;
+    private long start, end;
 
     @PostConstruct
     void setUp() {
@@ -55,6 +56,7 @@ public class AppStartup {
         log.info("Starting up new application...");
 
         executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
+        start = System.currentTimeMillis();
         generateTasks();
         executor.shutdown();
     }
@@ -83,11 +85,14 @@ public class AppStartup {
                 @Override
                 public void onFinish() {
                     currentGenerated += generate;
-                    log.info("Generation status: " +
-                            String.valueOf((currentGenerated * 100) / totalData) + "% complete.");
-                    if (currentGenerated == totalData)
+                    log.info(String.format("Generation status: %.2f%% complete",
+                            (double) (currentGenerated * 100) / totalData));
+                    if (currentGenerated == totalData) {
                         log.info("%d data successfully generated. Please check the data, make sure nothing is missing."
                                 .formatted(totalData));
+                        end = System.currentTimeMillis();
+                        log.info("Data generation elapsed time: " + (end - start) + "ms");
+                    }
                 }
 
                 @Override

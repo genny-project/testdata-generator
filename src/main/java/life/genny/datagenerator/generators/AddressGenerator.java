@@ -1,10 +1,9 @@
 package life.genny.datagenerator.generators;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -35,13 +34,10 @@ public class AddressGenerator extends CustomFakeDataGenerator {
     protected BaseEntity generateImpl(String defCode, BaseEntity entity) {
         PlaceDetail place = DataFakerUtils.randItemFromList(getPlaces());
 
-        List<String> containCodes = new ArrayList<>(
-                Arrays.asList("ADDRESS", "TIME", "COUNTRY"));
+        String containCodesRegex = ".*(ADDRESS|TIME|COUNTRY).*";
         List<EntityAttribute> filteredEntityAttribute = entity.findPrefixEntityAttributes(Prefix.ATT_)
                 .stream()
-                .filter(ea -> containCodes.stream()
-                        .filter(containCode -> ea.getAttributeCode().contains(containCode))
-                        .findFirst().orElse(null) != null)
+                .filter(ea -> Pattern.matches(containCodesRegex, ea.getAttributeCode()))
                 .toList();
 
         for (EntityAttribute ea : filteredEntityAttribute) {

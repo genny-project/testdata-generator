@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>life.genny</groupId>
-  <artifactId>genny-data-generator</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <artifactId>testdata-generator</artifactId>
+  <version>10.3.0</version>
   <properties>
     <compiler-plugin.version>3.8.1</compiler-plugin.version>
     <main.class>life.genny.datagenerator.ApplicationMain</main.class>
@@ -79,6 +81,53 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>pl.project13.maven</groupId>
+        <artifactId>git-commit-id-plugin</artifactId>
+        <version>2.2.3</version>
+        <executions>
+          <execution>
+            <id>git-info</id>
+            <goals>
+              <goal>revision</goal>
+            </goals>
+            <configuration>
+              <generateGitPropertiesFile>true</generateGitPropertiesFile>
+              <generateGitPropertiesFilename>target/classes/${project.name}-git.properties
+              </generateGitPropertiesFilename>
+              <dotGitDirectory>${project.basedir}/../.git</dotGitDirectory>
+              <prefix>git</prefix>
+              <dateFormat>yyyy.MM.dd '@' HH:mm:ss z</dateFormat>
+              <dateFormatTimeZone>${user.timezone}</dateFormatTimeZone>
+              <verbose>false</verbose>
+              <generateGitPropertiesFile>true</generateGitPropertiesFile>
+              <generateGitPropertiesFilename>src/main/resources/${project.name}-git.properties
+              </generateGitPropertiesFilename>
+              <format>properties</format>
+              <skipPoms>true</skipPoms>
+              <injectAllReactorProjects>false</injectAllReactorProjects>
+              <failOnNoGitDirectory>true</failOnNoGitDirectory>
+              <failOnUnableToExtractRepoInfo>true
+              </failOnUnableToExtractRepoInfo>
+              <skip>false</skip>
+              <runOnlyOnce>false</runOnlyOnce>
+              <excludeProperties></excludeProperties>
+              <includeOnlyProperties></includeOnlyProperties>
+              <useNativeGit>false</useNativeGit>
+              <abbrevLength>7</abbrevLength>
+              <gitDescribe>
+                <skip>false</skip>
+                <always>false</always>
+                <abbrev>7</abbrev>
+                <dirty>-dirty</dirty>
+                <match>*</match>
+                <forceLongFormat>false</forceLongFormat>
+              </gitDescribe>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
         <groupId>${quarkus.platform.group-id}</groupId>
         <artifactId>quarkus-maven-plugin</artifactId>
         <version>${quarkus.platform.version}</version>
@@ -93,6 +142,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
@@ -104,6 +154,7 @@
           </compilerArgs>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
@@ -114,6 +165,7 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-failsafe-plugin</artifactId>
         <version>${surefire-plugin.version}</version>
@@ -144,7 +196,8 @@
         </property>
       </activation>
       <properties>
-        <quarkus.native.additional-build-args>--initialize-at-run-time=java.util.Random --no-fallback -J-Xmx6G -J-Xms2G</quarkus.native.additional-build-args>
+        <quarkus.native.additional-build-args>--initialize-at-run-time=java.util.Random
+          --no-fallback -J-Xmx6G -J-Xms2G</quarkus.native.additional-build-args>
         <skipITs>false</skipITs>
         <quarkus.package.type>native</quarkus.package.type>
       </properties>

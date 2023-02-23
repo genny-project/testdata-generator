@@ -1,0 +1,25 @@
+version: "3.10"
+
+services:
+  data-generator:
+    image: gennyproject/testdata-generator:latest
+    container_name: testdata_generator
+    hostname: testdata_generator
+    build:
+      context: .
+      dockerfile: src/main/docker/Dockerfile.jvm
+    restart: unless-stopped
+    env_file:
+      - ${ENV_FILE}
+      - .env
+    ports:
+      - "18888:8899"
+    volumes:
+      - ./:/build/
+    networks:
+      - mainproxy
+
+networks:
+  mainproxy:
+    external: 
+      name: mp

@@ -3,12 +3,12 @@ package life.genny.datagenerator.services;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jboss.logging.Logger;
@@ -20,7 +20,6 @@ import life.genny.datagenerator.configs.MySQLConfig;
 import life.genny.datagenerator.model.Address;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.utils.DatabaseUtils;
-import life.genny.qwandaq.Answer;
 import life.genny.qwandaq.attribute.Attribute;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
@@ -31,6 +30,7 @@ import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
 import life.genny.qwandaq.exception.runtime.NullParameterException;
+import life.genny.qwandaq.utils.AttributeUtils;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.CommonUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
@@ -58,10 +58,10 @@ public class DataFakerService {
     BaseEntityUtils beUtils;
 
     @Inject
-    SearchUtils searchUtils;
+    AttributeUtils attrUtils;
 
     @Inject
-    EntityManager entityManager;
+    SearchUtils searchUtils;
 
     @ConfigProperty(name = "data.product-code")
     String productCode;
@@ -73,7 +73,7 @@ public class DataFakerService {
 
         BaseEntity entityDefinition = null;
         try {
-            entityDefinition = beUtils.getBaseEntity(productCode, definition);
+            entityDefinition = beUtils.getBaseEntity(productCode, definition, true);
         } catch (Exception e) {
             log.error("Something went wrong getting the BaseEntity: " + e.getMessage());
             e.printStackTrace();
@@ -93,11 +93,17 @@ public class DataFakerService {
                 continue;
             }
 
-            DataType dtt = attribute.getDataType();
-            List<Validation> validations = dtt.getValidationList();
+            try {
+                DataType dtt = attrUtils.getDataType(attribute, true);
+                if (dtt != null) {
+                    List<Validation> validations = dtt.getValidationList();
+                    dtt.setValidationList(validations);
+                }
+                attribute.setDataType(dtt);
+            } catch (Exception e) {
+                log.warn("Error building %s DataType: %s".formatted(definition, e.getMessage()));
+            }
 
-            dtt.setValidationList(validations);
-            attribute.setDataType(dtt);
             ea.setAttribute(attribute);
             ea.setAttributeCode(Prefix.ATT_ + attributeCode);
         }
@@ -119,8 +125,8 @@ public class DataFakerService {
         SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities")
                 .add(new Filter("LNK_DEF", Operator.CONTAINS, def))
                 .setRealm(productCode);
-        List<String> codes = searchUtils.searchBaseEntityCodes(sbe);
-        return codes;
+        List<BaseEntity> items = searchUtils.searchBaseEntitys(sbe);
+        return items.stream().map(BaseEntity::getCode).toList();
     }
 
     public BaseEntity getEntityByCode(String code) {
@@ -161,16 +167,22 @@ public class DataFakerService {
     }
 
     public BaseEntity addAttribute(BaseEntity entity, String attrCode, Object attrValue) {
-        Attribute attr;
-        if (attrCode.startsWith(Prefix.ATT_))
-            attr = qwandaUtils.getAttribute(CommonUtils.removePrefix(attrCode));
-        else
-            attr = qwandaUtils.getAttribute(attrCode);
+        Attribute attr = null;
+        if (attrCode.startsWith(Prefix.ATT_)) {
+            attr = attrUtils.getAttribute(entity.getRealm(), CommonUtils.removePrefix(attrCode),
+                    true);
+        } else {
+            attr = attrUtils.getAttribute(entity.getRealm(), attrCode, true);
+        }
 
-        entity.addAnswer(new Answer(entity, entity, attr, "" + attrValue));
+        if (attr != null) {
+            EntityAttribute newEA = new EntityAttribute(entity, attr, 1.0, attrValue);
+            entity.addAttribute(newEA);
+        }
         return entity;
     }
 
+    @ActivateRequestContext
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
         String name = entity.getName();
@@ -179,8 +191,7 @@ public class DataFakerService {
 
         if (entity.getCode().startsWith(Prefix.DEF_)) {
             try {
-                entity = beUtils.create(Definition.from(entity),
-                        entity.getName());
+                entity = beUtils.create(Definition.from(entity), entity.getName());
                 log.debug("Created entity: " + entity.getCode() + " in product: " +
                         entity.getRealm());
             } catch (Exception e) {
@@ -191,9 +202,10 @@ public class DataFakerService {
 
         // Saving or updating entity name and attributes
         entity.setName(name);
-        for (EntityAttribute ea : entityAttributes) 
+        for (EntityAttribute ea : entityAttributes) {
             entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
-        entity = beUtils.updateBaseEntity(productCode, entity);
+        }
+        entity = beUtils.updateBaseEntity(entity, true);
 
         log.debug("Entity " + entity.getCode() + " saved");
         return entity;

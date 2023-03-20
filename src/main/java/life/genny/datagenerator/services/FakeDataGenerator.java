@@ -140,46 +140,47 @@ public class FakeDataGenerator {
         log.debug("Entity Attribute count: " + entityAttributes.size());
         for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();
-            List<Validation> validations = dtt.getValidationList();
-            if (validations.size() > 0) {
-                String regex = dtt.getValidationList().size() > 0
-                        ? dtt.getValidationList().get(0).getRegex()
-                        : null;
-                String className = dtt.getClassName();
+            if (dtt != null) {
+                List<Validation> validations = dtt.getValidationList();
+                if (validations.size() > 0 && ea.getValue() == null) {
+                    String regex = dtt.getValidationList().size() > 0
+                            ? dtt.getValidationList().get(0).getRegex()
+                            : null;
+                    String className = dtt.getClassName();
 
-                if (ea.getValue() == null && ea.getAttributeCode().startsWith(Prefix.PRI_)) {
-                    if (String.class.getName().equals(className))
+                    if (String.class.getName().equals(className)) {
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randStringFromRegex(regex));
                         } else {
                             ea.setValue(DataFakerUtils.randString());
                         }
-                    else if (Integer.class.getName().equals(className))
+                    } else if (Integer.class.getName().equals(className)) {
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randIntFromRegex(regex));
                         } else {
                             ea.setValue(DataFakerUtils.randInt());
                         }
-                    else if (Long.class.getName().equals(className))
+                    } else if (Long.class.getName().equals(className)) {
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randLongFromRegex(regex));
                         } else {
                             ea.setValue(DataFakerUtils.randLong());
                         }
-                    else if (Double.class.getName().equals(className))
+                    } else if (Double.class.getName().equals(className)) {
                         if (regex != null) {
                             ea.setValue(DataFakerUtils.randDoubleFromRegex(regex));
                         } else {
                             ea.setValue(DataFakerUtils.randDouble());
                         }
-                    else if (Boolean.class.getName().equals(className))
+                    } else if (Boolean.class.getName().equals(className)) {
                         ea.setValue(DataFakerUtils.randBoolean());
-                    else if (LocalDateTime.class.getName().equals(className))
+                    } else if (LocalDateTime.class.getName().equals(className)) {
                         ea.setValue(DataFakerUtils.randDateTime());
-                    else if (LocalDate.class.getName().equals(className))
+                    } else if (LocalDate.class.getName().equals(className)) {
                         ea.setValue(DataFakerUtils.randDateTime().toLocalDate());
-                    else if (LocalTime.class.getName().equals(className))
+                    } else if (LocalTime.class.getName().equals(className)) {
                         ea.setValue(DataFakerUtils.randDateTime().toLocalTime());
+                    }
                 }
             }
         }
@@ -278,7 +279,7 @@ public class FakeDataGenerator {
         }
     }
 
-    public BaseEntity transferAttribute(BaseEntity toEntity, BaseEntity fromEntity,
+    public BaseEntity transferAttribute(BaseEntity fromEntity, BaseEntity toEntity,
             Map<String, String> attributeCodes) {
         for (Entry<String, String> data : attributeCodes.entrySet()) {
             String codeTo = data.getKey();
@@ -289,8 +290,8 @@ public class FakeDataGenerator {
                     .orElse(null);
 
             if (foundEntity == null)
-                throw new NullPointerException("Attribute with %s code could not be found."
-                        .formatted(codeFrom));
+                throw new NullPointerException("Attribute with %s code could not be found in %s."
+                        .formatted(codeFrom, fromEntity.getCode()));
 
             toEntity = fakerService.addAttribute(toEntity, codeTo, foundEntity.getValue());
         }
@@ -326,8 +327,12 @@ public class FakeDataGenerator {
         boolean valid = true;
 
         for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
-            DataType dtt = ea.getAttribute().getDataType();
-            List<Validation> validations = dtt.getValidationList();
+            DataType dtt = ea.getAttribute() != null
+                    ? ea.getAttribute().getDataType()
+                    : null;
+            List<Validation> validations = dtt != null
+                    ? dtt.getValidationList()
+                    : new ArrayList<>(0);
 
             if (validations.size() > 0 && ea.getValue() != null &&
                     !("" + ea.getValue()).equals("null")) {
@@ -341,9 +346,7 @@ public class FakeDataGenerator {
                     valid = false;
                 }
             } else {
-                if (showValidAttributes) {
-                    List<String> passTemp = new ArrayList<>(2);
-                    passTemp.add(dtt.getClassName());
+                if (showValidAttributes && dtt != null) {
                     passAttributes.add(ea);
                 }
             }
@@ -351,14 +354,19 @@ public class FakeDataGenerator {
 
         if (showValidAttributes) {
             log.debug("VALIDATING " + entity.getCode() + " ATTRIBUTES.");
-            for (EntityAttribute attribute : validAttributes)
+            for (EntityAttribute attribute : validAttributes) {
                 log.debug("Valid value for " + attribute.getAttributeCode() + " ("
                         + attribute.getAttribute().getDataType().getClassName() + ")" + ": "
                         + attribute.getValue());
-            for (EntityAttribute attribute : passAttributes)
+            }
+            for (EntityAttribute attribute : passAttributes) {
+                DataType dtt = attribute.getAttribute() != null
+                        ? attribute.getAttribute().getDataType()
+                        : null;
                 log.warn("Attribute fail to validate for " + attribute.getAttributeCode()
-                        + " (" + attribute.getAttribute().getDataType().getClassName() + ")"
+                        + " (" + (dtt != null ? dtt.getClassName() : null) + ")"
                         + ": " + attribute.getValue());
+            }
         }
 
         if (!hideInvalidAttributes) {

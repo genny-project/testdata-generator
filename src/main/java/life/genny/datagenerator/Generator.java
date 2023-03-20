@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.enterprise.context.control.ActivateRequestContext;
 import javax.inject.Inject;
 
 import org.jboss.logging.Logger;
@@ -93,9 +94,10 @@ public class Generator {
                 attributes.put(SpecialAttributes.PRI_INTERN_NAME, SpecialAttributes.PRI_NAME);
                 attributes.put(SpecialAttributes.PRI_INTERN_EMAIL, SpecialAttributes.PRI_EMAIL);
                 attributes.put(SpecialAttributes.PRI_INTERN_MOBILE, SpecialAttributes.PRI_MOBILE);
-                for (int i = 0; i < fixedSize; i++)
-                    generator.transferAttribute(applications.get(i), interns.get(i), attributes);
-
+                for (int i = 0; i < fixedSize; i++) {
+                    generator.transferAttribute(interns.get(i), applications.get(i), attributes);
+                }
+                
                 /**
                  * Creating relation
                  */
@@ -137,10 +139,11 @@ public class Generator {
         }
 
         @Override
+        @ActivateRequestContext
         public void run() {
             listener.onStart();
             try {
-                service.initToken();
+                service.fullServiceInit();
             } catch (Exception e) {
                 listener.onError(e);
             }

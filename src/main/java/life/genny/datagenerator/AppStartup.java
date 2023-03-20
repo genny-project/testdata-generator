@@ -47,11 +47,6 @@ public class AppStartup {
     private int currentGenerated = 0;
     private long start, end;
 
-    @PostConstruct
-    void setUp() {
-        service.fullServiceInit();
-    }
-
     void start(@Observes StartupEvent event) {
         log.info("Starting up new application...");
 

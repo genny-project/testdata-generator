@@ -47,6 +47,8 @@ public abstract class CustomFakeDataGenerator {
         if (be.getCode().equals(defCode)) {
             try {
                 be = generator.generateDataTypeAttributes(entity);
+                // generator.entityAttributesAreValid(be,
+                //         true, false);
                 be = generator.saveEntity(be);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -54,7 +56,6 @@ public abstract class CustomFakeDataGenerator {
         }
 
         log.debug("Done generation of: " + defCode + ". Resultant code: " + be.getCode());
-        // generator.entityAttributesAreValid(be, true, false);
         return be;
     }
 
@@ -64,10 +65,12 @@ public abstract class CustomFakeDataGenerator {
             return ea.getValue();
 
         String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-        String regexVal = ea.getAttribute().getDataType().getValidationList().size() > 0
+        String regexVal = ea.getAttribute().getDataType() != null
                 ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
                 : null;
-        String className = ea.getAttribute().getDataType().getClassName();
+        String className = ea.getAttribute().getDataType() != null
+                ? ea.getAttribute().getDataType().getClassName()
+                : "";
 
         Object newObj = null;
         try {

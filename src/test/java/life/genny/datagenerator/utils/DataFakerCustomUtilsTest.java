@@ -239,7 +239,6 @@ public class DataFakerCustomUtilsTest extends BaseTestCase {
     void generateWebsiteURL() {
         new JUnitTester<String, String>()
                 .setTest((input) -> {
-                    System.out.println(input.input);
                     return Expected(input.input);
                 })
                 .setVerification((result, expected) -> {

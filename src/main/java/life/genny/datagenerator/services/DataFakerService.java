@@ -73,7 +73,7 @@ public class DataFakerService {
 
         BaseEntity entityDefinition = null;
         try {
-            entityDefinition = beUtils.getBaseEntity(productCode, definition, true);
+            entityDefinition = beUtils.getDefinition(definition, true);
         } catch (Exception e) {
             log.error("Something went wrong getting the BaseEntity: " + e.getMessage());
             e.printStackTrace();
@@ -82,32 +82,41 @@ public class DataFakerService {
         if (entityDefinition == null)
             throw new NullParameterException("BaseEntity with " + definition + " cannot be found!!");
 
-        for (EntityAttribute ea : entityDefinition.findPrefixEntityAttributes(Prefix.ATT_)) {
-            String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-            Attribute attribute;
+        List<EntityAttribute> newEAs = new ArrayList<>(entityDefinition.getBaseEntityAttributes().size());
+        for (EntityAttribute ea : entityDefinition.getBaseEntityAttributes()) {
+            String attrCode = ea.getAttributeCode();
             try {
-                attribute = qwandaUtils.getAttribute(productCode, attributeCode);
+                Attribute attr;
+                if (attrCode.startsWith(Prefix.DFT_)) {
+                    continue;
+                }
+                if (attrCode.startsWith(Prefix.PRI_) || attrCode.startsWith(Prefix.LNK_)) {
+                    attr = attrUtils.getAttribute(productCode, ea.getAttributeCode(),
+                            true, true);
+                } else {
+                    attr = attrUtils.getAttribute(productCode,
+                            CommonUtils.removePrefix(ea.getAttributeCode()), true);
+                }
+
+                DataType dtt = attr.getDataType();
+                List<Validation> validations = attrUtils.getValidationList(dtt);
+                dtt.setValidationList(validations);
+                attr.setDataType(dtt);
+                attr.setCode(ea.getAttributeCode());
+                ea.setAttribute(attr);
+
+                if (ea.getAttributeCode().startsWith(Prefix.ATT_) && ea.getValue() instanceof Boolean) {
+                    ea.setValue(null);
+                }
+                newEAs.add(ea);
             } catch (Exception e) {
                 log.error("Ran into a problem: " + e.getMessage());
                 e.printStackTrace();
-                continue;
             }
-
-            try {
-                DataType dtt = attrUtils.getDataType(attribute, true);
-                if (dtt != null) {
-                    List<Validation> validations = dtt.getValidationList();
-                    dtt.setValidationList(validations);
-                }
-                attribute.setDataType(dtt);
-            } catch (Exception e) {
-                log.warn("Error building %s DataType: %s".formatted(definition, e.getMessage()));
-            }
-
-            ea.setAttribute(attribute);
-            ea.setAttributeCode(Prefix.ATT_ + attributeCode);
         }
 
+        entityDefinition.setBaseEntityAttributes(new HashMap<>());
+        entityDefinition.setBaseEntityAttributes(newEAs);
         return entityDefinition;
     }
 
@@ -176,8 +185,8 @@ public class DataFakerService {
         }
 
         if (attr != null) {
-            EntityAttribute newEA = new EntityAttribute(entity, attr, 1.0, attrValue);
-            entity.addAttribute(newEA);
+        EntityAttribute newEA = new EntityAttribute(entity, attr, 1.0, attrValue);
+        entity.addAttribute(newEA);
         }
         return entity;
     }
@@ -186,7 +195,7 @@ public class DataFakerService {
     public BaseEntity save(BaseEntity entity) {
         log.debug("Saving entity " + entity.getCode());
         String name = entity.getName();
-        List<EntityAttribute> entityAttributes = entity.findPrefixEntityAttributes(Prefix.ATT_)
+        List<EntityAttribute> entityAttributes = entity.getBaseEntityAttributes()
                 .stream().distinct().toList();
 
         if (entity.getCode().startsWith(Prefix.DEF_)) {

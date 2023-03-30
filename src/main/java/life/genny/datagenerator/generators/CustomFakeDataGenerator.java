@@ -12,6 +12,8 @@ import org.jboss.logging.Logger;
 import life.genny.datagenerator.model.PlaceDetail;
 import life.genny.datagenerator.services.FakeDataGenerator;
 import life.genny.qwandaq.attribute.EntityAttribute;
+import life.genny.qwandaq.constants.Prefix;
+import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.utils.CommonUtils;
 
@@ -48,7 +50,7 @@ public abstract class CustomFakeDataGenerator {
             try {
                 be = generator.generateDataTypeAttributes(entity);
                 // generator.entityAttributesAreValid(be,
-                //         true, false);
+                // true, false);
                 be = generator.saveEntity(be);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -64,9 +66,14 @@ public abstract class CustomFakeDataGenerator {
         if (ea.getValue() != null)
             return ea.getValue();
 
-        String attributeCode = CommonUtils.removePrefix(ea.getAttributeCode());
-        String regexVal = ea.getAttribute().getDataType() != null
-                ? ea.getAttribute().getDataType().getValidationList().get(0).getRegex()
+        String attributeCode = ea.getAttributeCode().startsWith(Prefix.ATT_)
+                ? CommonUtils.removePrefix(ea.getAttributeCode())
+                : ea.getAttributeCode();
+        DataType dtt = ea.getAttribute().getDataType() != null
+                ? ea.getAttribute().getDataType()
+                : new DataType();
+        String regexVal = dtt.getValidationList().size() > 0
+                ? dtt.getValidationList().get(0).getRegex()
                 : null;
         String className = ea.getAttribute().getDataType() != null
                 ? ea.getAttribute().getDataType().getClassName()
@@ -79,10 +86,10 @@ public abstract class CustomFakeDataGenerator {
                 dataTypeInvalidArgument(attributeCode, newObj, className);
         } catch (NoSuchElementException e) {
             log.error("Something went wrong generating " + defCode +
-                    " attribute value, " + e.getMessage());
+                    " " + attributeCode + " value, " + e.getMessage());
         } catch (Exception e) {
             log.error("Something went wrong generating " + defCode +
-                    " attribute value, " + e.getMessage());
+                    " " + attributeCode + " value, " + e.getMessage());
             e.printStackTrace();
         }
 

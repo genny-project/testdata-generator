@@ -2,8 +2,8 @@ package life.genny.datagenerator;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -15,6 +15,7 @@ import life.genny.datagenerator.Generator.*;
 import life.genny.datagenerator.configs.GeneratorConfig;
 import life.genny.datagenerator.services.DataFakerService;
 import life.genny.datagenerator.services.FakeDataGenerator;
+import life.genny.qwandaq.managers.CacheManager;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.serviceq.Service;
@@ -43,13 +44,18 @@ public class AppStartup {
     @Inject
     QwandaUtils qwandaUtils;
 
+    @Inject
+    CacheManager cm;
+
     private ExecutorService executor;
     private int currentGenerated = 0;
     private long start, end;
+    private AtomicLong id = new AtomicLong(0l);
 
     void start(@Observes StartupEvent event) {
         log.info("Starting up new application...");
-
+        service.fullServiceInit();
+        id.set(cm.getMaxBaseEntityId() + 1);
         executor = Executors.newFixedThreadPool(generatorConfig.maxThread());
         start = System.currentTimeMillis();
         generateTasks();
@@ -66,7 +72,7 @@ public class AppStartup {
         while (generatedData < totalData) {
             final int generate = Math.min(totalData - generatedData, generatorConfig.recordsPerThread());
             final int queueFinal = queue;
-            executor.submit(new GeneratorTask(service, generator, generate, new GeneratorListener() {
+            executor.submit(new GeneratorTask(id, service, generator, generate, new GeneratorListener() {
                 @Override
                 public void onStart() {
                     log.info("Start generating batch %s.".formatted(queueFinal));

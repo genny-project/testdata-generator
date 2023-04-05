@@ -43,7 +43,7 @@ public abstract class CustomFakeDataGenerator {
         this.places = places;
     }
 
-    public BaseEntity generate(String defCode, BaseEntity entity) {
+    public BaseEntity generate(String defCode, Long id, BaseEntity entity) {
         log.debug("Generating " + defCode + " attributes for " + entity.getCode());
         BaseEntity be = generateImpl(defCode, entity);
         if (be.getCode().equals(defCode)) {
@@ -51,8 +51,9 @@ public abstract class CustomFakeDataGenerator {
                 be = generator.generateDataTypeAttributes(entity);
                 // generator.entityAttributesAreValid(be,
                 // true, false);
-                be = generator.saveEntity(be);
+                be = generator.saveEntity(id, be);
             } catch (Exception e) {
+                log.error("Failed generating " + defCode, e);
                 e.printStackTrace();
             }
         }

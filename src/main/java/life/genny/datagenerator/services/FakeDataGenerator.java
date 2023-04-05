@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -82,7 +83,7 @@ public class FakeDataGenerator {
         return entity;
     }
 
-    public BaseEntity generateEntity(String code) {
+    public BaseEntity generateEntity(long id, String code) {
         log.debug("Generating " + code);
         BaseEntity entity = generateEntityDef(code);
         entity.setName(DataFakerCustomUtils.generateName().toUpperCase());
@@ -95,41 +96,41 @@ public class FakeDataGenerator {
 
         String prefix = prefixAttr != null ? prefixAttr.getValue() : "";
         if ("PER".equals(prefixCode + "_") || Prefix.PER_.equals(prefix + "_")) {
-            entity = personGenerator.generate(Entities.DEF_PERSON, entity);
-            entity = userGenerator.generate(Entities.DEF_USER, entity);
+            entity = personGenerator.generate(Entities.DEF_PERSON, id, entity);
+            entity = userGenerator.generate(Entities.DEF_USER, id, entity);
         }
 
-        entity = contactGenerator.generate(Entities.DEF_CONTACT, entity);
-        entity = addressGenerator.generate(Entities.DEF_ADDRESS, entity);
-        entity = generateEntityAttribtues(code, entity);
+        entity = contactGenerator.generate(Entities.DEF_CONTACT, id, entity);
+        entity = addressGenerator.generate(Entities.DEF_ADDRESS, id, entity);
+        entity = generateEntityAttribtues(code, id, entity);
         return entity;
     }
 
-    private BaseEntity generateEntityAttribtues(String defCode, BaseEntity entity) {
+    private BaseEntity generateEntityAttribtues(String defCode, Long id, BaseEntity entity) {
         log.debug("Generating attributes of " + defCode);
 
         entity = switch (defCode) {
             case Entities.DEF_PERSON:
             case Entities.DEF_BALI_PERSON:
-                yield personGenerator.generate(defCode, entity);
+                yield personGenerator.generate(defCode, id, entity);
 
             case Entities.DEF_HOST_COMPANY:
             case Entities.DEF_HOST_COMPANY_REP:
-                yield companyGenerator.generate(defCode, entity);
+                yield companyGenerator.generate(defCode, id, entity);
 
             case Entities.DEF_EDU_PROVIDER:
             case Entities.DEF_EDU_PRO_REP:
-                yield eduGenerator.generate(defCode, entity);
+                yield eduGenerator.generate(defCode, id, entity);
 
             case Entities.DEF_INTERN:
             case Entities.DEF_INTERNSHIP:
-                yield internGenerator.generate(defCode, entity);
+                yield internGenerator.generate(defCode, id, entity);
 
             case Entities.DEF_APPLICATION:
-                yield applicationGenerator.generate(defCode, entity);
+                yield applicationGenerator.generate(defCode, id, entity);
 
             default:
-                yield personGenerator.generate(defCode, entity);
+                yield personGenerator.generate(defCode, id, entity);
         };
 
         return entity;
@@ -189,65 +190,79 @@ public class FakeDataGenerator {
         return entity;
     }
 
-    public BaseEntity saveEntity(BaseEntity entity) {
-        return fakerService.save(entity);
+    public BaseEntity saveEntity(Long id, BaseEntity entity) {
+        return fakerService.save(id, entity);
     }
 
-    public void createRelation(BaseEntity entity1, BaseEntity entity2, String code1, String code2) {
+    public List<BaseEntity> saveEntities(List<BaseEntity> entities) {
+        return fakerService.save(entities);
+    }
+
+    public Map<String, BaseEntity> createRelation(BaseEntity entity1, BaseEntity entity2, String code1, String code2) {
+        Map<String, BaseEntity> entityMap = new HashMap<>(2);
         log.debug("Creating relation between %s and %s".formatted(entity1.getCode(), entity2.getCode()));
+
         if (code1 != null) {
             try {
                 entity1 = fakerService.addAttribute(entity1, code1, "[\"" + entity2.getCode() + "\"]");
-                entity1 = fakerService.save(entity1);
+                entityMap.put(entity1.getCode(), entity1);
             } catch (Exception e) {
                 log.error("Something wrong creating the relation on " +
                         entity1.getCode() + ": ", e);
             }
         }
-
         if (code2 != null) {
             try {
                 entity2 = fakerService.addAttribute(entity2, code2, "[\"" + entity1.getCode() + "\"]");
-                entity2 = fakerService.save(entity2);
+                entityMap.put(entity2.getCode(), entity2);
             } catch (Exception e) {
                 log.error("Something wrong creating the relation on " +
                         entity2.getCode() + ": ", e);
             }
         }
+
+        return entityMap;
     }
 
-    public void createRelation(BaseEntity entity, List<BaseEntity> entities, String code1, String code2) {
+    public Map<String, BaseEntity> createRelation(BaseEntity entity, List<BaseEntity> entities, String code1,
+            String code2) {
+        Map<String, BaseEntity> entityMap = new HashMap<>(entities.size() + 1);
         log.debug("Creating relation between %s and %s".formatted(entity.getCode(),
                 entities.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]"))));
+
         if (code1 != null) {
             List<String> entityCodes = entities.stream().map(BaseEntity::getCode).toList();
             String codes = "[\"" + String.join("\", \"", entityCodes.toArray(new String[0])) + "\"]";
             try {
                 entity = fakerService.addAttribute(entity, code1, codes);
-                entity = fakerService.save(entity);
+                entityMap.put(entity.getCode(), entity);
             } catch (Exception e) {
                 log.error("Something wrong creating the relation on " +
                         entity.getCode() + ": ", e);
             }
         }
-
         if (code2 != null) {
             for (BaseEntity be : entities) {
                 try {
                     be = fakerService.addAttribute(be, code2, "[\"" + entity.getCode() + "\"]");
-                    be = fakerService.save(be);
+                    entityMap.put(be.getCode(), be);
                 } catch (Exception e) {
                     log.error("Something wrong creating the relation on " +
                             be.getCode() + ": ", e);
                 }
             }
         }
+
+        return entityMap;
     }
 
-    public void createRelation(List<BaseEntity> entities1, List<BaseEntity> entities2, String code1, String code2) {
+    public Map<String, BaseEntity> createRelation(List<BaseEntity> entities1, List<BaseEntity> entities2, String code1,
+            String code2) {
+        Map<String, BaseEntity> entityMap = new HashMap<>(entities1.size() + entities2.size());
         log.debug("Creating relation between %s and %s".formatted(
                 entities1.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]")),
                 entities2.stream().map(BaseEntity::getCode).collect(Collectors.joining(", ", "[", "]"))));
+
         if (code1 != null) {
             for (BaseEntity entity : entities1) {
                 try {
@@ -255,14 +270,13 @@ public class FakeDataGenerator {
                     String codes = "[\"" +
                             String.join("\", \"", entityCodes.toArray(new String[0])) + "\"]";
                     entity = fakerService.addAttribute(entity, code1, codes);
-                    entity = fakerService.save(entity);
+                    entityMap.put(entity.getCode(), entity);
                 } catch (Exception e) {
                     log.error("Something wrong creating the relation on " +
                             entity.getCode() + ": ", e);
                 }
             }
         }
-
         if (code2 != null) {
             for (BaseEntity entity : entities2) {
                 try {
@@ -270,13 +284,15 @@ public class FakeDataGenerator {
                     String codes = "[\"" +
                             String.join("\", \"", entityCodes.toArray(new String[0])) + "\"]";
                     entity = fakerService.addAttribute(entity, code2, codes);
-                    entity = fakerService.save(entity);
+                    entityMap.put(entity.getCode(), entity);
                 } catch (Exception e) {
                     log.error("Something wrong creating the relation on " +
                             entity.getCode() + ": ", e);
                 }
             }
         }
+
+        return entityMap;
     }
 
     public BaseEntity transferAttribute(BaseEntity fromEntity, BaseEntity toEntity,
@@ -295,7 +311,6 @@ public class FakeDataGenerator {
 
             toEntity = fakerService.addAttribute(toEntity, codeTo, foundEntity.getValue());
         }
-        toEntity = fakerService.save(toEntity);
         return toEntity;
     }
 

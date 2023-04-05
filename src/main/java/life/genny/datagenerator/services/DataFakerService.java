@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
@@ -29,13 +30,18 @@ import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.entity.search.trait.Operator;
+import life.genny.qwandaq.exception.runtime.ItemNotFoundException;
 import life.genny.qwandaq.exception.runtime.NullParameterException;
+import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.AttributeUtils;
 import life.genny.qwandaq.utils.BaseEntityUtils;
 import life.genny.qwandaq.utils.CommonUtils;
+import life.genny.qwandaq.utils.DefUtils;
+import life.genny.qwandaq.utils.EntityAttributeUtils;
 import life.genny.qwandaq.utils.QwandaUtils;
 import life.genny.qwandaq.utils.SearchUtils;
 import life.genny.qwandaq.validation.Validation;
+import life.genny.serviceq.Service;
 
 @ApplicationScoped
 public class DataFakerService {
@@ -55,7 +61,13 @@ public class DataFakerService {
     QwandaUtils qwandaUtils;
 
     @Inject
+    DefUtils defUtils;
+
+    @Inject
     BaseEntityUtils beUtils;
+
+    @Inject
+    EntityAttributeUtils beaUtils;
 
     @Inject
     AttributeUtils attrUtils;
@@ -63,8 +75,14 @@ public class DataFakerService {
     @Inject
     SearchUtils searchUtils;
 
+    @Inject
+    Service service;
+
     @ConfigProperty(name = "data.product-code")
     String productCode;
+
+    @Inject
+    UserToken userToken;
 
     @ActivateRequestContext
     public BaseEntity getBaseEntityDef(String definition) {
@@ -73,7 +91,7 @@ public class DataFakerService {
 
         BaseEntity entityDefinition = null;
         try {
-            entityDefinition = beUtils.getDefinition(definition, true);
+            entityDefinition = beUtils.getBaseEntity(productCode, definition, true);
         } catch (Exception e) {
             log.error("Something went wrong getting the BaseEntity: " + e.getMessage());
             e.printStackTrace();
@@ -185,38 +203,65 @@ public class DataFakerService {
         }
 
         if (attr != null) {
-        EntityAttribute newEA = new EntityAttribute(entity, attr, 1.0, attrValue);
-        entity.addAttribute(newEA);
+            EntityAttribute newEA = new EntityAttribute(entity, attr, 1.0, attrValue);
+            entity.addAttribute(newEA);
         }
         return entity;
     }
 
     @ActivateRequestContext
-    public BaseEntity save(BaseEntity entity) {
-        log.debug("Saving entity " + entity.getCode());
-        String name = entity.getName();
-        List<EntityAttribute> entityAttributes = entity.getBaseEntityAttributes()
-                .stream().distinct().toList();
+    public BaseEntity save(Long id, BaseEntity defEntity) {
+        log.debug("Saving entity " + defEntity.getCode());
+        List<EntityAttribute> entityAttributes = new ArrayList<>(100);
+        entityAttributes.addAll(defEntity.getBaseEntityAttributes().stream().distinct().toList());
 
-        if (entity.getCode().startsWith(Prefix.DEF_)) {
-            try {
-                entity = beUtils.create(Definition.from(entity), entity.getName());
+        BaseEntity entity = null;
+        try {
+            if (defEntity.getCode().startsWith(Prefix.DEF_)) {
+                entity = beUtils.create(Definition.from(defEntity), null, null, false);
+                entity.setId(id);
+                entity.setName(defEntity.getName());
+
+                for (EntityAttribute ea : entity.getBaseEntityAttributes()) {
+                    Optional<EntityAttribute> filteredEA = entityAttributes.stream()
+                            .filter(savedEA -> savedEA.getAttributeCode().equals(ea.getAttributeCode()) ||
+                                    Prefix.ATT_.concat(ea.getAttributeCode()).equals(savedEA.getAttributeCode()))
+                            .findFirst();
+                    if (filteredEA.isEmpty()) {
+                        entityAttributes.add(ea);
+                    }
+                }
+                entity.setBaseEntityAttributes(new HashMap<>(0));
+                beUtils.updateBaseEntity(entity);
                 log.debug("Created entity: " + entity.getCode() + " in product: " +
                         entity.getRealm());
-            } catch (Exception e) {
-                log.info("Something went bad: " + e.getMessage());
-                e.printStackTrace();
+            } else {
+                entity = defEntity;
             }
-        }
 
-        // Saving or updating entity name and attributes
-        entity.setName(name);
-        for (EntityAttribute ea : entityAttributes) {
-            entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
-        }
-        entity = beUtils.updateBaseEntity(entity, true);
+            // Saving or updating entity name and attributes
+            for (EntityAttribute ea : entityAttributes) {
+                entity = addAttribute(entity, ea.getAttributeCode(), ea.getValue());
+            }
 
-        log.debug("Entity " + entity.getCode() + " saved");
-        return entity;
+            Long start = System.currentTimeMillis();
+            entity = beUtils.updateBaseEntity(entity, true);
+            Long end = System.currentTimeMillis();
+
+            log.debug("Entity " + entity.getCode() + " saved. Took " + (end - start) + " ms");
+            return entity;
+        } catch (Exception e) {
+            log.info("Something went bad: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<BaseEntity> save(List<BaseEntity> entities) {
+        List<BaseEntity> savedEntities = new ArrayList<>(entities.size());
+        for (BaseEntity entity : entities) {
+            savedEntities.add(save(entity.getId(), entity));
+        }
+        return savedEntities;
     }
 }

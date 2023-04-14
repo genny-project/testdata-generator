@@ -143,11 +143,9 @@ public class FakeDataGenerator {
         for (EntityAttribute ea : entityAttributes) {
             DataType dtt = ea.getAttribute().getDataType();
             if (dtt != null) {
-                List<Validation> validations = dtt.getValidationList();
+                List<Validation> validations = dtt.getValidationList().stream().toList();
                 if (validations.size() > 0 && ea.getValue() == null) {
-                    String regex = dtt.getValidationList().size() > 0
-                            ? dtt.getValidationList().get(0).getRegex()
-                            : null;
+                    String regex = validations.get(0).getRegex();
                     String className = dtt.getClassName();
 
                     if (String.class.getName().equals(className)) {
@@ -347,7 +345,7 @@ public class FakeDataGenerator {
                     ? ea.getAttribute().getDataType()
                     : null;
             List<Validation> validations = dtt != null
-                    ? dtt.getValidationList()
+                    ? dtt.getValidationList().stream().toList()
                     : new ArrayList<>(0);
 
             if (validations.size() > 0 && ea.getValue() != null &&

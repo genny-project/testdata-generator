@@ -75,7 +75,7 @@ public abstract class CustomFakeDataGenerator {
                 ? ea.getAttribute().getDataType()
                 : new DataType();
         String regexVal = dtt.getValidationList().size() > 0
-                ? dtt.getValidationList().get(0).getRegex()
+                ? dtt.getValidationList().iterator().next().getRegex()
                 : null;
         String className = ea.getAttribute().getDataType() != null
                 ? ea.getAttribute().getDataType().getClassName()

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.control.ActivateRequestContext;
@@ -115,7 +116,7 @@ public class DataFakerService {
                 }
 
                 DataType dtt = attr.getDataType();
-                List<Validation> validations = attrUtils.getValidationList(dtt);
+                Set<Validation> validations = attrUtils.getValidationList(dtt);
                 dtt.setValidationList(validations);
                 attr.setDataType(dtt);
                 attr.setCode(ea.getAttributeCode());
@@ -189,7 +190,7 @@ public class DataFakerService {
         if (attrCode.startsWith(Prefix.ATT_)) {
             attr = attrUtils.getAttribute(entity.getRealm(), CommonUtils.removePrefix(attrCode),
                     true);
-        } else {
+        } else if (attrCode.startsWith(Prefix.PRI_) || attrCode.startsWith(Prefix.LNK_)) {
             attr = attrUtils.getAttribute(entity.getRealm(), attrCode, true);
         }
 

@@ -35,6 +35,7 @@ import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.datatype.DataType;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.search.trait.Filter;
 import life.genny.qwandaq.validation.Validation;
 
 @ApplicationScoped
@@ -314,12 +315,12 @@ public class FakeDataGenerator {
         return toEntity;
     }
 
-    public BaseEntity getEntity(String code) {
-        return fakerService.getEntityByCode(code);
+    public BaseEntity searchEntity(List<Filter> filters) {
+        return fakerService.getBaseEntity(filters);
     }
 
-    public List<BaseEntity> getEntities(String code) {
-        return fakerService.getEntitiesByDefinition(code);
+    public List<BaseEntity> searchEntities(List<Filter> filters) {
+        return fakerService.getBaseEntities(filters);
     }
 
     public List<PlaceDetail> getRandomPlaces() {

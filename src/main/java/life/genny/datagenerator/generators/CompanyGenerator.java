@@ -1,5 +1,8 @@
 package life.genny.datagenerator.generators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -13,6 +16,8 @@ import life.genny.datagenerator.utils.DataFakerUtils;
 import life.genny.qwandaq.attribute.EntityAttribute;
 import life.genny.qwandaq.constants.Prefix;
 import life.genny.qwandaq.entity.BaseEntity;
+import life.genny.qwandaq.entity.search.trait.Filter;
+import life.genny.qwandaq.entity.search.trait.Operator;
 
 /**
  * Generate all important attributes for DEF_HOST_CPY and DEF_HOST_CPY_REP
@@ -25,6 +30,20 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     @Inject
     Logger log;
 
+    private String industryGrp = "[\"GRP_COMPANY_INDUSTRY\"]";
+
+    private List<BaseEntity> industries = new ArrayList<>(100);
+
+    @Override
+    protected void onPrepare() {
+        if (industries.size() < 1) {
+            List<Filter> industryFilters = new ArrayList<>(3);
+            industryFilters.add(new Filter(SpecialAttributes.LNK_PARENT, Operator.EQUALS, industryGrp));
+            industries.addAll(generator.searchEntities(industryFilters));
+        }
+        super.onPrepare();
+    }
+
     /**
      * Initialize needed parameter to generate each {@link EntityAttribute}
      * 
@@ -36,7 +55,7 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
     public BaseEntity generateImpl(String defCode, BaseEntity entity) {
         for (EntityAttribute ea : entity.findPrefixEntityAttributes(Prefix.ATT_)) {
             Object newObj = runGenerator(defCode, ea, defCode);
-                ea.setValue(newObj);
+            ea.setValue(newObj);
         }
         return entity;
     }
@@ -67,7 +86,6 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
      */
     Object generateHostCompanyAttr(String attributeCode) {
         return switch (attributeCode) {
-            case SpecialAttributes.PRI_NAME:
             case SpecialAttributes.PRI_LEGAL_NAME:
                 yield DataFakerCustomUtils.generateName();
 
@@ -116,6 +134,14 @@ public class CompanyGenerator extends CustomFakeDataGenerator {
             case SpecialAttributes.PRI_HCS_AGR_OUTCOME_SIGNATURE:
             case SpecialAttributes.PRI_HCS_AGR_SIGNATURE:
                 yield IGNORE;
+
+            case SpecialAttributes.LNK_COMPANY_INDUSTRY:
+                String code = "[]";
+                if (industries.size() > 1) {
+                    List<String> industryCodes = industries.stream().map(BaseEntity::getCode).toList();
+                    code = "[\"" + DataFakerUtils.randItemFromList(industryCodes) + "\"]";
+                }
+                yield code;
 
             default:
                 yield null;

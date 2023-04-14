@@ -47,6 +47,7 @@ public abstract class CustomFakeDataGenerator {
         log.debug("Generating " + defCode + " attributes for " + entity.getCode());
         BaseEntity be = generateImpl(defCode, entity);
         if (be.getCode().equals(defCode)) {
+            onPrepare();
             try {
                 be = generator.generateDataTypeAttributes(entity);
                 // generator.entityAttributesAreValid(be,
@@ -95,6 +96,9 @@ public abstract class CustomFakeDataGenerator {
         }
 
         return newObj;
+    }
+
+    protected void onPrepare() {
     }
 
     protected void dataTypeInvalidArgument(String attributeCode, Object value, String className) {

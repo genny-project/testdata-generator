@@ -29,8 +29,6 @@ import life.genny.qwandaq.entity.BaseEntity;
 import life.genny.qwandaq.entity.Definition;
 import life.genny.qwandaq.entity.search.SearchEntity;
 import life.genny.qwandaq.entity.search.trait.Filter;
-import life.genny.qwandaq.entity.search.trait.Operator;
-import life.genny.qwandaq.exception.runtime.ItemNotFoundException;
 import life.genny.qwandaq.exception.runtime.NullParameterException;
 import life.genny.qwandaq.models.UserToken;
 import life.genny.qwandaq.utils.AttributeUtils;
@@ -138,31 +136,24 @@ public class DataFakerService {
         return entityDefinition;
     }
 
-    public List<BaseEntity> getEntitiesByDefinition(String def) {
-        SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities")
-                .add(new Filter("LNK_DEF", Operator.CONTAINS, def))
-                // .add(new Column("PRI_ADDRESS", "Address"))
-                .setAllColumns(true)
-                .setRealm(productCode);
-        List<BaseEntity> entities = searchUtils.searchBaseEntitys(sbe);
+    public List<BaseEntity> getBaseEntities(List<Filter> filters) {
+        SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities");
+        for (Filter filter : filters) {
+            sbe.add(filter);
+        }
+        sbe.setAllColumns(true).setRealm(productCode);
+        List<BaseEntity> entities = new ArrayList<>();
+        entities.addAll(searchUtils.searchBaseEntitys(sbe));
         return entities;
     }
 
-    public List<String> getEntityCodesByDefinition(String def) {
-        SearchEntity sbe = new SearchEntity("SBE_ALL_ENTITIES", "All entities")
-                .add(new Filter("LNK_DEF", Operator.CONTAINS, def))
-                .setRealm(productCode);
-        List<BaseEntity> items = searchUtils.searchBaseEntitys(sbe);
-        return items.stream().map(BaseEntity::getCode).toList();
-    }
-
-    public BaseEntity getEntityByCode(String code) {
-        SearchEntity sbe = new SearchEntity("SBE_ENTITY", "Entity")
-                .add(new Filter("PRI_CODE", Operator.EQUALS, code))
-                .setAllColumns(true)
-                .setRealm(productCode);
-        BaseEntity entity = searchUtils.searchBaseEntitys(sbe).get(0);
-        return entity;
+    public BaseEntity getBaseEntity(List<Filter> filters) {
+        List<BaseEntity> entities = getBaseEntities(filters);
+        if (entities.size() > 1) {
+            List<String> codes = entities.stream().map(BaseEntity::getCode).toList();
+            log.warn("SearchEntity found more than 1 BaseEntity: " + String.join(", ", codes));
+        }
+        return entities.get(0);
     }
 
     public List<PlaceDetail> getAddresses() {

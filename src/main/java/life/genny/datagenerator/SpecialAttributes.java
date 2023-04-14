@@ -12,6 +12,7 @@ public class SpecialAttributes {
      * Special case for {@link EntityAttribute} generation for DEF_COMMON
      */
     public static final String PRI_NAME = "PRI_NAME";
+    public static final String LNK_PARENT = "LNK_PARENT";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_PERSON
@@ -85,6 +86,7 @@ public class SpecialAttributes {
     public static final String LNK_HOST_COMPANY_REP = "LNK_HOST_COMPANY_REP";
     public static final String LNK_DJP_JOB_AGREE = "LNK_DJP_JOB_AGREE";
     public static final String LNK_SPECIFY_ABN = "LNK_SPECIFY_ABN";
+    public static final String LNK_COMPANY_INDUSTRY = "LNK_COMPANY_INDUSTRY";
 
     /**
      * Special case for {@link EntityAttribute} generation for DEF_HOST_CPY_REP
@@ -152,7 +154,6 @@ public class SpecialAttributes {
     public static final String PRI_IS_EDU_PROVIDER  = "PRI_IS_EDU_PROVIDER";
     public static final String PRI_STATUS   = "PRI_STATUS";
     public static final String PRI_PREFIX  = "PRI_PREFIX";
-    public static final String LNK_COMPANY_INDUSTRY = "LNK_COMPANY_INDUSTRY";
     public static final String LNK_NUMBER_STAFF = "LNK_NUMBER_STAFF";
     public static final String PRI_TIMEZONE  = "PRI_TIMEZONE";
 

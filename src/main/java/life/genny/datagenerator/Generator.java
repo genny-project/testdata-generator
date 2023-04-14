@@ -84,6 +84,8 @@ public class Generator {
                 for (int i = 0; i < fixedSize; i++) {
                     applications.add(generator.generateEntity(id.incrementAndGet(), Entities.DEF_APPLICATION));
                 }
+                // DEF_AGENT
+                generator.generateEntity(id.incrementAndGet(), Entities.DEF_AGENT);
 
                 /**
                  * Transfer identical value

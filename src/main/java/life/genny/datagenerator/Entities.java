@@ -16,4 +16,5 @@ public class Entities {
     public static final String DEF_EDU_PROVIDER = "DEF_EDU_PROVIDER";
     public static final String DEF_EDU_PRO_REP = "DEF_EDU_PRO_REP";
     public static final String DEF_APPLICATION = "DEF_APPLICATION";
+    public static final String DEF_AGENT = "DEF_AGENT";
 }
